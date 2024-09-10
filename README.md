@@ -20,4 +20,4 @@ It is important for the customer that the stations can work as independently as 
 
 ## Domain Model
 
-![Domain Model](Development-Documents-(UML,-etc)\domain-model.svg)
+![Domain Model](Development%20Documents%20(UML%2C%20etc)/domain-model.svg)
