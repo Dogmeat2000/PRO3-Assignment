@@ -23,5 +23,6 @@ It is important for the customer that the stations can work as independently as 
 ![Domain Model](Development%20Documents%20(UML%2C%20etc)/domain-model.svg)
 
 ## Architecture
+![Architecture Model](Development%20Documents%20(UML%2C%20etc)/architecture-model.svg)
 
 ## Threat Model
