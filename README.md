@@ -26,3 +26,4 @@ It is important for the customer that the stations can work as independently as 
 ![Architecture Model](Development%20Documents%20(UML%2C%20etc)/architecture-model.svg)
 
 ## Threat Model
+### EINOO: Potential Attacker Analysis
