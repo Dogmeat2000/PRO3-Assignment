@@ -27,3 +27,9 @@ It is important for the customer that the stations can work as independently as 
 
 ## Threat Model
 ### EINOO: Potential Attacker Analysis
+
+![EINOO Model](Development%20Documents%20(UML%2C%20etc)/EINOO-Threat-Model.png)
+
+### STRIDE: Security Design Considerations
+
+![EINOO Model](Development%20Documents%20(UML%2C%20etc)/STRIDE-Threat-Model.png)
