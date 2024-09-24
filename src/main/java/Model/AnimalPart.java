@@ -8,6 +8,7 @@ public class AnimalPart extends PartType
   private BigDecimal weight;
   private String part_Id;
   private Animal animal;
+  private Tray tray;
 
 
   public AnimalPart(Animal animal) {
@@ -15,6 +16,7 @@ public class AnimalPart extends PartType
     setWeight(BigDecimal.valueOf(0));
     setPart_Id("NotSpecified");
     setAnimal(animal);
+    setTray(null);
   }
 
 
@@ -47,6 +49,16 @@ public class AnimalPart extends PartType
     this.animal = animal;
   }
 
+
+  public Tray getTray() {
+    return tray;
+  }
+
+
+  public void setTray(Tray tray) {
+    this.tray = tray;
+  }
+
   @Override public boolean equals(Object o) {
     if (o == null || this.getClass() != o.getClass())
       return false;
@@ -54,6 +66,7 @@ public class AnimalPart extends PartType
     return Objects.equals(getWeight(), ((AnimalPart) o).getWeight())
         && Objects.equals(getPart_Id(), ((AnimalPart) o).getPart_Id())
         && Objects.equals(getAnimal(), ((AnimalPart) o).getAnimal())
+        && Objects.equals(getTray(), ((AnimalPart) o).getTray())
         && super.equals((PartType) o);
   }
 

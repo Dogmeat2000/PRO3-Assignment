@@ -9,7 +9,7 @@ public class Animal
 {
   private BigDecimal weight;
   private String animal_id;
-  private List<AnimalPart> partList;
+  private List<Model.AnimalPart> partList;
 
 
   public Animal() {

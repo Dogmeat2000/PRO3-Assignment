@@ -1,0 +1,101 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package grpc;
+
+
+message AnimalData {
+  string animalId = 1;
+  string animalWeight = 2;
+}
+
+
+message AnimalId {
+  string animalId = 1;
+}
+
+
+message AnimalsData {
+  repeated AnimalData animals = 1;
+}
+
+
+message EmptyMessage {
+
+}
+
+
+message AnimalPartData {
+  string animalPartId = 1;
+  string partTypeId = 2;
+  string partWeight = 3;
+  string animalId = 4;
+}
+
+
+message AnimalPartId {
+  string animalPartId = 1;
+}
+
+
+message AnimalPartsData {
+  repeated AnimalPartData animalParts = 1;
+}
+
+
+message TrayData {
+  string trayId = 1;
+  repeated AnimalPartId animalParts = 2;
+}
+
+
+message PartTypeData {
+  string partTypeId = 1;
+  string partDesc = 2;
+}
+
+
+message ProductData {
+  string productId = 1;
+  repeated TrayData trayIds = 2;
+  repeated AnimalPartId animalPartIds = 3;
+}
+
+
+message ProductId {
+  string productId = 1;
+}
+
+
+message ProductsData {
+  repeated ProductData products = 1;
+}
+
+
+service SlaughterHouseService {
+  // Create:
+  rpc registerAnimal(AnimalData) returns (AnimalData);
+  rpc registerAnimalPart(AnimalPartData) returns (AnimalPartData);
+  rpc registerProduct(ProductData) returns (ProductData);
+
+  // Read:
+  rpc readAnimal(AnimalId) returns (AnimalData);
+  rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
+  rpc readProduct(ProductId) returns (ProductData);
+
+  // Update:
+  rpc updateAnimal(AnimalData) returns (EmptyMessage);
+  rpc updateAnimalPart(AnimalPartData) returns (EmptyMessage);
+  rpc updateProduct(ProductData) returns (EmptyMessage);
+
+  // Delete:
+  rpc removeAnimal(AnimalData) returns (EmptyMessage);
+  rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);
+  rpc removeProduct(ProductData) returns (EmptyMessage);
+
+  // Get All:
+  rpc getAllAnimals(EmptyMessage) returns (AnimalData);
+  rpc getAnimalParts(EmptyMessage) returns (AnimalPartData);
+  rpc getAllProducts(EmptyMessage) returns (ProductData);
+
+}
