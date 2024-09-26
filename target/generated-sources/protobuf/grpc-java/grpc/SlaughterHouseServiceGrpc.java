@@ -20,9 +20,9 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.4.0)",
     comments = "Source: SlaughterHouseSim.proto")
-public class SlaughterHouseServiceGrpc {
+public final class SlaughterHouseServiceGrpc {
 
-  protected SlaughterHouseServiceGrpc() {}
+  private SlaughterHouseServiceGrpc() {}
 
   public static final String SERVICE_NAME = "grpc.SlaughterHouseService";
 

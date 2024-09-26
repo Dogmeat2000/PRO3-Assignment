@@ -1,4 +1,4 @@
-package Model;
+package shared.model.entities;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

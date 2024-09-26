@@ -1,0 +1,1 @@
+Contains the domain models or data models for the client UI.

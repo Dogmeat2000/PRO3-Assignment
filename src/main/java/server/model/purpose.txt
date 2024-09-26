@@ -1,0 +1,1 @@
+Contains the domain models or entities that represent the data. These are used in both the REST and gRPC layers.

@@ -4,7 +4,7 @@
 
  - [Case](#Case)
  - [Analysis](#Analysis)
-   - [Domain Model](#Domain-Model)
+   - [Domain model](#Domain-Model)
 
 # Case
 Your task is to simulate the operation of a nearby slaughterhouse. In one end of the slaughterhouse living animals arrive and in the other end various products, consisting of one or more animal parts, depart. The slaughterhouse has three stations where smaller parts of the whole process take place.
@@ -18,18 +18,18 @@ It is important for the customer that the stations can work as independently as 
 
 # Analysis
 
-## Domain Model
+## Domain model
 
-![Domain Model](Development%20Documents%20(UML%2C%20etc)/domain-model.svg)
+![Domain model](Development%20Documents%20(UML%2C%20etc)/domain-model.svg)
 
 ## Architecture
-![Architecture Model](Development%20Documents%20(UML%2C%20etc)/architecture-model.svg)
+![Architecture model](Development%20Documents%20(UML%2C%20etc)/architecture-model.svg)
 
-## Threat Model
+## Threat model
 ### EINOO: Potential Attacker Analysis
 
-![EINOO Model](Development%20Documents%20(UML%2C%20etc)/EINOO-Threat-Model.png)
+![EINOO model](Development%20Documents%20(UML%2C%20etc)/EINOO-Threat-Model.png)
 
 ### STRIDE: Security Design Considerations
 
-![EINOO Model](Development%20Documents%20(UML%2C%20etc)/STRIDE-Threat-Model.png)
+![EINOO model](Development%20Documents%20(UML%2C%20etc)/STRIDE-Threat-Model.png)

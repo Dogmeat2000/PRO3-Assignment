@@ -1,0 +1,2 @@
+
+Consider adding a /application.yml file, for the main Spring Boot configuration file where profiles, database connections, gRPC configurations, and other settings are defined.

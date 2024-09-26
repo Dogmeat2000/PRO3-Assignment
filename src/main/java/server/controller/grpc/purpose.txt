@@ -1,0 +1,12 @@
+/controller/grpc:
+
+This directory is typically responsible for handling incoming gRPC requests, processing them, and returning the appropriate responses. Controllers can be thought of as the entry point for gRPC calls.
+Contents:
+gRPC Service Controllers: These classes would implement the generated gRPC service interfaces. They define the methods that handle the logic when a gRPC call is made.
+Request/Response Handling: Any additional handling or processing logic specific to the gRPC calls can reside here.
+
+Example Structure:
+
+/controller/grpc
+├── SlaughterHouseServiceController.java
+└── ...

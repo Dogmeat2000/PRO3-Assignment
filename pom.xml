@@ -28,6 +28,12 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
                 <configuration>
+                    <!-- Specify the source root where the .proto files are located -->
+                    <protoSourceRoot>${project.basedir}/src/main/resources/grpc</protoSourceRoot>
+
+                    <!-- Change the output directory for generated Java classes -->
+                    <!-- <outputDirectory>${project.basedir}/src/main/java/server/grpc</outputDirectory>-->
+
                     <protocArtifact>
                         com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}
                     </protocArtifact>

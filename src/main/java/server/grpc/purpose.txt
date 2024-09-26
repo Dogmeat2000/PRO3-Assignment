@@ -1,0 +1,11 @@
+Contains the actual gRPC service implementations and server configuration.
+
+This directory is generally for the actual gRPC service implementations, where you define how the service methods behave, including business logic, database interactions, and integration with other services.
+Contents:
+gRPC Service Implementations: Implementations of the gRPC service interfaces defined in the .proto files. This is where the core logic resides.
+gRPC Server Setup: Code for configuring and starting the gRPC server.
+Example Structure:
+
+/server/grpc
+├── SlaughterHouseServiceImpl.java
+└── GrpcServerConfig.java  # Configuration for starting the gRPC server

@@ -1,4 +1,4 @@
-package Model;
+package shared.model.entities;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ public class Animal
 {
   private BigDecimal weight;
   private String animal_id;
-  private List<Model.AnimalPart> partList;
+  private List<AnimalPart> partList;
 
 
   public Animal() {
