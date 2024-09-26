@@ -7,7 +7,7 @@
    - [Domain model](#Domain-Model)
    - [Threat models](##Threat-model)
   - [Design](#Design)
-   - [EER Diagraml](#EER-Diagram)
+   - [EER Diagram](#EER-Diagram)
    - [Relational Schema](#Relational-Schema)
    - [Global Relations Diagraml](#Global-Relations-Diagram)
 
