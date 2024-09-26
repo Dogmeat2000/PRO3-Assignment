@@ -7,9 +7,9 @@
    - [Domain model](#Domain-Model)
    - [Threat models](##Threat-model)
   - [Design](#Design)
-   - [EER Diagram](#EER-Diagram)
-   - [Relational Schema](#Relational-Schema)
-   - [Global Relations Diagraml](#Global-Relations-Diagram)
+    - [EER Diagram](#EER-Diagram)
+    - [Relational Schema](#Relational-Schema)
+    - [Global Relations Diagraml](#Global-Relations-Diagram)
 
 # Case
 Your task is to simulate the operation of a nearby slaughterhouse. In one end of the slaughterhouse living animals arrive and in the other end various products, consisting of one or more animal parts, depart. The slaughterhouse has three stations where smaller parts of the whole process take place.
