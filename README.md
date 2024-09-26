@@ -8,7 +8,7 @@
    - [Threat models](##Threat-model)
   - [Design](#Design)
    - [EER Diagraml](#EER-Diagram)
-   - [Relational Schemal](#Relationa-Schema)
+   - [Relational Schema](#Relational-Schema)
    - [Global Relations Diagraml](#Global-Relations-Diagram)
 
 # Case
