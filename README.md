@@ -5,6 +5,11 @@
  - [Case](#Case)
  - [Analysis](#Analysis)
    - [Domain model](#Domain-Model)
+   - [Threat models](##Threat-model)
+  - [Design](#Design)
+    - [EER Diagram](#EER-Diagram)
+    - [Relational Schema](#Relational-Schema)
+    - [Global Relations Diagraml](#Global-Relations-Diagram)
 
 # Case
 Your task is to simulate the operation of a nearby slaughterhouse. In one end of the slaughterhouse living animals arrive and in the other end various products, consisting of one or more animal parts, depart. The slaughterhouse has three stations where smaller parts of the whole process take place.
@@ -33,3 +38,18 @@ It is important for the customer that the stations can work as independently as 
 ### STRIDE: Security Design Considerations
 
 ![EINOO model](Development%20Documents%20(UML%2C%20etc)/STRIDE-Threat-Model.png)
+
+
+# Design
+
+## EER Diagram
+
+![EER Diagram](Development%20Documents%20(UML%2C%20etc)/eer-diagram.svg)
+
+## Relational Schema
+
+![Relational Schema](Development%20Documents%20(UML%2C%20etc)/relational-schema.png)
+
+## Global Relations Diagram
+
+![Global Relations Diagram](Development%20Documents%20(UML%2C%20etc)/grd-diagram.svg)
