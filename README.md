@@ -21,6 +21,14 @@ The parts are put into trays with each tray containing only one type of parts. E
 If it is later discovered, that there is some kind of trouble with a slaughtered animal, it should be possible to recall all products, which might contain parts of the animal. This function should be accessible outside the slaughterhouse.
 It is important for the customer that the stations can work as independently as possible. In particular, Work shouldn’t stop at a station just because the network is down.
 
+# How to run
+1. Import/Clone repository
+2. Clean and Install with Maven, ensuring to generate sources and documentation
+3. Run GrpcServer.java to launch the Server.
+4. Run Station1_CLI to launch the debugging CLI with basic commands accessable.
+
+
+
 # Analysis
 
 ## Domain model
