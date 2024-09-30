@@ -3,6 +3,7 @@
 # Table of Contents:
 
  - [Case](#Case)
+ - [How To Run](#How-to-run)
  - [Analysis](#Analysis)
    - [Domain model](#Domain-Model)
    - [Threat models](##Threat-model)
@@ -27,6 +28,7 @@ It is important for the customer that the stations can work as independently as 
 3. Run GrpcServer.java to launch the Server.
 4. Run Station1_CLI to launch the debugging CLI with basic commands accessable.
 
+![CLI Screenshot](Development%20Documents%20(UML%2C%20etc)/Station1_CLI.png)
 
 
 # Analysis
