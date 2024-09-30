@@ -8,21 +8,19 @@ public interface PartTypeDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string partTypeId = 1;</code>
+   * <code>int64 partTypeId = 1;</code>
+   * @return The partTypeId.
    */
-  java.lang.String getPartTypeId();
-  /**
-   * <code>string partTypeId = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getPartTypeIdBytes();
+  long getPartTypeId();
 
   /**
    * <code>string partDesc = 2;</code>
+   * @return The partDesc.
    */
   java.lang.String getPartDesc();
   /**
    * <code>string partDesc = 2;</code>
+   * @return The bytes for partDesc.
    */
   com.google.protobuf.ByteString
       getPartDescBytes();

@@ -4,13 +4,13 @@ option java_multiple_files = true;
 package grpc;
 
 message AnimalData {
-  string animalId = 1;
+  int64 animalId = 1;
   string animalWeight = 2;
 }
 
 
 message AnimalId {
-  string animalId = 1;
+  int64 animalId = 1;
 }
 
 
@@ -25,10 +25,10 @@ message EmptyMessage {
 
 
 message AnimalPartData {
-  string animalPartId = 1;
-  string partTypeId = 2;
+  int64 animalPartId = 1;
+  int64 partTypeId = 2;
   string partWeight = 3;
-  string animalId = 4;
+  int64 animalId = 4;
 }
 
 
@@ -43,26 +43,26 @@ message AnimalPartsData {
 
 
 message TrayData {
-  string trayId = 1;
+  int64 trayId = 1;
   repeated AnimalPartId animalParts = 2;
 }
 
 
 message PartTypeData {
-  string partTypeId = 1;
+  int64 partTypeId = 1;
   string partDesc = 2;
 }
 
 
 message ProductData {
-  string productId = 1;
+  int64 productId = 1;
   repeated TrayData trayIds = 2;
   repeated AnimalPartId animalPartIds = 3;
 }
 
 
 message ProductId {
-  string productId = 1;
+  int64 productId = 1;
 }
 
 

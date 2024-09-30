@@ -6,30 +6,42 @@ package grpc;
 /**
  * Protobuf type {@code grpc.TrayData}
  */
-public  final class TrayData extends
+public final class TrayData extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:grpc.TrayData)
     TrayDataOrBuilder {
+private static final long serialVersionUID = 0L;
   // Use TrayData.newBuilder() to construct.
   private TrayData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
   private TrayData() {
-    trayId_ = "";
     animalParts_ = java.util.Collections.emptyList();
+  }
+
+  @java.lang.Override
+  @SuppressWarnings({"unused"})
+  protected java.lang.Object newInstance(
+      UnusedPrivateParameter unused) {
+    return new TrayData();
   }
 
   @java.lang.Override
   public final com.google.protobuf.UnknownFieldSet
   getUnknownFields() {
-    return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    return this.unknownFields;
   }
   private TrayData(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     this();
+    if (extensionRegistry == null) {
+      throw new java.lang.NullPointerException();
+    }
     int mutable_bitField0_ = 0;
+    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+        com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
       boolean done = false;
       while (!done) {
@@ -38,25 +50,25 @@ public  final class TrayData extends
           case 0:
             done = true;
             break;
-          default: {
-            if (!input.skipField(tag)) {
-              done = true;
-            }
-            break;
-          }
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 8: {
 
-            trayId_ = s;
+            trayId_ = input.readInt64();
             break;
           }
           case 18: {
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
               animalParts_ = new java.util.ArrayList<grpc.AnimalPartId>();
-              mutable_bitField0_ |= 0x00000002;
+              mutable_bitField0_ |= 0x00000001;
             }
             animalParts_.add(
                 input.readMessage(grpc.AnimalPartId.parser(), extensionRegistry));
+            break;
+          }
+          default: {
+            if (!parseUnknownField(
+                input, unknownFields, extensionRegistry, tag)) {
+              done = true;
+            }
             break;
           }
         }
@@ -67,9 +79,10 @@ public  final class TrayData extends
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((mutable_bitField0_ & 0x00000001) != 0)) {
         animalParts_ = java.util.Collections.unmodifiableList(animalParts_);
       }
+      this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
   }
@@ -78,6 +91,7 @@ public  final class TrayData extends
     return grpc.SlaughterHouseSim.internal_static_grpc_TrayData_descriptor;
   }
 
+  @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return grpc.SlaughterHouseSim.internal_static_grpc_TrayData_fieldAccessorTable
@@ -85,39 +99,15 @@ public  final class TrayData extends
             grpc.TrayData.class, grpc.TrayData.Builder.class);
   }
 
-  private int bitField0_;
   public static final int TRAYID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object trayId_;
+  private long trayId_;
   /**
-   * <code>string trayId = 1;</code>
+   * <code>int64 trayId = 1;</code>
+   * @return The trayId.
    */
-  public java.lang.String getTrayId() {
-    java.lang.Object ref = trayId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      trayId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string trayId = 1;</code>
-   */
-  public com.google.protobuf.ByteString
-      getTrayIdBytes() {
-    java.lang.Object ref = trayId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      trayId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getTrayId() {
+    return trayId_;
   }
 
   public static final int ANIMALPARTS_FIELD_NUMBER = 2;
@@ -125,12 +115,14 @@ public  final class TrayData extends
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>
    */
+  @java.lang.Override
   public java.util.List<grpc.AnimalPartId> getAnimalPartsList() {
     return animalParts_;
   }
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>
    */
+  @java.lang.Override
   public java.util.List<? extends grpc.AnimalPartIdOrBuilder> 
       getAnimalPartsOrBuilderList() {
     return animalParts_;
@@ -138,24 +130,28 @@ public  final class TrayData extends
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>
    */
+  @java.lang.Override
   public int getAnimalPartsCount() {
     return animalParts_.size();
   }
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>
    */
+  @java.lang.Override
   public grpc.AnimalPartId getAnimalParts(int index) {
     return animalParts_.get(index);
   }
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>
    */
+  @java.lang.Override
   public grpc.AnimalPartIdOrBuilder getAnimalPartsOrBuilder(
       int index) {
     return animalParts_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
+  @java.lang.Override
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
     if (isInitialized == 1) return true;
@@ -165,33 +161,37 @@ public  final class TrayData extends
     return true;
   }
 
+  @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getTrayIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, trayId_);
+    if (trayId_ != 0L) {
+      output.writeInt64(1, trayId_);
     }
     for (int i = 0; i < animalParts_.size(); i++) {
       output.writeMessage(2, animalParts_.get(i));
     }
+    unknownFields.writeTo(output);
   }
 
+  @java.lang.Override
   public int getSerializedSize() {
     int size = memoizedSize;
     if (size != -1) return size;
 
     size = 0;
-    if (!getTrayIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, trayId_);
+    if (trayId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, trayId_);
     }
     for (int i = 0; i < animalParts_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, animalParts_.get(i));
     }
+    size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
   }
 
-  private static final long serialVersionUID = 0L;
   @java.lang.Override
   public boolean equals(final java.lang.Object obj) {
     if (obj == this) {
@@ -202,12 +202,12 @@ public  final class TrayData extends
     }
     grpc.TrayData other = (grpc.TrayData) obj;
 
-    boolean result = true;
-    result = result && getTrayId()
-        .equals(other.getTrayId());
-    result = result && getAnimalPartsList()
-        .equals(other.getAnimalPartsList());
-    return result;
+    if (getTrayId()
+        != other.getTrayId()) return false;
+    if (!getAnimalPartsList()
+        .equals(other.getAnimalPartsList())) return false;
+    if (!unknownFields.equals(other.unknownFields)) return false;
+    return true;
   }
 
   @java.lang.Override
@@ -218,7 +218,8 @@ public  final class TrayData extends
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TRAYID_FIELD_NUMBER;
-    hash = (53 * hash) + getTrayId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getTrayId());
     if (getAnimalPartsCount() > 0) {
       hash = (37 * hash) + ANIMALPARTS_FIELD_NUMBER;
       hash = (53 * hash) + getAnimalPartsList().hashCode();
@@ -298,6 +299,7 @@ public  final class TrayData extends
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
   public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
@@ -305,6 +307,7 @@ public  final class TrayData extends
   public static Builder newBuilder(grpc.TrayData prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
+  @java.lang.Override
   public Builder toBuilder() {
     return this == DEFAULT_INSTANCE
         ? new Builder() : new Builder().mergeFrom(this);
@@ -328,6 +331,7 @@ public  final class TrayData extends
       return grpc.SlaughterHouseSim.internal_static_grpc_TrayData_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return grpc.SlaughterHouseSim.internal_static_grpc_TrayData_fieldAccessorTable
@@ -351,28 +355,32 @@ public  final class TrayData extends
         getAnimalPartsFieldBuilder();
       }
     }
+    @java.lang.Override
     public Builder clear() {
       super.clear();
-      trayId_ = "";
+      trayId_ = 0L;
 
       if (animalPartsBuilder_ == null) {
         animalParts_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
         animalPartsBuilder_.clear();
       }
       return this;
     }
 
+    @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
       return grpc.SlaughterHouseSim.internal_static_grpc_TrayData_descriptor;
     }
 
+    @java.lang.Override
     public grpc.TrayData getDefaultInstanceForType() {
       return grpc.TrayData.getDefaultInstance();
     }
 
+    @java.lang.Override
     public grpc.TrayData build() {
       grpc.TrayData result = buildPartial();
       if (!result.isInitialized()) {
@@ -381,51 +389,57 @@ public  final class TrayData extends
       return result;
     }
 
+    @java.lang.Override
     public grpc.TrayData buildPartial() {
       grpc.TrayData result = new grpc.TrayData(this);
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
       result.trayId_ = trayId_;
       if (animalPartsBuilder_ == null) {
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((bitField0_ & 0x00000001) != 0)) {
           animalParts_ = java.util.Collections.unmodifiableList(animalParts_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.animalParts_ = animalParts_;
       } else {
         result.animalParts_ = animalPartsBuilder_.build();
       }
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
 
+    @java.lang.Override
     public Builder clone() {
-      return (Builder) super.clone();
+      return super.clone();
     }
+    @java.lang.Override
     public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.setField(field, value);
+        java.lang.Object value) {
+      return super.setField(field, value);
     }
+    @java.lang.Override
     public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return (Builder) super.clearField(field);
+      return super.clearField(field);
     }
+    @java.lang.Override
     public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return (Builder) super.clearOneof(oneof);
+      return super.clearOneof(oneof);
     }
+    @java.lang.Override
     public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, Object value) {
-      return (Builder) super.setRepeatedField(field, index, value);
+        int index, java.lang.Object value) {
+      return super.setRepeatedField(field, index, value);
     }
+    @java.lang.Override
     public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.addRepeatedField(field, value);
+        java.lang.Object value) {
+      return super.addRepeatedField(field, value);
     }
+    @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
       if (other instanceof grpc.TrayData) {
         return mergeFrom((grpc.TrayData)other);
@@ -437,15 +451,14 @@ public  final class TrayData extends
 
     public Builder mergeFrom(grpc.TrayData other) {
       if (other == grpc.TrayData.getDefaultInstance()) return this;
-      if (!other.getTrayId().isEmpty()) {
-        trayId_ = other.trayId_;
-        onChanged();
+      if (other.getTrayId() != 0L) {
+        setTrayId(other.getTrayId());
       }
       if (animalPartsBuilder_ == null) {
         if (!other.animalParts_.isEmpty()) {
           if (animalParts_.isEmpty()) {
             animalParts_ = other.animalParts_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureAnimalPartsIsMutable();
             animalParts_.addAll(other.animalParts_);
@@ -458,7 +471,7 @@ public  final class TrayData extends
             animalPartsBuilder_.dispose();
             animalPartsBuilder_ = null;
             animalParts_ = other.animalParts_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
             animalPartsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getAnimalPartsFieldBuilder() : null;
@@ -467,14 +480,17 @@ public  final class TrayData extends
           }
         }
       }
+      this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
     }
 
+    @java.lang.Override
     public final boolean isInitialized() {
       return true;
     }
 
+    @java.lang.Override
     public Builder mergeFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -494,71 +510,33 @@ public  final class TrayData extends
     }
     private int bitField0_;
 
-    private java.lang.Object trayId_ = "";
+    private long trayId_ ;
     /**
-     * <code>string trayId = 1;</code>
+     * <code>int64 trayId = 1;</code>
+     * @return The trayId.
      */
-    public java.lang.String getTrayId() {
-      java.lang.Object ref = trayId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        trayId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getTrayId() {
+      return trayId_;
     }
     /**
-     * <code>string trayId = 1;</code>
+     * <code>int64 trayId = 1;</code>
+     * @param value The trayId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getTrayIdBytes() {
-      java.lang.Object ref = trayId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        trayId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string trayId = 1;</code>
-     */
-    public Builder setTrayId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setTrayId(long value) {
+      
       trayId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string trayId = 1;</code>
+     * <code>int64 trayId = 1;</code>
+     * @return This builder for chaining.
      */
     public Builder clearTrayId() {
       
-      trayId_ = getDefaultInstance().getTrayId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string trayId = 1;</code>
-     */
-    public Builder setTrayIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      trayId_ = value;
+      trayId_ = 0L;
       onChanged();
       return this;
     }
@@ -566,9 +544,9 @@ public  final class TrayData extends
     private java.util.List<grpc.AnimalPartId> animalParts_ =
       java.util.Collections.emptyList();
     private void ensureAnimalPartsIsMutable() {
-      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (!((bitField0_ & 0x00000001) != 0)) {
         animalParts_ = new java.util.ArrayList<grpc.AnimalPartId>(animalParts_);
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
        }
     }
 
@@ -718,7 +696,7 @@ public  final class TrayData extends
     public Builder clearAnimalParts() {
       if (animalPartsBuilder_ == null) {
         animalParts_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
       } else {
         animalPartsBuilder_.clear();
@@ -795,21 +773,23 @@ public  final class TrayData extends
         animalPartsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder>(
                 animalParts_,
-                ((bitField0_ & 0x00000002) == 0x00000002),
+                ((bitField0_ & 0x00000001) != 0),
                 getParentForChildren(),
                 isClean());
         animalParts_ = null;
       }
       return animalPartsBuilder_;
     }
+    @java.lang.Override
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.setUnknownFields(unknownFields);
     }
 
+    @java.lang.Override
     public final Builder mergeUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.mergeUnknownFields(unknownFields);
     }
 
 
@@ -828,11 +808,12 @@ public  final class TrayData extends
 
   private static final com.google.protobuf.Parser<TrayData>
       PARSER = new com.google.protobuf.AbstractParser<TrayData>() {
+    @java.lang.Override
     public TrayData parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new TrayData(input, extensionRegistry);
+      return new TrayData(input, extensionRegistry);
     }
   };
 
@@ -845,6 +826,7 @@ public  final class TrayData extends
     return PARSER;
   }
 
+  @java.lang.Override
   public grpc.TrayData getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }

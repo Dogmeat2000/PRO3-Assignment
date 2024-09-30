@@ -1,1 +1,0 @@
-The data access layer, typically using Spring Data JPA to interact with a database.

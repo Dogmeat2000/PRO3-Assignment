@@ -6,30 +6,41 @@ package grpc;
 /**
  * Protobuf type {@code grpc.PartTypeData}
  */
-public  final class PartTypeData extends
+public final class PartTypeData extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:grpc.PartTypeData)
     PartTypeDataOrBuilder {
+private static final long serialVersionUID = 0L;
   // Use PartTypeData.newBuilder() to construct.
   private PartTypeData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
   private PartTypeData() {
-    partTypeId_ = "";
     partDesc_ = "";
+  }
+
+  @java.lang.Override
+  @SuppressWarnings({"unused"})
+  protected java.lang.Object newInstance(
+      UnusedPrivateParameter unused) {
+    return new PartTypeData();
   }
 
   @java.lang.Override
   public final com.google.protobuf.UnknownFieldSet
   getUnknownFields() {
-    return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    return this.unknownFields;
   }
   private PartTypeData(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     this();
-    int mutable_bitField0_ = 0;
+    if (extensionRegistry == null) {
+      throw new java.lang.NullPointerException();
+    }
+    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+        com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
       boolean done = false;
       while (!done) {
@@ -38,22 +49,22 @@ public  final class PartTypeData extends
           case 0:
             done = true;
             break;
-          default: {
-            if (!input.skipField(tag)) {
-              done = true;
-            }
-            break;
-          }
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 8: {
 
-            partTypeId_ = s;
+            partTypeId_ = input.readInt64();
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
             partDesc_ = s;
+            break;
+          }
+          default: {
+            if (!parseUnknownField(
+                input, unknownFields, extensionRegistry, tag)) {
+              done = true;
+            }
             break;
           }
         }
@@ -64,6 +75,7 @@ public  final class PartTypeData extends
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
   }
@@ -72,6 +84,7 @@ public  final class PartTypeData extends
     return grpc.SlaughterHouseSim.internal_static_grpc_PartTypeData_descriptor;
   }
 
+  @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return grpc.SlaughterHouseSim.internal_static_grpc_PartTypeData_fieldAccessorTable
@@ -80,44 +93,23 @@ public  final class PartTypeData extends
   }
 
   public static final int PARTTYPEID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object partTypeId_;
+  private long partTypeId_;
   /**
-   * <code>string partTypeId = 1;</code>
+   * <code>int64 partTypeId = 1;</code>
+   * @return The partTypeId.
    */
-  public java.lang.String getPartTypeId() {
-    java.lang.Object ref = partTypeId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      partTypeId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string partTypeId = 1;</code>
-   */
-  public com.google.protobuf.ByteString
-      getPartTypeIdBytes() {
-    java.lang.Object ref = partTypeId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      partTypeId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getPartTypeId() {
+    return partTypeId_;
   }
 
   public static final int PARTDESC_FIELD_NUMBER = 2;
   private volatile java.lang.Object partDesc_;
   /**
    * <code>string partDesc = 2;</code>
+   * @return The partDesc.
    */
+  @java.lang.Override
   public java.lang.String getPartDesc() {
     java.lang.Object ref = partDesc_;
     if (ref instanceof java.lang.String) {
@@ -132,7 +124,9 @@ public  final class PartTypeData extends
   }
   /**
    * <code>string partDesc = 2;</code>
+   * @return The bytes for partDesc.
    */
+  @java.lang.Override
   public com.google.protobuf.ByteString
       getPartDescBytes() {
     java.lang.Object ref = partDesc_;
@@ -148,6 +142,7 @@ public  final class PartTypeData extends
   }
 
   private byte memoizedIsInitialized = -1;
+  @java.lang.Override
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
     if (isInitialized == 1) return true;
@@ -157,32 +152,36 @@ public  final class PartTypeData extends
     return true;
   }
 
+  @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getPartTypeIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, partTypeId_);
+    if (partTypeId_ != 0L) {
+      output.writeInt64(1, partTypeId_);
     }
-    if (!getPartDescBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(partDesc_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, partDesc_);
     }
+    unknownFields.writeTo(output);
   }
 
+  @java.lang.Override
   public int getSerializedSize() {
     int size = memoizedSize;
     if (size != -1) return size;
 
     size = 0;
-    if (!getPartTypeIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, partTypeId_);
+    if (partTypeId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, partTypeId_);
     }
-    if (!getPartDescBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(partDesc_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, partDesc_);
     }
+    size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
   }
 
-  private static final long serialVersionUID = 0L;
   @java.lang.Override
   public boolean equals(final java.lang.Object obj) {
     if (obj == this) {
@@ -193,12 +192,12 @@ public  final class PartTypeData extends
     }
     grpc.PartTypeData other = (grpc.PartTypeData) obj;
 
-    boolean result = true;
-    result = result && getPartTypeId()
-        .equals(other.getPartTypeId());
-    result = result && getPartDesc()
-        .equals(other.getPartDesc());
-    return result;
+    if (getPartTypeId()
+        != other.getPartTypeId()) return false;
+    if (!getPartDesc()
+        .equals(other.getPartDesc())) return false;
+    if (!unknownFields.equals(other.unknownFields)) return false;
+    return true;
   }
 
   @java.lang.Override
@@ -209,7 +208,8 @@ public  final class PartTypeData extends
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + PARTTYPEID_FIELD_NUMBER;
-    hash = (53 * hash) + getPartTypeId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getPartTypeId());
     hash = (37 * hash) + PARTDESC_FIELD_NUMBER;
     hash = (53 * hash) + getPartDesc().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
@@ -287,6 +287,7 @@ public  final class PartTypeData extends
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
   public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
@@ -294,6 +295,7 @@ public  final class PartTypeData extends
   public static Builder newBuilder(grpc.PartTypeData prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
+  @java.lang.Override
   public Builder toBuilder() {
     return this == DEFAULT_INSTANCE
         ? new Builder() : new Builder().mergeFrom(this);
@@ -317,6 +319,7 @@ public  final class PartTypeData extends
       return grpc.SlaughterHouseSim.internal_static_grpc_PartTypeData_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return grpc.SlaughterHouseSim.internal_static_grpc_PartTypeData_fieldAccessorTable
@@ -339,24 +342,28 @@ public  final class PartTypeData extends
               .alwaysUseFieldBuilders) {
       }
     }
+    @java.lang.Override
     public Builder clear() {
       super.clear();
-      partTypeId_ = "";
+      partTypeId_ = 0L;
 
       partDesc_ = "";
 
       return this;
     }
 
+    @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
       return grpc.SlaughterHouseSim.internal_static_grpc_PartTypeData_descriptor;
     }
 
+    @java.lang.Override
     public grpc.PartTypeData getDefaultInstanceForType() {
       return grpc.PartTypeData.getDefaultInstance();
     }
 
+    @java.lang.Override
     public grpc.PartTypeData build() {
       grpc.PartTypeData result = buildPartial();
       if (!result.isInitialized()) {
@@ -365,6 +372,7 @@ public  final class PartTypeData extends
       return result;
     }
 
+    @java.lang.Override
     public grpc.PartTypeData buildPartial() {
       grpc.PartTypeData result = new grpc.PartTypeData(this);
       result.partTypeId_ = partTypeId_;
@@ -373,32 +381,39 @@ public  final class PartTypeData extends
       return result;
     }
 
+    @java.lang.Override
     public Builder clone() {
-      return (Builder) super.clone();
+      return super.clone();
     }
+    @java.lang.Override
     public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.setField(field, value);
+        java.lang.Object value) {
+      return super.setField(field, value);
     }
+    @java.lang.Override
     public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return (Builder) super.clearField(field);
+      return super.clearField(field);
     }
+    @java.lang.Override
     public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return (Builder) super.clearOneof(oneof);
+      return super.clearOneof(oneof);
     }
+    @java.lang.Override
     public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, Object value) {
-      return (Builder) super.setRepeatedField(field, index, value);
+        int index, java.lang.Object value) {
+      return super.setRepeatedField(field, index, value);
     }
+    @java.lang.Override
     public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.addRepeatedField(field, value);
+        java.lang.Object value) {
+      return super.addRepeatedField(field, value);
     }
+    @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
       if (other instanceof grpc.PartTypeData) {
         return mergeFrom((grpc.PartTypeData)other);
@@ -410,22 +425,24 @@ public  final class PartTypeData extends
 
     public Builder mergeFrom(grpc.PartTypeData other) {
       if (other == grpc.PartTypeData.getDefaultInstance()) return this;
-      if (!other.getPartTypeId().isEmpty()) {
-        partTypeId_ = other.partTypeId_;
-        onChanged();
+      if (other.getPartTypeId() != 0L) {
+        setPartTypeId(other.getPartTypeId());
       }
       if (!other.getPartDesc().isEmpty()) {
         partDesc_ = other.partDesc_;
         onChanged();
       }
+      this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
     }
 
+    @java.lang.Override
     public final boolean isInitialized() {
       return true;
     }
 
+    @java.lang.Override
     public Builder mergeFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -444,71 +461,33 @@ public  final class PartTypeData extends
       return this;
     }
 
-    private java.lang.Object partTypeId_ = "";
+    private long partTypeId_ ;
     /**
-     * <code>string partTypeId = 1;</code>
+     * <code>int64 partTypeId = 1;</code>
+     * @return The partTypeId.
      */
-    public java.lang.String getPartTypeId() {
-      java.lang.Object ref = partTypeId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        partTypeId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getPartTypeId() {
+      return partTypeId_;
     }
     /**
-     * <code>string partTypeId = 1;</code>
+     * <code>int64 partTypeId = 1;</code>
+     * @param value The partTypeId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getPartTypeIdBytes() {
-      java.lang.Object ref = partTypeId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        partTypeId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string partTypeId = 1;</code>
-     */
-    public Builder setPartTypeId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setPartTypeId(long value) {
+      
       partTypeId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string partTypeId = 1;</code>
+     * <code>int64 partTypeId = 1;</code>
+     * @return This builder for chaining.
      */
     public Builder clearPartTypeId() {
       
-      partTypeId_ = getDefaultInstance().getPartTypeId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string partTypeId = 1;</code>
-     */
-    public Builder setPartTypeIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      partTypeId_ = value;
+      partTypeId_ = 0L;
       onChanged();
       return this;
     }
@@ -516,6 +495,7 @@ public  final class PartTypeData extends
     private java.lang.Object partDesc_ = "";
     /**
      * <code>string partDesc = 2;</code>
+     * @return The partDesc.
      */
     public java.lang.String getPartDesc() {
       java.lang.Object ref = partDesc_;
@@ -531,6 +511,7 @@ public  final class PartTypeData extends
     }
     /**
      * <code>string partDesc = 2;</code>
+     * @return The bytes for partDesc.
      */
     public com.google.protobuf.ByteString
         getPartDescBytes() {
@@ -547,6 +528,8 @@ public  final class PartTypeData extends
     }
     /**
      * <code>string partDesc = 2;</code>
+     * @param value The partDesc to set.
+     * @return This builder for chaining.
      */
     public Builder setPartDesc(
         java.lang.String value) {
@@ -560,6 +543,7 @@ public  final class PartTypeData extends
     }
     /**
      * <code>string partDesc = 2;</code>
+     * @return This builder for chaining.
      */
     public Builder clearPartDesc() {
       
@@ -569,6 +553,8 @@ public  final class PartTypeData extends
     }
     /**
      * <code>string partDesc = 2;</code>
+     * @param value The bytes for partDesc to set.
+     * @return This builder for chaining.
      */
     public Builder setPartDescBytes(
         com.google.protobuf.ByteString value) {
@@ -581,14 +567,16 @@ public  final class PartTypeData extends
       onChanged();
       return this;
     }
+    @java.lang.Override
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.setUnknownFields(unknownFields);
     }
 
+    @java.lang.Override
     public final Builder mergeUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.mergeUnknownFields(unknownFields);
     }
 
 
@@ -607,11 +595,12 @@ public  final class PartTypeData extends
 
   private static final com.google.protobuf.Parser<PartTypeData>
       PARSER = new com.google.protobuf.AbstractParser<PartTypeData>() {
+    @java.lang.Override
     public PartTypeData parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new PartTypeData(input, extensionRegistry);
+      return new PartTypeData(input, extensionRegistry);
     }
   };
 
@@ -624,6 +613,7 @@ public  final class PartTypeData extends
     return PARSER;
   }
 
+  @java.lang.Override
   public grpc.PartTypeData getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }

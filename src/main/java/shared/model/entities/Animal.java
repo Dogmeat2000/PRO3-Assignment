@@ -8,13 +8,25 @@ import java.util.Objects;
 public class Animal
 {
   private BigDecimal weight;
-  private String animal_id;
+  private long animal_id;
   private List<AnimalPart> partList;
 
 
   public Animal() {
     setWeight(BigDecimal.valueOf(0));
-    setAnimal_id("NotSpecified");
+    setId(-1);
+    partList = new ArrayList<>();
+  }
+
+  public Animal(BigDecimal weight) {
+    setWeight(weight);
+    setId(-1);
+    partList = new ArrayList<>();
+  }
+
+  public Animal(long id, BigDecimal weight) {
+    setWeight(weight);
+    setId(id);
     partList = new ArrayList<>();
   }
 
@@ -29,12 +41,12 @@ public class Animal
   }
 
 
-  public String getAnimal_id() {
+  public long getId() {
     return animal_id;
   }
 
 
-  public void setAnimal_id(String animal_id) {
+  public void setId(long animal_id) {
     this.animal_id = animal_id;
   }
 
@@ -50,12 +62,22 @@ public class Animal
       return false;
 
     return Objects.equals(getWeight(), ((Animal) o).getWeight())
-        && Objects.equals(getAnimal_id(), ((Animal) o).getAnimal_id())
+        && Objects.equals(getId(), ((Animal) o).getId())
         && Objects.equals(getPartList(), ((Animal) o).getPartList()); //TODO Confirm that this equals method also performs equals check on contents.
   }
 
 
   @Override public String toString() {
     return "Animal{" + "weight=" + weight + ", animal_id='" + animal_id + '\'' + ", partList=" + partList + '}';
+  }
+
+  public Animal copy() {
+    Animal animalCopy = new Animal();
+    animalCopy.setId(getId());
+    animalCopy.setWeight(getWeight());
+    for (AnimalPart animalPart : getPartList()) {
+      animalCopy.getPartList().add(animalPart);
+    }
+    return animalCopy;
   }
 }

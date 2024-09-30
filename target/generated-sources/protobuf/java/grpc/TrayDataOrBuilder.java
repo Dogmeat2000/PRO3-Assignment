@@ -8,14 +8,10 @@ public interface TrayDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string trayId = 1;</code>
+   * <code>int64 trayId = 1;</code>
+   * @return The trayId.
    */
-  java.lang.String getTrayId();
-  /**
-   * <code>string trayId = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getTrayIdBytes();
+  long getTrayId();
 
   /**
    * <code>repeated .grpc.AnimalPartId animalParts = 2;</code>

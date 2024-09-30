@@ -8,42 +8,32 @@ public interface AnimalPartDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string animalPartId = 1;</code>
+   * <code>int64 animalPartId = 1;</code>
+   * @return The animalPartId.
    */
-  java.lang.String getAnimalPartId();
-  /**
-   * <code>string animalPartId = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getAnimalPartIdBytes();
+  long getAnimalPartId();
 
   /**
-   * <code>string partTypeId = 2;</code>
+   * <code>int64 partTypeId = 2;</code>
+   * @return The partTypeId.
    */
-  java.lang.String getPartTypeId();
-  /**
-   * <code>string partTypeId = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getPartTypeIdBytes();
+  long getPartTypeId();
 
   /**
    * <code>string partWeight = 3;</code>
+   * @return The partWeight.
    */
   java.lang.String getPartWeight();
   /**
    * <code>string partWeight = 3;</code>
+   * @return The bytes for partWeight.
    */
   com.google.protobuf.ByteString
       getPartWeightBytes();
 
   /**
-   * <code>string animalId = 4;</code>
+   * <code>int64 animalId = 4;</code>
+   * @return The animalId.
    */
-  java.lang.String getAnimalId();
-  /**
-   * <code>string animalId = 4;</code>
-   */
-  com.google.protobuf.ByteString
-      getAnimalIdBytes();
+  long getAnimalId();
 }

@@ -8,14 +8,10 @@ public interface ProductDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string productId = 1;</code>
+   * <code>int64 productId = 1;</code>
+   * @return The productId.
    */
-  java.lang.String getProductId();
-  /**
-   * <code>string productId = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getProductIdBytes();
+  long getProductId();
 
   /**
    * <code>repeated .grpc.TrayData trayIds = 2;</code>

@@ -8,12 +8,8 @@ public interface AnimalIdOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string animalId = 1;</code>
+   * <code>int64 animalId = 1;</code>
+   * @return The animalId.
    */
-  java.lang.String getAnimalId();
-  /**
-   * <code>string animalId = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getAnimalIdBytes();
+  long getAnimalId();
 }

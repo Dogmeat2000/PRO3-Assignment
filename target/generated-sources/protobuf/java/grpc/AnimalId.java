@@ -6,29 +6,40 @@ package grpc;
 /**
  * Protobuf type {@code grpc.AnimalId}
  */
-public  final class AnimalId extends
+public final class AnimalId extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:grpc.AnimalId)
     AnimalIdOrBuilder {
+private static final long serialVersionUID = 0L;
   // Use AnimalId.newBuilder() to construct.
   private AnimalId(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
   private AnimalId() {
-    animalId_ = "";
+  }
+
+  @java.lang.Override
+  @SuppressWarnings({"unused"})
+  protected java.lang.Object newInstance(
+      UnusedPrivateParameter unused) {
+    return new AnimalId();
   }
 
   @java.lang.Override
   public final com.google.protobuf.UnknownFieldSet
   getUnknownFields() {
-    return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    return this.unknownFields;
   }
   private AnimalId(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     this();
-    int mutable_bitField0_ = 0;
+    if (extensionRegistry == null) {
+      throw new java.lang.NullPointerException();
+    }
+    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+        com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
       boolean done = false;
       while (!done) {
@@ -37,16 +48,16 @@ public  final class AnimalId extends
           case 0:
             done = true;
             break;
-          default: {
-            if (!input.skipField(tag)) {
-              done = true;
-            }
+          case 8: {
+
+            animalId_ = input.readInt64();
             break;
           }
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            animalId_ = s;
+          default: {
+            if (!parseUnknownField(
+                input, unknownFields, extensionRegistry, tag)) {
+              done = true;
+            }
             break;
           }
         }
@@ -57,6 +68,7 @@ public  final class AnimalId extends
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
   }
@@ -65,6 +77,7 @@ public  final class AnimalId extends
     return grpc.SlaughterHouseSim.internal_static_grpc_AnimalId_descriptor;
   }
 
+  @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return grpc.SlaughterHouseSim.internal_static_grpc_AnimalId_fieldAccessorTable
@@ -73,40 +86,18 @@ public  final class AnimalId extends
   }
 
   public static final int ANIMALID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object animalId_;
+  private long animalId_;
   /**
-   * <code>string animalId = 1;</code>
+   * <code>int64 animalId = 1;</code>
+   * @return The animalId.
    */
-  public java.lang.String getAnimalId() {
-    java.lang.Object ref = animalId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      animalId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string animalId = 1;</code>
-   */
-  public com.google.protobuf.ByteString
-      getAnimalIdBytes() {
-    java.lang.Object ref = animalId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      animalId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getAnimalId() {
+    return animalId_;
   }
 
   private byte memoizedIsInitialized = -1;
+  @java.lang.Override
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
     if (isInitialized == 1) return true;
@@ -116,26 +107,30 @@ public  final class AnimalId extends
     return true;
   }
 
+  @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getAnimalIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, animalId_);
+    if (animalId_ != 0L) {
+      output.writeInt64(1, animalId_);
     }
+    unknownFields.writeTo(output);
   }
 
+  @java.lang.Override
   public int getSerializedSize() {
     int size = memoizedSize;
     if (size != -1) return size;
 
     size = 0;
-    if (!getAnimalIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, animalId_);
+    if (animalId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, animalId_);
     }
+    size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
   }
 
-  private static final long serialVersionUID = 0L;
   @java.lang.Override
   public boolean equals(final java.lang.Object obj) {
     if (obj == this) {
@@ -146,10 +141,10 @@ public  final class AnimalId extends
     }
     grpc.AnimalId other = (grpc.AnimalId) obj;
 
-    boolean result = true;
-    result = result && getAnimalId()
-        .equals(other.getAnimalId());
-    return result;
+    if (getAnimalId()
+        != other.getAnimalId()) return false;
+    if (!unknownFields.equals(other.unknownFields)) return false;
+    return true;
   }
 
   @java.lang.Override
@@ -160,7 +155,8 @@ public  final class AnimalId extends
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ANIMALID_FIELD_NUMBER;
-    hash = (53 * hash) + getAnimalId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getAnimalId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -236,6 +232,7 @@ public  final class AnimalId extends
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
   public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
@@ -243,6 +240,7 @@ public  final class AnimalId extends
   public static Builder newBuilder(grpc.AnimalId prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
+  @java.lang.Override
   public Builder toBuilder() {
     return this == DEFAULT_INSTANCE
         ? new Builder() : new Builder().mergeFrom(this);
@@ -266,6 +264,7 @@ public  final class AnimalId extends
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalId_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalId_fieldAccessorTable
@@ -288,22 +287,26 @@ public  final class AnimalId extends
               .alwaysUseFieldBuilders) {
       }
     }
+    @java.lang.Override
     public Builder clear() {
       super.clear();
-      animalId_ = "";
+      animalId_ = 0L;
 
       return this;
     }
 
+    @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalId_descriptor;
     }
 
+    @java.lang.Override
     public grpc.AnimalId getDefaultInstanceForType() {
       return grpc.AnimalId.getDefaultInstance();
     }
 
+    @java.lang.Override
     public grpc.AnimalId build() {
       grpc.AnimalId result = buildPartial();
       if (!result.isInitialized()) {
@@ -312,6 +315,7 @@ public  final class AnimalId extends
       return result;
     }
 
+    @java.lang.Override
     public grpc.AnimalId buildPartial() {
       grpc.AnimalId result = new grpc.AnimalId(this);
       result.animalId_ = animalId_;
@@ -319,32 +323,39 @@ public  final class AnimalId extends
       return result;
     }
 
+    @java.lang.Override
     public Builder clone() {
-      return (Builder) super.clone();
+      return super.clone();
     }
+    @java.lang.Override
     public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.setField(field, value);
+        java.lang.Object value) {
+      return super.setField(field, value);
     }
+    @java.lang.Override
     public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return (Builder) super.clearField(field);
+      return super.clearField(field);
     }
+    @java.lang.Override
     public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return (Builder) super.clearOneof(oneof);
+      return super.clearOneof(oneof);
     }
+    @java.lang.Override
     public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, Object value) {
-      return (Builder) super.setRepeatedField(field, index, value);
+        int index, java.lang.Object value) {
+      return super.setRepeatedField(field, index, value);
     }
+    @java.lang.Override
     public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.addRepeatedField(field, value);
+        java.lang.Object value) {
+      return super.addRepeatedField(field, value);
     }
+    @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
       if (other instanceof grpc.AnimalId) {
         return mergeFrom((grpc.AnimalId)other);
@@ -356,18 +367,20 @@ public  final class AnimalId extends
 
     public Builder mergeFrom(grpc.AnimalId other) {
       if (other == grpc.AnimalId.getDefaultInstance()) return this;
-      if (!other.getAnimalId().isEmpty()) {
-        animalId_ = other.animalId_;
-        onChanged();
+      if (other.getAnimalId() != 0L) {
+        setAnimalId(other.getAnimalId());
       }
+      this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
     }
 
+    @java.lang.Override
     public final boolean isInitialized() {
       return true;
     }
 
+    @java.lang.Override
     public Builder mergeFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -386,82 +399,46 @@ public  final class AnimalId extends
       return this;
     }
 
-    private java.lang.Object animalId_ = "";
+    private long animalId_ ;
     /**
-     * <code>string animalId = 1;</code>
+     * <code>int64 animalId = 1;</code>
+     * @return The animalId.
      */
-    public java.lang.String getAnimalId() {
-      java.lang.Object ref = animalId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        animalId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getAnimalId() {
+      return animalId_;
     }
     /**
-     * <code>string animalId = 1;</code>
+     * <code>int64 animalId = 1;</code>
+     * @param value The animalId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getAnimalIdBytes() {
-      java.lang.Object ref = animalId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        animalId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string animalId = 1;</code>
-     */
-    public Builder setAnimalId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setAnimalId(long value) {
+      
       animalId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string animalId = 1;</code>
+     * <code>int64 animalId = 1;</code>
+     * @return This builder for chaining.
      */
     public Builder clearAnimalId() {
       
-      animalId_ = getDefaultInstance().getAnimalId();
+      animalId_ = 0L;
       onChanged();
       return this;
     }
-    /**
-     * <code>string animalId = 1;</code>
-     */
-    public Builder setAnimalIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      animalId_ = value;
-      onChanged();
-      return this;
-    }
+    @java.lang.Override
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.setUnknownFields(unknownFields);
     }
 
+    @java.lang.Override
     public final Builder mergeUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.mergeUnknownFields(unknownFields);
     }
 
 
@@ -480,11 +457,12 @@ public  final class AnimalId extends
 
   private static final com.google.protobuf.Parser<AnimalId>
       PARSER = new com.google.protobuf.AbstractParser<AnimalId>() {
+    @java.lang.Override
     public AnimalId parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new AnimalId(input, extensionRegistry);
+      return new AnimalId(input, extensionRegistry);
     }
   };
 
@@ -497,6 +475,7 @@ public  final class AnimalId extends
     return PARSER;
   }
 
+  @java.lang.Override
   public grpc.AnimalId getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }

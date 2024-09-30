@@ -6,32 +6,41 @@ package grpc;
 /**
  * Protobuf type {@code grpc.AnimalPartData}
  */
-public  final class AnimalPartData extends
+public final class AnimalPartData extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:grpc.AnimalPartData)
     AnimalPartDataOrBuilder {
+private static final long serialVersionUID = 0L;
   // Use AnimalPartData.newBuilder() to construct.
   private AnimalPartData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
   private AnimalPartData() {
-    animalPartId_ = "";
-    partTypeId_ = "";
     partWeight_ = "";
-    animalId_ = "";
+  }
+
+  @java.lang.Override
+  @SuppressWarnings({"unused"})
+  protected java.lang.Object newInstance(
+      UnusedPrivateParameter unused) {
+    return new AnimalPartData();
   }
 
   @java.lang.Override
   public final com.google.protobuf.UnknownFieldSet
   getUnknownFields() {
-    return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    return this.unknownFields;
   }
   private AnimalPartData(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     this();
-    int mutable_bitField0_ = 0;
+    if (extensionRegistry == null) {
+      throw new java.lang.NullPointerException();
+    }
+    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+        com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
       boolean done = false;
       while (!done) {
@@ -40,22 +49,14 @@ public  final class AnimalPartData extends
           case 0:
             done = true;
             break;
-          default: {
-            if (!input.skipField(tag)) {
-              done = true;
-            }
+          case 8: {
+
+            animalPartId_ = input.readInt64();
             break;
           }
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 16: {
 
-            animalPartId_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            partTypeId_ = s;
+            partTypeId_ = input.readInt64();
             break;
           }
           case 26: {
@@ -64,10 +65,16 @@ public  final class AnimalPartData extends
             partWeight_ = s;
             break;
           }
-          case 34: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 32: {
 
-            animalId_ = s;
+            animalId_ = input.readInt64();
+            break;
+          }
+          default: {
+            if (!parseUnknownField(
+                input, unknownFields, extensionRegistry, tag)) {
+              done = true;
+            }
             break;
           }
         }
@@ -78,6 +85,7 @@ public  final class AnimalPartData extends
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
   }
@@ -86,6 +94,7 @@ public  final class AnimalPartData extends
     return grpc.SlaughterHouseSim.internal_static_grpc_AnimalPartData_descriptor;
   }
 
+  @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return grpc.SlaughterHouseSim.internal_static_grpc_AnimalPartData_fieldAccessorTable
@@ -94,78 +103,34 @@ public  final class AnimalPartData extends
   }
 
   public static final int ANIMALPARTID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object animalPartId_;
+  private long animalPartId_;
   /**
-   * <code>string animalPartId = 1;</code>
+   * <code>int64 animalPartId = 1;</code>
+   * @return The animalPartId.
    */
-  public java.lang.String getAnimalPartId() {
-    java.lang.Object ref = animalPartId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      animalPartId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string animalPartId = 1;</code>
-   */
-  public com.google.protobuf.ByteString
-      getAnimalPartIdBytes() {
-    java.lang.Object ref = animalPartId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      animalPartId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getAnimalPartId() {
+    return animalPartId_;
   }
 
   public static final int PARTTYPEID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object partTypeId_;
+  private long partTypeId_;
   /**
-   * <code>string partTypeId = 2;</code>
+   * <code>int64 partTypeId = 2;</code>
+   * @return The partTypeId.
    */
-  public java.lang.String getPartTypeId() {
-    java.lang.Object ref = partTypeId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      partTypeId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string partTypeId = 2;</code>
-   */
-  public com.google.protobuf.ByteString
-      getPartTypeIdBytes() {
-    java.lang.Object ref = partTypeId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      partTypeId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getPartTypeId() {
+    return partTypeId_;
   }
 
   public static final int PARTWEIGHT_FIELD_NUMBER = 3;
   private volatile java.lang.Object partWeight_;
   /**
    * <code>string partWeight = 3;</code>
+   * @return The partWeight.
    */
+  @java.lang.Override
   public java.lang.String getPartWeight() {
     java.lang.Object ref = partWeight_;
     if (ref instanceof java.lang.String) {
@@ -180,7 +145,9 @@ public  final class AnimalPartData extends
   }
   /**
    * <code>string partWeight = 3;</code>
+   * @return The bytes for partWeight.
    */
+  @java.lang.Override
   public com.google.protobuf.ByteString
       getPartWeightBytes() {
     java.lang.Object ref = partWeight_;
@@ -196,40 +163,18 @@ public  final class AnimalPartData extends
   }
 
   public static final int ANIMALID_FIELD_NUMBER = 4;
-  private volatile java.lang.Object animalId_;
+  private long animalId_;
   /**
-   * <code>string animalId = 4;</code>
+   * <code>int64 animalId = 4;</code>
+   * @return The animalId.
    */
-  public java.lang.String getAnimalId() {
-    java.lang.Object ref = animalId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      animalId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string animalId = 4;</code>
-   */
-  public com.google.protobuf.ByteString
-      getAnimalIdBytes() {
-    java.lang.Object ref = animalId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      animalId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  @java.lang.Override
+  public long getAnimalId() {
+    return animalId_;
   }
 
   private byte memoizedIsInitialized = -1;
+  @java.lang.Override
   public final boolean isInitialized() {
     byte isInitialized = memoizedIsInitialized;
     if (isInitialized == 1) return true;
@@ -239,44 +184,50 @@ public  final class AnimalPartData extends
     return true;
   }
 
+  @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getAnimalPartIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, animalPartId_);
+    if (animalPartId_ != 0L) {
+      output.writeInt64(1, animalPartId_);
     }
-    if (!getPartTypeIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, partTypeId_);
+    if (partTypeId_ != 0L) {
+      output.writeInt64(2, partTypeId_);
     }
-    if (!getPartWeightBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(partWeight_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, partWeight_);
     }
-    if (!getAnimalIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, animalId_);
+    if (animalId_ != 0L) {
+      output.writeInt64(4, animalId_);
     }
+    unknownFields.writeTo(output);
   }
 
+  @java.lang.Override
   public int getSerializedSize() {
     int size = memoizedSize;
     if (size != -1) return size;
 
     size = 0;
-    if (!getAnimalPartIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, animalPartId_);
+    if (animalPartId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, animalPartId_);
     }
-    if (!getPartTypeIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, partTypeId_);
+    if (partTypeId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(2, partTypeId_);
     }
-    if (!getPartWeightBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(partWeight_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, partWeight_);
     }
-    if (!getAnimalIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, animalId_);
+    if (animalId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(4, animalId_);
     }
+    size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
   }
 
-  private static final long serialVersionUID = 0L;
   @java.lang.Override
   public boolean equals(final java.lang.Object obj) {
     if (obj == this) {
@@ -287,16 +238,16 @@ public  final class AnimalPartData extends
     }
     grpc.AnimalPartData other = (grpc.AnimalPartData) obj;
 
-    boolean result = true;
-    result = result && getAnimalPartId()
-        .equals(other.getAnimalPartId());
-    result = result && getPartTypeId()
-        .equals(other.getPartTypeId());
-    result = result && getPartWeight()
-        .equals(other.getPartWeight());
-    result = result && getAnimalId()
-        .equals(other.getAnimalId());
-    return result;
+    if (getAnimalPartId()
+        != other.getAnimalPartId()) return false;
+    if (getPartTypeId()
+        != other.getPartTypeId()) return false;
+    if (!getPartWeight()
+        .equals(other.getPartWeight())) return false;
+    if (getAnimalId()
+        != other.getAnimalId()) return false;
+    if (!unknownFields.equals(other.unknownFields)) return false;
+    return true;
   }
 
   @java.lang.Override
@@ -307,13 +258,16 @@ public  final class AnimalPartData extends
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ANIMALPARTID_FIELD_NUMBER;
-    hash = (53 * hash) + getAnimalPartId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getAnimalPartId());
     hash = (37 * hash) + PARTTYPEID_FIELD_NUMBER;
-    hash = (53 * hash) + getPartTypeId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getPartTypeId());
     hash = (37 * hash) + PARTWEIGHT_FIELD_NUMBER;
     hash = (53 * hash) + getPartWeight().hashCode();
     hash = (37 * hash) + ANIMALID_FIELD_NUMBER;
-    hash = (53 * hash) + getAnimalId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getAnimalId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -389,6 +343,7 @@ public  final class AnimalPartData extends
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
   public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
@@ -396,6 +351,7 @@ public  final class AnimalPartData extends
   public static Builder newBuilder(grpc.AnimalPartData prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
+  @java.lang.Override
   public Builder toBuilder() {
     return this == DEFAULT_INSTANCE
         ? new Builder() : new Builder().mergeFrom(this);
@@ -419,6 +375,7 @@ public  final class AnimalPartData extends
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalPartData_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalPartData_fieldAccessorTable
@@ -441,28 +398,32 @@ public  final class AnimalPartData extends
               .alwaysUseFieldBuilders) {
       }
     }
+    @java.lang.Override
     public Builder clear() {
       super.clear();
-      animalPartId_ = "";
+      animalPartId_ = 0L;
 
-      partTypeId_ = "";
+      partTypeId_ = 0L;
 
       partWeight_ = "";
 
-      animalId_ = "";
+      animalId_ = 0L;
 
       return this;
     }
 
+    @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
       return grpc.SlaughterHouseSim.internal_static_grpc_AnimalPartData_descriptor;
     }
 
+    @java.lang.Override
     public grpc.AnimalPartData getDefaultInstanceForType() {
       return grpc.AnimalPartData.getDefaultInstance();
     }
 
+    @java.lang.Override
     public grpc.AnimalPartData build() {
       grpc.AnimalPartData result = buildPartial();
       if (!result.isInitialized()) {
@@ -471,6 +432,7 @@ public  final class AnimalPartData extends
       return result;
     }
 
+    @java.lang.Override
     public grpc.AnimalPartData buildPartial() {
       grpc.AnimalPartData result = new grpc.AnimalPartData(this);
       result.animalPartId_ = animalPartId_;
@@ -481,32 +443,39 @@ public  final class AnimalPartData extends
       return result;
     }
 
+    @java.lang.Override
     public Builder clone() {
-      return (Builder) super.clone();
+      return super.clone();
     }
+    @java.lang.Override
     public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.setField(field, value);
+        java.lang.Object value) {
+      return super.setField(field, value);
     }
+    @java.lang.Override
     public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return (Builder) super.clearField(field);
+      return super.clearField(field);
     }
+    @java.lang.Override
     public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return (Builder) super.clearOneof(oneof);
+      return super.clearOneof(oneof);
     }
+    @java.lang.Override
     public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, Object value) {
-      return (Builder) super.setRepeatedField(field, index, value);
+        int index, java.lang.Object value) {
+      return super.setRepeatedField(field, index, value);
     }
+    @java.lang.Override
     public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
-        Object value) {
-      return (Builder) super.addRepeatedField(field, value);
+        java.lang.Object value) {
+      return super.addRepeatedField(field, value);
     }
+    @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
       if (other instanceof grpc.AnimalPartData) {
         return mergeFrom((grpc.AnimalPartData)other);
@@ -518,30 +487,30 @@ public  final class AnimalPartData extends
 
     public Builder mergeFrom(grpc.AnimalPartData other) {
       if (other == grpc.AnimalPartData.getDefaultInstance()) return this;
-      if (!other.getAnimalPartId().isEmpty()) {
-        animalPartId_ = other.animalPartId_;
-        onChanged();
+      if (other.getAnimalPartId() != 0L) {
+        setAnimalPartId(other.getAnimalPartId());
       }
-      if (!other.getPartTypeId().isEmpty()) {
-        partTypeId_ = other.partTypeId_;
-        onChanged();
+      if (other.getPartTypeId() != 0L) {
+        setPartTypeId(other.getPartTypeId());
       }
       if (!other.getPartWeight().isEmpty()) {
         partWeight_ = other.partWeight_;
         onChanged();
       }
-      if (!other.getAnimalId().isEmpty()) {
-        animalId_ = other.animalId_;
-        onChanged();
+      if (other.getAnimalId() != 0L) {
+        setAnimalId(other.getAnimalId());
       }
+      this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
     }
 
+    @java.lang.Override
     public final boolean isInitialized() {
       return true;
     }
 
+    @java.lang.Override
     public Builder mergeFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -560,140 +529,64 @@ public  final class AnimalPartData extends
       return this;
     }
 
-    private java.lang.Object animalPartId_ = "";
+    private long animalPartId_ ;
     /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
+     * @return The animalPartId.
      */
-    public java.lang.String getAnimalPartId() {
-      java.lang.Object ref = animalPartId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        animalPartId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getAnimalPartId() {
+      return animalPartId_;
     }
     /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
+     * @param value The animalPartId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getAnimalPartIdBytes() {
-      java.lang.Object ref = animalPartId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        animalPartId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string animalPartId = 1;</code>
-     */
-    public Builder setAnimalPartId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setAnimalPartId(long value) {
+      
       animalPartId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
+     * @return This builder for chaining.
      */
     public Builder clearAnimalPartId() {
       
-      animalPartId_ = getDefaultInstance().getAnimalPartId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string animalPartId = 1;</code>
-     */
-    public Builder setAnimalPartIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      animalPartId_ = value;
+      animalPartId_ = 0L;
       onChanged();
       return this;
     }
 
-    private java.lang.Object partTypeId_ = "";
+    private long partTypeId_ ;
     /**
-     * <code>string partTypeId = 2;</code>
+     * <code>int64 partTypeId = 2;</code>
+     * @return The partTypeId.
      */
-    public java.lang.String getPartTypeId() {
-      java.lang.Object ref = partTypeId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        partTypeId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getPartTypeId() {
+      return partTypeId_;
     }
     /**
-     * <code>string partTypeId = 2;</code>
+     * <code>int64 partTypeId = 2;</code>
+     * @param value The partTypeId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getPartTypeIdBytes() {
-      java.lang.Object ref = partTypeId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        partTypeId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string partTypeId = 2;</code>
-     */
-    public Builder setPartTypeId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setPartTypeId(long value) {
+      
       partTypeId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string partTypeId = 2;</code>
+     * <code>int64 partTypeId = 2;</code>
+     * @return This builder for chaining.
      */
     public Builder clearPartTypeId() {
       
-      partTypeId_ = getDefaultInstance().getPartTypeId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string partTypeId = 2;</code>
-     */
-    public Builder setPartTypeIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      partTypeId_ = value;
+      partTypeId_ = 0L;
       onChanged();
       return this;
     }
@@ -701,6 +594,7 @@ public  final class AnimalPartData extends
     private java.lang.Object partWeight_ = "";
     /**
      * <code>string partWeight = 3;</code>
+     * @return The partWeight.
      */
     public java.lang.String getPartWeight() {
       java.lang.Object ref = partWeight_;
@@ -716,6 +610,7 @@ public  final class AnimalPartData extends
     }
     /**
      * <code>string partWeight = 3;</code>
+     * @return The bytes for partWeight.
      */
     public com.google.protobuf.ByteString
         getPartWeightBytes() {
@@ -732,6 +627,8 @@ public  final class AnimalPartData extends
     }
     /**
      * <code>string partWeight = 3;</code>
+     * @param value The partWeight to set.
+     * @return This builder for chaining.
      */
     public Builder setPartWeight(
         java.lang.String value) {
@@ -745,6 +642,7 @@ public  final class AnimalPartData extends
     }
     /**
      * <code>string partWeight = 3;</code>
+     * @return This builder for chaining.
      */
     public Builder clearPartWeight() {
       
@@ -754,6 +652,8 @@ public  final class AnimalPartData extends
     }
     /**
      * <code>string partWeight = 3;</code>
+     * @param value The bytes for partWeight to set.
+     * @return This builder for chaining.
      */
     public Builder setPartWeightBytes(
         com.google.protobuf.ByteString value) {
@@ -767,82 +667,46 @@ public  final class AnimalPartData extends
       return this;
     }
 
-    private java.lang.Object animalId_ = "";
+    private long animalId_ ;
     /**
-     * <code>string animalId = 4;</code>
+     * <code>int64 animalId = 4;</code>
+     * @return The animalId.
      */
-    public java.lang.String getAnimalId() {
-      java.lang.Object ref = animalId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        animalId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getAnimalId() {
+      return animalId_;
     }
     /**
-     * <code>string animalId = 4;</code>
+     * <code>int64 animalId = 4;</code>
+     * @param value The animalId to set.
+     * @return This builder for chaining.
      */
-    public com.google.protobuf.ByteString
-        getAnimalIdBytes() {
-      java.lang.Object ref = animalId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        animalId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string animalId = 4;</code>
-     */
-    public Builder setAnimalId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setAnimalId(long value) {
+      
       animalId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string animalId = 4;</code>
+     * <code>int64 animalId = 4;</code>
+     * @return This builder for chaining.
      */
     public Builder clearAnimalId() {
       
-      animalId_ = getDefaultInstance().getAnimalId();
+      animalId_ = 0L;
       onChanged();
       return this;
     }
-    /**
-     * <code>string animalId = 4;</code>
-     */
-    public Builder setAnimalIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      animalId_ = value;
-      onChanged();
-      return this;
-    }
+    @java.lang.Override
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.setUnknownFields(unknownFields);
     }
 
+    @java.lang.Override
     public final Builder mergeUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return this;
+      return super.mergeUnknownFields(unknownFields);
     }
 
 
@@ -861,11 +725,12 @@ public  final class AnimalPartData extends
 
   private static final com.google.protobuf.Parser<AnimalPartData>
       PARSER = new com.google.protobuf.AbstractParser<AnimalPartData>() {
+    @java.lang.Override
     public AnimalPartData parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new AnimalPartData(input, extensionRegistry);
+      return new AnimalPartData(input, extensionRegistry);
     }
   };
 
@@ -878,6 +743,7 @@ public  final class AnimalPartData extends
     return PARSER;
   }
 
+  @java.lang.Override
   public grpc.AnimalPartData getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }

@@ -84,25 +84,25 @@ public final class SlaughterHouseSim {
   static {
     java.lang.String[] descriptorData = {
       "\n\027SlaughterHouseSim.proto\022\004grpc\"4\n\nAnima" +
-      "lData\022\020\n\010animalId\030\001 \001(\t\022\024\n\014animalWeight\030" +
-      "\002 \001(\t\"\034\n\010AnimalId\022\020\n\010animalId\030\001 \001(\t\"0\n\013A" +
+      "lData\022\020\n\010animalId\030\001 \001(\003\022\024\n\014animalWeight\030" +
+      "\002 \001(\t\"\034\n\010AnimalId\022\020\n\010animalId\030\001 \001(\003\"0\n\013A" +
       "nimalsData\022!\n\007animals\030\001 \003(\0132\020.grpc.Anima" +
       "lData\"\016\n\014EmptyMessage\"`\n\016AnimalPartData\022" +
-      "\024\n\014animalPartId\030\001 \001(\t\022\022\n\npartTypeId\030\002 \001(" +
-      "\t\022\022\n\npartWeight\030\003 \001(\t\022\020\n\010animalId\030\004 \001(\t\"" +
+      "\024\n\014animalPartId\030\001 \001(\003\022\022\n\npartTypeId\030\002 \001(" +
+      "\003\022\022\n\npartWeight\030\003 \001(\t\022\020\n\010animalId\030\004 \001(\003\"" +
       "$\n\014AnimalPartId\022\024\n\014animalPartId\030\001 \001(\t\"<\n" +
       "\017AnimalPartsData\022)\n\013animalParts\030\001 \003(\0132\024." +
-      "grpc.AnimalPartData\"C\n\010TrayData\022\016\n\006trayI",
-      "d\030\001 \001(\t\022\'\n\013animalParts\030\002 \003(\0132\022.grpc.Anim" +
+      "grpc.AnimalPartData\"C\n\010TrayData\022\016\n\006trayI" +
+      "d\030\001 \001(\003\022\'\n\013animalParts\030\002 \003(\0132\022.grpc.Anim" +
       "alPartId\"4\n\014PartTypeData\022\022\n\npartTypeId\030\001" +
-      " \001(\t\022\020\n\010partDesc\030\002 \001(\t\"l\n\013ProductData\022\021\n" +
-      "\tproductId\030\001 \001(\t\022\037\n\007trayIds\030\002 \003(\0132\016.grpc" +
+      " \001(\003\022\020\n\010partDesc\030\002 \001(\t\"l\n\013ProductData\022\021\n" +
+      "\tproductId\030\001 \001(\003\022\037\n\007trayIds\030\002 \003(\0132\016.grpc" +
       ".TrayData\022)\n\ranimalPartIds\030\003 \003(\0132\022.grpc." +
       "AnimalPartId\"\036\n\tProductId\022\021\n\tproductId\030\001" +
-      " \001(\t\"3\n\014ProductsData\022#\n\010products\030\001 \003(\0132\021" +
+      " \001(\003\"3\n\014ProductsData\022#\n\010products\030\001 \003(\0132\021" +
       ".grpc.ProductData2\353\006\n\025SlaughterHouseServ" +
       "ice\0224\n\016registerAnimal\022\020.grpc.AnimalData\032" +
-      "\020.grpc.AnimalData\022@\n\022registerAnimalPart\022",
+      "\020.grpc.AnimalData\022@\n\022registerAnimalPart\022" +
       "\024.grpc.AnimalPartData\032\024.grpc.AnimalPartD" +
       "ata\0227\n\017registerProduct\022\021.grpc.ProductDat" +
       "a\032\021.grpc.ProductData\022.\n\nreadAnimal\022\016.grp" +
@@ -112,7 +112,7 @@ public final class SlaughterHouseSim {
       "\032\021.grpc.ProductData\0224\n\014updateAnimal\022\020.gr" +
       "pc.AnimalData\032\022.grpc.EmptyMessage\022<\n\020upd" +
       "ateAnimalPart\022\024.grpc.AnimalPartData\032\022.gr" +
-      "pc.EmptyMessage\0226\n\rupdateProduct\022\021.grpc.",
+      "pc.EmptyMessage\0226\n\rupdateProduct\022\021.grpc." +
       "ProductData\032\022.grpc.EmptyMessage\0224\n\014remov" +
       "eAnimal\022\020.grpc.AnimalData\032\022.grpc.EmptyMe" +
       "ssage\022<\n\020removeAnimalPart\022\024.grpc.AnimalP" +
@@ -124,18 +124,10 @@ public final class SlaughterHouseSim {
       "\n\016getAllProducts\022\022.grpc.EmptyMessage\032\021.g" +
       "rpc.ProductDataB\002P\001b\006proto3"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-        }, assigner);
+        });
     internal_static_grpc_AnimalData_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_grpc_AnimalData_fieldAccessorTable = new

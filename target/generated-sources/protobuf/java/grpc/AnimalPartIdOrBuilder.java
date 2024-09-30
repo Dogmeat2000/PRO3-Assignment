@@ -9,10 +9,12 @@ public interface AnimalPartIdOrBuilder extends
 
   /**
    * <code>string animalPartId = 1;</code>
+   * @return The animalPartId.
    */
   java.lang.String getAnimalPartId();
   /**
    * <code>string animalPartId = 1;</code>
+   * @return The bytes for animalPartId.
    */
   com.google.protobuf.ByteString
       getAnimalPartIdBytes();

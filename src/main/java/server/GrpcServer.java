@@ -1,6 +1,12 @@
 package server;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
 public class GrpcServer
 {
-  //TODO Missing Implementation
+  public static void main(String[] args) {
+    SpringApplication.run(GrpcServer.class, args);
+  }
 }

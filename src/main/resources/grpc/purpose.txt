@@ -1,1 +1,1 @@
-.proto Files: Define the contract for gRPC services and are stored in /resources/grpc/. These files are compiled to generate client and server code.
+.proto Files: Define the contract for gRPC services. These files are compiled to generate client and server code.
