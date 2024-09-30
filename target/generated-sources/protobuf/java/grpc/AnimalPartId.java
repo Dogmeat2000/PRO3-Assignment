@@ -16,7 +16,6 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private AnimalPartId() {
-    animalPartId_ = "";
   }
 
   @java.lang.Override
@@ -49,10 +48,9 @@ private static final long serialVersionUID = 0L;
           case 0:
             done = true;
             break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 8: {
 
-            animalPartId_ = s;
+            animalPartId_ = input.readInt64();
             break;
           }
           default: {
@@ -88,41 +86,14 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int ANIMALPARTID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object animalPartId_;
+  private long animalPartId_;
   /**
-   * <code>string animalPartId = 1;</code>
+   * <code>int64 animalPartId = 1;</code>
    * @return The animalPartId.
    */
   @java.lang.Override
-  public java.lang.String getAnimalPartId() {
-    java.lang.Object ref = animalPartId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      animalPartId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string animalPartId = 1;</code>
-   * @return The bytes for animalPartId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getAnimalPartIdBytes() {
-    java.lang.Object ref = animalPartId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      animalPartId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public long getAnimalPartId() {
+    return animalPartId_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -139,8 +110,8 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(animalPartId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, animalPartId_);
+    if (animalPartId_ != 0L) {
+      output.writeInt64(1, animalPartId_);
     }
     unknownFields.writeTo(output);
   }
@@ -151,8 +122,9 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(animalPartId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, animalPartId_);
+    if (animalPartId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, animalPartId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -169,8 +141,8 @@ private static final long serialVersionUID = 0L;
     }
     grpc.AnimalPartId other = (grpc.AnimalPartId) obj;
 
-    if (!getAnimalPartId()
-        .equals(other.getAnimalPartId())) return false;
+    if (getAnimalPartId()
+        != other.getAnimalPartId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -183,7 +155,8 @@ private static final long serialVersionUID = 0L;
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ANIMALPARTID_FIELD_NUMBER;
-    hash = (53 * hash) + getAnimalPartId().hashCode();
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getAnimalPartId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -317,7 +290,7 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      animalPartId_ = "";
+      animalPartId_ = 0L;
 
       return this;
     }
@@ -394,9 +367,8 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(grpc.AnimalPartId other) {
       if (other == grpc.AnimalPartId.getDefaultInstance()) return this;
-      if (!other.getAnimalPartId().isEmpty()) {
-        animalPartId_ = other.animalPartId_;
-        onChanged();
+      if (other.getAnimalPartId() != 0L) {
+        setAnimalPartId(other.getAnimalPartId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -427,78 +399,33 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object animalPartId_ = "";
+    private long animalPartId_ ;
     /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
      * @return The animalPartId.
      */
-    public java.lang.String getAnimalPartId() {
-      java.lang.Object ref = animalPartId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        animalPartId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    @java.lang.Override
+    public long getAnimalPartId() {
+      return animalPartId_;
     }
     /**
-     * <code>string animalPartId = 1;</code>
-     * @return The bytes for animalPartId.
-     */
-    public com.google.protobuf.ByteString
-        getAnimalPartIdBytes() {
-      java.lang.Object ref = animalPartId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        animalPartId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
      * @param value The animalPartId to set.
      * @return This builder for chaining.
      */
-    public Builder setAnimalPartId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setAnimalPartId(long value) {
+      
       animalPartId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string animalPartId = 1;</code>
+     * <code>int64 animalPartId = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearAnimalPartId() {
       
-      animalPartId_ = getDefaultInstance().getAnimalPartId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string animalPartId = 1;</code>
-     * @param value The bytes for animalPartId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setAnimalPartIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      animalPartId_ = value;
+      animalPartId_ = 0L;
       onChanged();
       return this;
     }

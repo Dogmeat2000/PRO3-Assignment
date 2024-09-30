@@ -68,7 +68,7 @@ public class Animal
 
 
   @Override public String toString() {
-    return "Animal{" + "weight=" + weight + ", animal_id='" + animal_id + '\'' + ", partList=" + partList + '}';
+    return "Animal {\n" + "    weight = " + weight + ",\n    animal_id = '" + animal_id + '\'' + ",\n    partList = " + partList + "\n}";
   }
 
   public Animal copy() {

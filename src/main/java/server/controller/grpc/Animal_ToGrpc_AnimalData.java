@@ -4,7 +4,7 @@ import grpc.AnimalData;
 import shared.model.entities.Animal;
 
 /** Responsible for converting a application entities into a database/gRPC compatible formats */
-public class AnimalToGrpcAnimalData
+public class Animal_ToGrpc_AnimalData
 {
   /** Converts a Animal entity into a database/gRPC compatible AnimalData format */
   public static AnimalData ConvertToAnimalData(Animal animal) {
@@ -17,4 +17,6 @@ public class AnimalToGrpcAnimalData
 
     return animalBuilder.build();
   }
+
+  //TODO MISSING IMPLEMENTATION
 }

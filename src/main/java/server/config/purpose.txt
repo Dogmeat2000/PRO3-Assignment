@@ -1,1 +1,0 @@
-Contains configuration classes (e.g., database configuration, security configuration).

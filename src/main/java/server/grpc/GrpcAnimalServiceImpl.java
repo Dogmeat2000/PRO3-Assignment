@@ -9,10 +9,10 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.controller.grpc.AnimalToGrpcAnimalData;
+import server.controller.grpc.Animal_ToGrpc_AnimalData;
 import server.service.AnimalRegistryInterface;
-import server.service.AnimalService;
 import shared.model.entities.Animal;
+import shared.model.exceptions.AnimalNotFoundException;
 
 import java.math.BigDecimal;
 
@@ -31,8 +31,11 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
   @Override
   public void registerAnimal(AnimalData request, StreamObserver<AnimalData> responseObserver) {
     try {
+      // Translate received gRPC information from the client, into Java compatible types:
       long animalId = request.getAnimalId();
       BigDecimal animalWeight = new BigDecimal(request.getAnimalWeight());
+
+      // Attempt to register the Animal:
       Animal createdAnimal = animalService.registerAnimal(new Animal(animalId, animalWeight));
 
       if (createdAnimal == null) {
@@ -41,7 +44,8 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
         return;
       }
 
-      AnimalData response = AnimalToGrpcAnimalData.ConvertToAnimalData(createdAnimal);
+      // Translate the created Animal into gRPC compatible types, before transmitting back to client:
+      AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(createdAnimal);
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } catch (Exception e) {
@@ -55,8 +59,36 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
 
 
   @Override
-  public void readAnimal(AnimalId request, io.grpc.stub.StreamObserver<AnimalData> responseObserver) {
-    //TODO MISSING IMPLEMENTATION
+  public void readAnimal(AnimalId request, StreamObserver<AnimalData> responseObserver) {
+    try {
+      // Translate received gRPC information from the client, into Java compatible types:
+      long animalId = request.getAnimalId();
+
+      // Attempt to read the Animal with the provided ID:
+      Animal animal = animalService.readAnimal(animalId);
+
+      // If Animal read failed:
+      if (animal == null) {
+        responseObserver.onError(Status.INTERNAL.withDescription("Failed to read animal with id '" + animalId + "' in the database").asRuntimeException());
+        return;
+      }
+
+      // Translate the found Animal into gRPC compatible types, before transmitting back to client:
+      AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(animal);
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    } catch (AnimalNotFoundException e) {
+      // Return an animal with id -1, when no Animals matching this Id were found.
+      AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(new Animal(-1, BigDecimal.ZERO));
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      // TODO: Implement proper exception handling.
+      responseObserver.onError(Status.INTERNAL
+          .withDescription("Error reading animal")
+          .withCause(e) // Optional: include the original exception
+          .asRuntimeException());
+    }
   }
 
 

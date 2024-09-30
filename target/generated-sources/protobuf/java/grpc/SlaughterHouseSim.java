@@ -90,7 +90,7 @@ public final class SlaughterHouseSim {
       "lData\"\016\n\014EmptyMessage\"`\n\016AnimalPartData\022" +
       "\024\n\014animalPartId\030\001 \001(\003\022\022\n\npartTypeId\030\002 \001(" +
       "\003\022\022\n\npartWeight\030\003 \001(\t\022\020\n\010animalId\030\004 \001(\003\"" +
-      "$\n\014AnimalPartId\022\024\n\014animalPartId\030\001 \001(\t\"<\n" +
+      "$\n\014AnimalPartId\022\024\n\014animalPartId\030\001 \001(\003\"<\n" +
       "\017AnimalPartsData\022)\n\013animalParts\030\001 \003(\0132\024." +
       "grpc.AnimalPartData\"C\n\010TrayData\022\016\n\006trayI" +
       "d\030\001 \001(\003\022\'\n\013animalParts\030\002 \003(\0132\022.grpc.Anim" +

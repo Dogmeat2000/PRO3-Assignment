@@ -1,2 +1,0 @@
-Contains REST and gRPC controllers to handle incoming HTTP/gRPC requests. gRPC controllers are generated via .proto files.
-Handles incoming gRPC or REST requests and orchestrates the backend logic.

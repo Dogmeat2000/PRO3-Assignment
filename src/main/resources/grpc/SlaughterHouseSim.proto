@@ -33,7 +33,7 @@ message AnimalPartData {
 
 
 message AnimalPartId {
-  string animalPartId = 1;
+  int64 animalPartId = 1;
 }
 
 

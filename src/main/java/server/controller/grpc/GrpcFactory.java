@@ -1,6 +1,7 @@
 package server.controller.grpc;
 
 import grpc.AnimalData;
+import grpc.AnimalId;
 
 import java.math.BigDecimal;
 
@@ -13,4 +14,12 @@ public class GrpcFactory
         .setAnimalId(0)
         .build();
   }
+
+  public static AnimalId buildGrpcAnimalId (long id) {
+    return AnimalId.newBuilder()
+        .setAnimalId(id)
+        .build();
+  }
+
+  //TODO MISSING IMPLEMENTATION
 }

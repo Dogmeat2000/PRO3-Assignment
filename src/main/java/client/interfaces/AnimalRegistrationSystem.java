@@ -11,7 +11,7 @@ public interface AnimalRegistrationSystem
   Animal registerNewAnimal (BigDecimal weightInKilogram) throws InterruptedException;
 
   // Read:
-  Animal readAnimal (String animalId);
+  Animal readAnimal (long animalId);
 
   // Update:
   int updateAnimal (Animal data);

@@ -1,1 +1,0 @@
-Contains the business logic of the application. This layer is independent of the protocol and is shared between REST and gRPC.

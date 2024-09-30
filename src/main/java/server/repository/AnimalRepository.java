@@ -1,11 +1,15 @@
 package server.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
+import server.repository.exceptions.DBInsertionException;
+import server.repository.exceptions.DBPrimaryKeyMatchNotFound;
+import server.repository.exceptions.DBPrimaryKeyRetrievalException;
 import shared.model.entities.Animal;
 
 import java.sql.PreparedStatement;
@@ -17,10 +21,11 @@ public class AnimalRepository
 {
   private final JdbcTemplate jdbcTemplate;
 
-  @Autowired
+  @Autowired //Signals to Spring Boot, that it should utilize dependency injection to fill out parameters, i.e. the JdbcTemplate!
   public AnimalRepository(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
   }
+
 
   // RowMapper is responsible for mapping each resultSet into Java Objects!
   private RowMapper<Animal> animalRowMapper = (resultSet, rowNum) -> {
@@ -30,17 +35,38 @@ public class AnimalRepository
     return animal;
   };
 
+
   public List<Animal> getAllAnimalsFromDatabase() {
     String sql = "SELECT id, name FROM animal";
     return jdbcTemplate.query(sql, animalRowMapper);
   }
 
-  public Animal getAnimalByIdFromDatabase(Long id) {
-    String sql = "SELECT id, name FROM animal WHERE id = ?";
-    return jdbcTemplate.queryForObject(sql, animalRowMapper, id);
+
+  public Animal getAnimalByIdFromDatabase(Long id) throws DBPrimaryKeyRetrievalException, DBPrimaryKeyMatchNotFound {
+
+    // The SQL statement to be executed on the database:
+    String sql = "SELECT animal_id, weight_kilogram FROM animal WHERE animal_id = ?";
+
+    try {
+      // Attempt to execute query on the database:
+      Animal animal = jdbcTemplate.queryForObject(sql, animalRowMapper, id);
+
+      if (animal != null) {
+        // TODO: Implement query related table (AnimalPart), and fill Animal's animalPartList!
+
+        return animal;
+      } else {
+        throw new DBPrimaryKeyRetrievalException("Failed to retrieve Animal with animal_id=" + id);
+      }
+    } catch (IncorrectResultSizeDataAccessException e) {
+      throw new DBPrimaryKeyMatchNotFound("No Animal with Primary Key animal_id=" + id + " found in database.");
+    } catch (Exception e) {
+      throw new DBPrimaryKeyRetrievalException("Error looking up Animal in database");
+    }
   }
 
-  public Animal addNewAnimalToDatabase(Animal animal) {
+
+  public Animal addNewAnimalToDatabase(Animal animal) throws DBInsertionException, DBPrimaryKeyRetrievalException {
     try {
       // The SQL statement to be executed on the database:
       String sql = "INSERT INTO animal (weight_kilogram) VALUES (?) RETURNING animal_id";
@@ -65,16 +91,14 @@ public class AnimalRepository
         // Assign the created key id to the Animal, if such a key is not null.
         createdAnimal.setId(key.longValue());
         return createdAnimal;
-
       } else {
-        throw new RuntimeException("Failed to retrieve generated animal_id.");
+        throw new DBPrimaryKeyRetrievalException("Failed to retrieve generated animal_id primary key.");
       }
-
     } catch (Exception e) {
-      //TODO Implement better exception handling
-      throw new RuntimeException("Error inserting animal into database", e);
+      throw new DBInsertionException("Error inserting Animal into database");
     }
   }
+
 
   //TODO MISSING IMPLEMENTATION
 
