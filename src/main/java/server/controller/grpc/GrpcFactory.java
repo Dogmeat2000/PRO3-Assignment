@@ -2,6 +2,7 @@ package server.controller.grpc;
 
 import grpc.AnimalData;
 import grpc.AnimalId;
+import grpc.EmptyMessage;
 
 import java.math.BigDecimal;
 
@@ -19,6 +20,10 @@ public class GrpcFactory
     return AnimalId.newBuilder()
         .setAnimalId(id)
         .build();
+  }
+
+  public static EmptyMessage buildGrpcEmptyMessage () {
+    return EmptyMessage.newBuilder().build();
   }
 
   //TODO MISSING IMPLEMENTATION

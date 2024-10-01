@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("singleton")
-public class TrayDAO
+public class TrayRepository
 {
   //TODO MISSING IMPLEMENTATION
 }

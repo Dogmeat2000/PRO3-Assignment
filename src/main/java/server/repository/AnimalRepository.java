@@ -14,6 +14,7 @@ import shared.model.entities.Animal;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -37,8 +38,25 @@ public class AnimalRepository
 
 
   public List<Animal> getAllAnimalsFromDatabase() {
-    String sql = "SELECT id, name FROM animal";
-    return jdbcTemplate.query(sql, animalRowMapper);
+    // The SQL statement to be executed on the database:
+    String sql = "SELECT * FROM animal";
+
+    try {
+      // Attempt to execute query on the database:
+      List<Animal> animals = jdbcTemplate.query(sql, animalRowMapper);
+
+      // TODO: Implement query related table (AnimalPart), and fill Animal's animalPartList!
+
+      if (animals.isEmpty())
+        throw new DBPrimaryKeyRetrievalException("Unexpected exception occurred while retrieving animals from database");
+
+      return animals;
+
+    } catch (IncorrectResultSizeDataAccessException e) {
+      throw new DBPrimaryKeyMatchNotFound("Unexpected exception occurred while retrieving animals from database");
+    } catch (Exception e) {
+      throw new DBPrimaryKeyRetrievalException("Error looking up Animals in database");
+    }
   }
 
 

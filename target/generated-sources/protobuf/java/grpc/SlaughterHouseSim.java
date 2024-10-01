@@ -100,7 +100,7 @@ public final class SlaughterHouseSim {
       ".TrayData\022)\n\ranimalPartIds\030\003 \003(\0132\022.grpc." +
       "AnimalPartId\"\036\n\tProductId\022\021\n\tproductId\030\001" +
       " \001(\003\"3\n\014ProductsData\022#\n\010products\030\001 \003(\0132\021" +
-      ".grpc.ProductData2\353\006\n\025SlaughterHouseServ" +
+      ".grpc.ProductData2\356\006\n\025SlaughterHouseServ" +
       "ice\0224\n\016registerAnimal\022\020.grpc.AnimalData\032" +
       "\020.grpc.AnimalData\022@\n\022registerAnimalPart\022" +
       "\024.grpc.AnimalPartData\032\024.grpc.AnimalPartD" +
@@ -118,11 +118,11 @@ public final class SlaughterHouseSim {
       "ssage\022<\n\020removeAnimalPart\022\024.grpc.AnimalP" +
       "artData\032\022.grpc.EmptyMessage\0226\n\rremovePro" +
       "duct\022\021.grpc.ProductData\032\022.grpc.EmptyMess" +
-      "age\0225\n\rgetAllAnimals\022\022.grpc.EmptyMessage" +
-      "\032\020.grpc.AnimalData\022:\n\016getAnimalParts\022\022.g" +
-      "rpc.EmptyMessage\032\024.grpc.AnimalPartData\0227" +
-      "\n\016getAllProducts\022\022.grpc.EmptyMessage\032\021.g" +
-      "rpc.ProductDataB\002P\001b\006proto3"
+      "age\0226\n\rgetAllAnimals\022\022.grpc.EmptyMessage" +
+      "\032\021.grpc.AnimalsData\022;\n\016getAnimalParts\022\022." +
+      "grpc.EmptyMessage\032\025.grpc.AnimalPartsData" +
+      "\0228\n\016getAllProducts\022\022.grpc.EmptyMessage\032\022" +
+      ".grpc.ProductsDataB\002P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

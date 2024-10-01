@@ -1,1 +1,0 @@
-The ViewModel layer binds the UI to the Model and handles data transformation and logic.

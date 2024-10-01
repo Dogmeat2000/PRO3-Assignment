@@ -1,10 +1,9 @@
 package server.grpc;
 
-import grpc.AnimalData;
-import grpc.AnimalId;
-import grpc.EmptyMessage;
-import grpc.SlaughterHouseServiceGrpc;
+import com.google.rpc.Code;
+import grpc.*;
 import io.grpc.Status;
+import io.grpc.protobuf.StatusProto;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import shared.model.entities.Animal;
 import shared.model.exceptions.AnimalNotFoundException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @GrpcService
 public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
@@ -105,7 +105,31 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
 
 
   @Override
-  public void getAllAnimals(EmptyMessage request, io.grpc.stub.StreamObserver<AnimalData> responseObserver) {
-    //TODO MISSING IMPLEMENTATION
+  public void getAllAnimals(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.AnimalsData> responseObserver) {
+    try {
+      // Attempt to retrieve all Animals:
+      List<Animal> animals = animalService.getAllAnimals();
+
+      // If Animal read failed:
+      if (animals == null) {
+        responseObserver.onError(Status.INTERNAL.withDescription("Failed to retrieve all animals from the database").asRuntimeException());
+        return;
+      }
+
+      // Translate the found Animal into gRPC compatible types, before transmitting back to client:
+      AnimalsData response = Animal_ToGrpc_AnimalData.convertToAnimalsDataList(animals);
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    } catch (AnimalNotFoundException e) {
+      // throw an error when no animals were found.
+      com.google.rpc.Status error = com.google.rpc.Status.newBuilder().setCode(Code.NOT_FOUND_VALUE).setMessage("No Animals found").build();
+      responseObserver.onError(StatusProto.toStatusRuntimeException(error));
+    } catch (Exception e) {
+      // TODO: Implement proper exception handling.
+      responseObserver.onError(Status.INTERNAL
+          .withDescription("Error retrieving all animals")
+          .withCause(e) // Optional: include the original exception
+          .asRuntimeException());
+    }
   }
 }

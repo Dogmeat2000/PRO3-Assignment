@@ -85,6 +85,7 @@ public class Station1_CLI
     }
   }
 
+
   private static void performCommand(String input) {
     String value;
 
@@ -106,10 +107,12 @@ public class Station1_CLI
 
       case "remove":
         System.out.println("NOT IMPLEMENTED YET");
+        // TODO: Implement
         break;
 
       case "update":
         System.out.println("NOT IMPLEMENTED YET");
+        // TODO: Implement
         break;
 
       case "viewone":
@@ -127,8 +130,19 @@ public class Station1_CLI
           }
         break;
 
-      case "viewAll":
-        System.out.println("NOT IMPLEMENTED YET");
+      case "viewall":
+        System.out.println("Retrieving all Animals from Database: ");
+        try {
+          List<Animal> animal = station1.getAllAnimals();
+
+          for (Animal a : animal) {
+            System.out.println(a.getId() + ": weight '" + a.getWeight() + "kg'. Was dissected into AnimalParts '" + a.getPartList() + "'.");
+          }
+
+        } catch (Exception e) {
+          System.out.println("Invalid input!");
+          e.printStackTrace();
+        }
         break;
 
       default:

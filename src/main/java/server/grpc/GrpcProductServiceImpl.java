@@ -38,7 +38,7 @@ public class GrpcProductServiceImpl extends SlaughterHouseServiceGrpc.SlaughterH
 
 
   @Override
-  public void getAllProducts(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.ProductData> responseObserver) {
+  public void getAllProducts(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.ProductsData> responseObserver) {
     //TODO MISSING IMPLEMENTATION
   }
 }

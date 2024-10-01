@@ -1,6 +1,7 @@
 package server.service;
 
 import shared.model.entities.Animal;
+import shared.model.entities.Product;
 import shared.model.exceptions.AnimalNotFoundException;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface AnimalRegistryInterface
 
   // Get All:
   List<Animal> getAllAnimals();
+
+  // Recall functions:
+  List<Animal> getAllAnimalsInProduct(long productId);
+  List<Product> getAllProductsThatContainAnimal(long animalId);
 }

@@ -38,7 +38,7 @@ public class GrpcAnimalPartServiceImpl extends SlaughterHouseServiceGrpc.Slaught
 
 
   @Override
-  public void getAnimalParts(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.AnimalPartData> responseObserver) {
+  public void getAnimalParts(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
     //TODO MISSING IMPLEMENTATION
   }
 }

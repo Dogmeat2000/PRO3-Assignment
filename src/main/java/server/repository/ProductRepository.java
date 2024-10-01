@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope("singleton")
-public class ProductDAO
+public class ProductRepository
 {
   //TODO MISSING IMPLEMENTATION
 }

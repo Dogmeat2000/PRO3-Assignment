@@ -93,8 +93,7 @@ service SlaughterHouseService {
   rpc removeProduct(ProductData) returns (EmptyMessage);
 
   // Get All:
-  rpc getAllAnimals(EmptyMessage) returns (AnimalData);
-  rpc getAnimalParts(EmptyMessage) returns (AnimalPartData);
-  rpc getAllProducts(EmptyMessage) returns (ProductData);
-
+  rpc getAllAnimals(EmptyMessage) returns (AnimalsData);
+  rpc getAnimalParts(EmptyMessage) returns (AnimalPartsData);
+  rpc getAllProducts(EmptyMessage) returns (ProductsData);
 }

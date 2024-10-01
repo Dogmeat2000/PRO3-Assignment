@@ -388,28 +388,28 @@ public final class SlaughterHouseServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.AnimalData> getGetAllAnimalsMethod;
+      grpc.AnimalsData> getGetAllAnimalsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getAllAnimals",
       requestType = grpc.EmptyMessage.class,
-      responseType = grpc.AnimalData.class,
+      responseType = grpc.AnimalsData.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.AnimalData> getGetAllAnimalsMethod() {
-    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.AnimalData> getGetAllAnimalsMethod;
+      grpc.AnimalsData> getGetAllAnimalsMethod() {
+    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.AnimalsData> getGetAllAnimalsMethod;
     if ((getGetAllAnimalsMethod = SlaughterHouseServiceGrpc.getGetAllAnimalsMethod) == null) {
       synchronized (SlaughterHouseServiceGrpc.class) {
         if ((getGetAllAnimalsMethod = SlaughterHouseServiceGrpc.getGetAllAnimalsMethod) == null) {
           SlaughterHouseServiceGrpc.getGetAllAnimalsMethod = getGetAllAnimalsMethod =
-              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.AnimalData>newBuilder()
+              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.AnimalsData>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getAllAnimals"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   grpc.EmptyMessage.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  grpc.AnimalData.getDefaultInstance()))
+                  grpc.AnimalsData.getDefaultInstance()))
               .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("getAllAnimals"))
               .build();
         }
@@ -419,28 +419,28 @@ public final class SlaughterHouseServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.AnimalPartData> getGetAnimalPartsMethod;
+      grpc.AnimalPartsData> getGetAnimalPartsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getAnimalParts",
       requestType = grpc.EmptyMessage.class,
-      responseType = grpc.AnimalPartData.class,
+      responseType = grpc.AnimalPartsData.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.AnimalPartData> getGetAnimalPartsMethod() {
-    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.AnimalPartData> getGetAnimalPartsMethod;
+      grpc.AnimalPartsData> getGetAnimalPartsMethod() {
+    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.AnimalPartsData> getGetAnimalPartsMethod;
     if ((getGetAnimalPartsMethod = SlaughterHouseServiceGrpc.getGetAnimalPartsMethod) == null) {
       synchronized (SlaughterHouseServiceGrpc.class) {
         if ((getGetAnimalPartsMethod = SlaughterHouseServiceGrpc.getGetAnimalPartsMethod) == null) {
           SlaughterHouseServiceGrpc.getGetAnimalPartsMethod = getGetAnimalPartsMethod =
-              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.AnimalPartData>newBuilder()
+              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.AnimalPartsData>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getAnimalParts"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   grpc.EmptyMessage.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  grpc.AnimalPartData.getDefaultInstance()))
+                  grpc.AnimalPartsData.getDefaultInstance()))
               .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("getAnimalParts"))
               .build();
         }
@@ -450,28 +450,28 @@ public final class SlaughterHouseServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.ProductData> getGetAllProductsMethod;
+      grpc.ProductsData> getGetAllProductsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getAllProducts",
       requestType = grpc.EmptyMessage.class,
-      responseType = grpc.ProductData.class,
+      responseType = grpc.ProductsData.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<grpc.EmptyMessage,
-      grpc.ProductData> getGetAllProductsMethod() {
-    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.ProductData> getGetAllProductsMethod;
+      grpc.ProductsData> getGetAllProductsMethod() {
+    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.ProductsData> getGetAllProductsMethod;
     if ((getGetAllProductsMethod = SlaughterHouseServiceGrpc.getGetAllProductsMethod) == null) {
       synchronized (SlaughterHouseServiceGrpc.class) {
         if ((getGetAllProductsMethod = SlaughterHouseServiceGrpc.getGetAllProductsMethod) == null) {
           SlaughterHouseServiceGrpc.getGetAllProductsMethod = getGetAllProductsMethod =
-              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.ProductData>newBuilder()
+              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.ProductsData>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getAllProducts"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   grpc.EmptyMessage.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  grpc.ProductData.getDefaultInstance()))
+                  grpc.ProductsData.getDefaultInstance()))
               .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("getAllProducts"))
               .build();
         }
@@ -630,21 +630,21 @@ public final class SlaughterHouseServiceGrpc {
      * </pre>
      */
     default void getAllAnimals(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.AnimalData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.AnimalsData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllAnimalsMethod(), responseObserver);
     }
 
     /**
      */
     default void getAnimalParts(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.AnimalPartData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAnimalPartsMethod(), responseObserver);
     }
 
     /**
      */
     default void getAllProducts(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.ProductData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.ProductsData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllProductsMethod(), responseObserver);
     }
   }
@@ -790,7 +790,7 @@ public final class SlaughterHouseServiceGrpc {
      * </pre>
      */
     public void getAllAnimals(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.AnimalData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.AnimalsData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllAnimalsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -798,7 +798,7 @@ public final class SlaughterHouseServiceGrpc {
     /**
      */
     public void getAnimalParts(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.AnimalPartData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAnimalPartsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -806,7 +806,7 @@ public final class SlaughterHouseServiceGrpc {
     /**
      */
     public void getAllProducts(grpc.EmptyMessage request,
-        io.grpc.stub.StreamObserver<grpc.ProductData> responseObserver) {
+        io.grpc.stub.StreamObserver<grpc.ProductsData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllProductsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -929,21 +929,21 @@ public final class SlaughterHouseServiceGrpc {
      * Get All:
      * </pre>
      */
-    public grpc.AnimalData getAllAnimals(grpc.EmptyMessage request) {
+    public grpc.AnimalsData getAllAnimals(grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllAnimalsMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public grpc.AnimalPartData getAnimalParts(grpc.EmptyMessage request) {
+    public grpc.AnimalPartsData getAnimalParts(grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAnimalPartsMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public grpc.ProductData getAllProducts(grpc.EmptyMessage request) {
+    public grpc.ProductsData getAllProducts(grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllProductsMethod(), getCallOptions(), request);
     }
@@ -1078,7 +1078,7 @@ public final class SlaughterHouseServiceGrpc {
      * Get All:
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalData> getAllAnimals(
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalsData> getAllAnimals(
         grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllAnimalsMethod(), getCallOptions()), request);
@@ -1086,7 +1086,7 @@ public final class SlaughterHouseServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartData> getAnimalParts(
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartsData> getAnimalParts(
         grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAnimalPartsMethod(), getCallOptions()), request);
@@ -1094,7 +1094,7 @@ public final class SlaughterHouseServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<grpc.ProductData> getAllProducts(
+    public com.google.common.util.concurrent.ListenableFuture<grpc.ProductsData> getAllProducts(
         grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllProductsMethod(), getCallOptions()), request);
@@ -1184,15 +1184,15 @@ public final class SlaughterHouseServiceGrpc {
           break;
         case METHODID_GET_ALL_ANIMALS:
           serviceImpl.getAllAnimals((grpc.EmptyMessage) request,
-              (io.grpc.stub.StreamObserver<grpc.AnimalData>) responseObserver);
+              (io.grpc.stub.StreamObserver<grpc.AnimalsData>) responseObserver);
           break;
         case METHODID_GET_ANIMAL_PARTS:
           serviceImpl.getAnimalParts((grpc.EmptyMessage) request,
-              (io.grpc.stub.StreamObserver<grpc.AnimalPartData>) responseObserver);
+              (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
           break;
         case METHODID_GET_ALL_PRODUCTS:
           serviceImpl.getAllProducts((grpc.EmptyMessage) request,
-              (io.grpc.stub.StreamObserver<grpc.ProductData>) responseObserver);
+              (io.grpc.stub.StreamObserver<grpc.ProductsData>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1301,21 +1301,21 @@ public final class SlaughterHouseServiceGrpc {
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
               grpc.EmptyMessage,
-              grpc.AnimalData>(
+              grpc.AnimalsData>(
                 service, METHODID_GET_ALL_ANIMALS)))
         .addMethod(
           getGetAnimalPartsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
               grpc.EmptyMessage,
-              grpc.AnimalPartData>(
+              grpc.AnimalPartsData>(
                 service, METHODID_GET_ANIMAL_PARTS)))
         .addMethod(
           getGetAllProductsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
               grpc.EmptyMessage,
-              grpc.ProductData>(
+              grpc.ProductsData>(
                 service, METHODID_GET_ALL_PRODUCTS)))
         .build();
   }

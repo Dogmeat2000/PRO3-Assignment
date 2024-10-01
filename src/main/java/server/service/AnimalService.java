@@ -9,6 +9,7 @@ import server.repository.AnimalRepository;
 import server.repository.exceptions.DBInsertionException;
 import server.repository.exceptions.DBPrimaryKeyRetrievalException;
 import shared.model.entities.Animal;
+import shared.model.entities.Product;
 import shared.model.exceptions.AnimalNotFoundException;
 
 import java.util.HashMap;
@@ -98,6 +99,43 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Override public List<Animal> getAllAnimals() {
+    // Compare last entry in database with last entry in local cache.
+    // If both are same, then no need to query database. Else query database for updated list,
+    // but only get the entries that are missing between local cache last entry and last entry in the database.
+    // TODO: Implement above!
+
+    //logger.info("Checking if local cache has the same number of Animal data entries as the database");
+    //logger.info("Database has more entries, than local cache. Retrieving the missing entries from database to local cache.");
+
+    // Below is temporary 'easy' implementation. TODO: Refactor the below code!
+    try {
+      List<Animal> animals = animalRepository.getAllAnimalsFromDatabase();
+
+      // Add found Animals to local cache, to improve performance next time Animal is requested.
+      animalCache.clear();
+      for (Animal animal : animals) {
+        // Clear cache.
+        if(animal != null) {
+          animalCache.put(animal.getId(), animal);
+          logger.info("Animal added to local cache with ID: {}", animal.getId());
+        }
+      }
+      return animals;
+    } catch (DBPrimaryKeyRetrievalException e) {
+      // TODO: Implement proper exception handling.
+      logger.info("ERROR: Exception occurred while attempting to query Animals from database.");
+      throw new AnimalNotFoundException("Did not find any Animals in the database!");
+    }
+  }
+
+
+  @Override public List<Animal> getAllAnimalsInProduct(long productId) {
+    //TODO Not implemented yet
+    return List.of();
+  }
+
+
+  @Override public List<Product> getAllProductsThatContainAnimal(long animalId) {
     //TODO Not implemented yet
     return List.of();
   }
