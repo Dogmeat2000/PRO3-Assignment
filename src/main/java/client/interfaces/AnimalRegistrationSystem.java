@@ -14,7 +14,7 @@ public interface AnimalRegistrationSystem
   Animal readAnimal (long animalId);
 
   // Update:
-  int updateAnimal (Animal data);
+  void updateAnimal (Animal data);
 
   // Delete:
   int removeAnimal (Animal data);

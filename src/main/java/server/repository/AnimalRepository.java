@@ -14,7 +14,6 @@ import shared.model.entities.Animal;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -45,7 +44,7 @@ public class AnimalRepository
       // Attempt to execute query on the database:
       List<Animal> animals = jdbcTemplate.query(sql, animalRowMapper);
 
-      // TODO: Implement query related table (AnimalPart), and fill Animal's animalPartList!
+      // TODO: Implement query to related table (AnimalPart), and fill Animal's animalPartList!
 
       if (animals.isEmpty())
         throw new DBPrimaryKeyRetrievalException("Unexpected exception occurred while retrieving animals from database");
@@ -118,13 +117,24 @@ public class AnimalRepository
   }
 
 
+  public boolean updateExistingAnimalInDatabase(Animal animal) throws DBInsertionException, DBPrimaryKeyMatchNotFound {
+    // The SQL statement to be executed on the database:
+    String sql = "UPDATE animal SET weight_kilogram = ? WHERE animal_id = ?";
+
+    // Execute the SQL statement on the database, using jdbcTemplate - a spring boot method!.
+    int updatedRows = jdbcTemplate.update(sql, animal.getWeight(), animal.getId());
+
+    // Evaluate and return response.
+    if(updatedRows == 1) // Exactly one row was updated in database:
+      return true;
+    else if (updatedRows == 0)
+      throw new DBPrimaryKeyMatchNotFound("No Animals with Primary Key animal_id=" + animal.getId() + " found in database.");
+    else
+      throw new DBInsertionException("Multiple Animals with animal_id=" + animal.getId() + " found in database. Update aborted!");
+  }
+
+
   //TODO MISSING IMPLEMENTATION
-
-  /*public int updateExistingAnimalInDatabase(Animal animal) {
-    String sql = "UPDATE animal SET name = ? WHERE id = ?";
-    return jdbcTemplate.update(sql, animal.getName(), animal.getId());
-  }*/
-
   /*public int deleteExistingAnimalFromDatabase(Long id) {
     String sql = "DELETE FROM animal WHERE id = ?";
     return jdbcTemplate.update(sql, id);

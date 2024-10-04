@@ -1,9 +1,11 @@
 package server.grpc;
 
 import grpc.SlaughterHouseServiceGrpc;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//@GrpcService
 public class GrpcProductServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
 {
   private static final Logger logger = LoggerFactory.getLogger("Service");

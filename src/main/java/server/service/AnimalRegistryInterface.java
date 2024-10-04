@@ -15,10 +15,10 @@ public interface AnimalRegistryInterface
   Animal readAnimal (long animalId) throws AnimalNotFoundException;
 
   // Update:
-  int updateAnimal (Animal data);
+  boolean updateAnimal (Animal data) throws AnimalNotFoundException;
 
   // Delete:
-  int removeAnimal (Animal data);
+  boolean removeAnimal (Animal data);
 
   // Get All:
   List<Animal> getAllAnimals();

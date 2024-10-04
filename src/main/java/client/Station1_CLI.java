@@ -111,8 +111,38 @@ public class Station1_CLI
         break;
 
       case "update":
-        System.out.println("NOT IMPLEMENTED YET");
-        // TODO: Implement
+        System.out.print("Enter animal_id: ");
+        value = getUserInput();
+        if(!validateLongInput(value))
+          System.out.println("Invalid input!");
+        else {
+          try {
+            Animal animal = station1.readAnimal(Long.parseLong(value));
+            System.out.println("Found [" + animal + "]");
+          }
+          catch (Exception e) {
+            System.out.println("Invalid input!");
+            e.printStackTrace();
+            break;
+          }
+        }
+        long animalId = Long.parseLong(value);
+        System.out.print("Enter new weight: ");
+        value = getUserInput();
+        if(!validateBigDecimalInput(value))
+          System.out.println("Invalid input!");
+        else {
+          try {
+            Animal animal = new Animal(animalId, new BigDecimal(value));
+            station1.updateAnimal(animal);
+            System.out.println("Updated [" + animal + "]");
+          }
+          catch (Exception e) {
+            System.out.println("Invalid input!");
+            e.printStackTrace();
+            break;
+          }
+        }
         break;
 
       case "viewone":

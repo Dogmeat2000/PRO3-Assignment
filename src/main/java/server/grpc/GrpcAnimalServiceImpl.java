@@ -1,14 +1,13 @@
 package server.grpc;
 
-import com.google.rpc.Code;
 import grpc.*;
 import io.grpc.Status;
-import io.grpc.protobuf.StatusProto;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import server.controller.grpc.Animal_ToGrpc_AnimalData;
+import server.controller.grpc.GrpcAnimalData_To_Animal;
 import server.service.AnimalRegistryInterface;
 import shared.model.entities.Animal;
 import shared.model.exceptions.AnimalNotFoundException;
@@ -49,11 +48,7 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } catch (Exception e) {
-      // TODO: Implement proper error handling.
-      responseObserver.onError(Status.INTERNAL
-          .withDescription("Error registering animal")
-          .withCause(e) // Optional: include the original exception
-          .asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error registering animal").withCause(e).asRuntimeException());
     }
   }
 
@@ -78,23 +73,36 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } catch (AnimalNotFoundException e) {
-      // Return an animal with id -1, when no Animals matching this Id were found.
-      AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(new Animal(-1, BigDecimal.ZERO));
-      responseObserver.onNext(response);
-      responseObserver.onCompleted();
+      responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      // TODO: Implement proper exception handling.
-      responseObserver.onError(Status.INTERNAL
-          .withDescription("Error reading animal")
-          .withCause(e) // Optional: include the original exception
-          .asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error reading animal").withCause(e).asRuntimeException());
     }
   }
 
 
   @Override
-  public void updateAnimal(AnimalData request, io.grpc.stub.StreamObserver<EmptyMessage> responseObserver) {
-    //TODO MISSING IMPLEMENTATION
+  public void updateAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
+    try {
+      // Translate received gRPC information from the client, into Java compatible types:
+      Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(request);
+
+      // Attempt to update the Animal with the provided ID:
+      boolean updateAnimal = animalService.updateAnimal(animal);
+
+      // If Animal update failed:
+      if (!updateAnimal) {
+        responseObserver.onError(Status.INTERNAL.withDescription("Failed to update animal with id '" + animal.getId() + "' in the database").asRuntimeException());
+        return;
+      }
+
+      // Signal to client to complete the gRPC operation:
+      responseObserver.onNext(EmptyMessage.newBuilder().build());
+      responseObserver.onCompleted();
+    } catch (AnimalNotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Animal with id '" + request.getAnimalId() + "'").withCause(e).asRuntimeException());
+    }
   }
 
 
@@ -121,15 +129,9 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } catch (AnimalNotFoundException e) {
-      // throw an error when no animals were found.
-      com.google.rpc.Status error = com.google.rpc.Status.newBuilder().setCode(Code.NOT_FOUND_VALUE).setMessage("No Animals found").build();
-      responseObserver.onError(StatusProto.toStatusRuntimeException(error));
+      responseObserver.onError(Status.NOT_FOUND.withDescription("No Animals found").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      // TODO: Implement proper exception handling.
-      responseObserver.onError(Status.INTERNAL
-          .withDescription("Error retrieving all animals")
-          .withCause(e) // Optional: include the original exception
-          .asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all animals").withCause(e).asRuntimeException());
     }
   }
 }

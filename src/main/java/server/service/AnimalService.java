@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.repository.AnimalRepository;
 import server.repository.exceptions.DBInsertionException;
+import server.repository.exceptions.DBPrimaryKeyMatchNotFound;
 import server.repository.exceptions.DBPrimaryKeyRetrievalException;
 import shared.model.entities.Animal;
 import shared.model.entities.Product;
 import shared.model.exceptions.AnimalNotFoundException;
+import shared.model.exceptions.UpdateFailedException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -86,15 +88,34 @@ public class AnimalService implements AnimalRegistryInterface
   }
 
 
-  @Override public int updateAnimal(Animal data) {
-    //TODO Not implemented yet
-    return -1;
+  @Override public boolean updateAnimal(Animal data) {
+    // Perform Data Validation:
+    // TODO: Implement validation
+
+    // Attempt to update Animal in database:
+    try {
+      if(animalRepository.updateExistingAnimalInDatabase(data)) {
+        logger.info("Animal updated in database with ID: {}", data.getId());
+        // Update Animal in local cache also, overwriting any existing animal associated with given key:
+        animalCache.put(data.getId(), data);
+        logger.info("Animal updated in local cache with ID: {}", data.getId());
+        return true;
+      }
+      // Update same Animal in local cache, if exists:
+    } catch (DBPrimaryKeyMatchNotFound e) {
+      logger.info("ERROR: Unable to find Animal with ID: {}", data.getId());
+      throw new AnimalNotFoundException("No Animal found in database with matching id.");
+    } catch (DBInsertionException e) {
+      logger.info("ERROR: Unable to Update Animal with ID: {}", data.getId() + ". Multiple entries with this ID found.");
+      throw new UpdateFailedException("Animal Update failed. Found multiple entries of the same animal_id");
+    }
+    return false;
   }
 
 
-  @Override public int removeAnimal(Animal data) {
+  @Override public boolean removeAnimal(Animal data) {
     //TODO Not implemented yet
-    return -1;
+    return false;
   }
 
 
