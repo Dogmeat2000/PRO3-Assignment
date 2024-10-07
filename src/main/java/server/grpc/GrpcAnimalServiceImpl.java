@@ -4,13 +4,14 @@ import grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import server.controller.grpc.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.GrpcAnimalData_To_Animal;
 import server.service.AnimalRegistryInterface;
 import shared.model.entities.Animal;
 import shared.model.exceptions.AnimalNotFoundException;
+import shared.model.exceptions.CreateFailedException;
+import shared.model.exceptions.DeleteFailedException;
+import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,7 +20,6 @@ import java.util.List;
 public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
 {
   private final AnimalRegistryInterface animalService;
-  private static final Logger logger = LoggerFactory.getLogger("Service");
 
   public GrpcAnimalServiceImpl(AnimalRegistryInterface animalService) {
     super();
@@ -37,11 +37,9 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       // Attempt to register the Animal:
       Animal createdAnimal = animalService.registerAnimal(new Animal(animalId, animalWeight));
 
-      if (createdAnimal == null) {
-        // If animal creation fails
-        responseObserver.onError(Status.INTERNAL.withDescription("Failed to register animal in the database").asRuntimeException());
-        return;
-      }
+      // If animal creation fails
+      if (createdAnimal == null)
+        throw new CreateFailedException("Animal could not be created");
 
       // Translate the created Animal into gRPC compatible types, before transmitting back to client:
       AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(createdAnimal);
@@ -63,17 +61,15 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       Animal animal = animalService.readAnimal(animalId);
 
       // If Animal read failed:
-      if (animal == null) {
-        responseObserver.onError(Status.INTERNAL.withDescription("Failed to read animal with id '" + animalId + "' in the database").asRuntimeException());
-        return;
-      }
+      if (animal == null)
+        throw new AnimalNotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
       AnimalData response = Animal_ToGrpc_AnimalData.ConvertToAnimalData(animal);
       responseObserver.onNext(response);
       responseObserver.onCompleted();
     } catch (AnimalNotFoundException e) {
-      responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.NOT_FOUND.withDescription("Animal with id " + request.getAnimalId() + "not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error reading animal").withCause(e).asRuntimeException());
     }
@@ -87,12 +83,9 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
       Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(request);
 
       // Attempt to update the Animal with the provided ID:
-      boolean updateAnimal = animalService.updateAnimal(animal);
-
-      // If Animal update failed:
-      if (!updateAnimal) {
-        responseObserver.onError(Status.INTERNAL.withDescription("Failed to update animal with id '" + animal.getId() + "' in the database").asRuntimeException());
-        return;
+      if (!animalService.updateAnimal(animal)) {
+        // If Animal update failed:
+        throw new UpdateFailedException("Error occurred while updated animal with id='" + animal.getId() + "'");
       }
 
       // Signal to client to complete the gRPC operation:
@@ -107,22 +100,37 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
 
 
   @Override
-  public void removeAnimal(AnimalData request, io.grpc.stub.StreamObserver<EmptyMessage> responseObserver) {
-    //TODO MISSING IMPLEMENTATION
+  public void removeAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
+    try {
+      // Translate received gRPC information from the client, into Java compatible types:
+      Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(request);
+
+      // Attempt to delete the Animal with the provided ID:
+      if(!animalService.removeAnimal(animal)) {
+        // If Animal deletion failed:
+        throw new DeleteFailedException("Error occurred while deleting animal with id='" + animal.getId() + "'");
+      }
+
+      // Signal to client to complete the gRPC operation:
+      responseObserver.onNext(EmptyMessage.newBuilder().build());
+      responseObserver.onCompleted();
+    } catch (AnimalNotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting animal").withCause(e).asRuntimeException());
+    }
   }
 
 
   @Override
-  public void getAllAnimals(grpc.EmptyMessage request, io.grpc.stub.StreamObserver<grpc.AnimalsData> responseObserver) {
+  public void getAllAnimals(EmptyMessage request, StreamObserver<AnimalsData> responseObserver) {
     try {
       // Attempt to retrieve all Animals:
       List<Animal> animals = animalService.getAllAnimals();
 
       // If Animal read failed:
-      if (animals == null) {
-        responseObserver.onError(Status.INTERNAL.withDescription("Failed to retrieve all animals from the database").asRuntimeException());
-        return;
-      }
+      if (animals == null)
+        throw new AnimalNotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
       AnimalsData response = Animal_ToGrpc_AnimalData.convertToAnimalsDataList(animals);

@@ -3,6 +3,10 @@ package client;
 import client.interfaces.AnimalRegistrationSystem;
 import client.service.Station1_AnimalRegistration;
 import shared.model.entities.Animal;
+import shared.model.exceptions.AnimalNotFoundException;
+import shared.model.exceptions.CreateFailedException;
+import shared.model.exceptions.DeleteFailedException;
+import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,9 +42,7 @@ public class Station1_CLI
 
   private static String getUserInput() {
     Scanner input = new Scanner(System.in);
-    String userInput = input.nextLine();
-
-    return userInput;
+    return input.nextLine();
   }
 
 
@@ -91,7 +93,7 @@ public class Station1_CLI
 
     switch (input.toLowerCase()) {
       case "add":
-        System.out.print("Enter animal weight (kg): ");
+        System.out.print("Enter animal weight (kg) of animal to ADD: ");
         value = getUserInput();
         if(!validateBigDecimalInput(value))
           System.out.println("Invalid input!");
@@ -99,15 +101,25 @@ public class Station1_CLI
           try {
             Animal animal = station1.registerNewAnimal(new BigDecimal(value));
             System.out.println("Added [" + animal + "] to Database!");
-          } catch (InterruptedException e) {
-            System.out.println("Invalid input!");
+          } catch (CreateFailedException e) {
             e.printStackTrace();
+            System.out.println("Invalid input!");
           }
         break;
 
       case "remove":
-        System.out.println("NOT IMPLEMENTED YET");
-        // TODO: Implement
+        System.out.print("Enter animal_id of animal to REMOVE: ");
+        value = getUserInput();
+        if(!validateLongInput(value))
+          System.out.println("Invalid input!");
+        else
+          try {
+            if(station1.removeAnimal(Long.parseLong(value)))
+              System.out.println("Removed Animal with ID '" + value + "' from Database!");
+          } catch (DeleteFailedException | AnimalNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("Invalid input!");
+          }
         break;
 
       case "update":
@@ -120,9 +132,9 @@ public class Station1_CLI
             Animal animal = station1.readAnimal(Long.parseLong(value));
             System.out.println("Found [" + animal + "]");
           }
-          catch (Exception e) {
-            System.out.println("Invalid input!");
+          catch (AnimalNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Invalid input!");
             break;
           }
         }
@@ -137,9 +149,9 @@ public class Station1_CLI
             station1.updateAnimal(animal);
             System.out.println("Updated [" + animal + "]");
           }
-          catch (Exception e) {
-            System.out.println("Invalid input!");
+          catch (UpdateFailedException | AnimalNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Invalid input!");
             break;
           }
         }
@@ -154,9 +166,9 @@ public class Station1_CLI
           try {
             Animal animal = station1.readAnimal(Long.parseLong(value));
             System.out.println("Found [" + animal + "]");
-          } catch (Exception e) {
-            System.out.println("Invalid input!");
+          } catch (AnimalNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Invalid input!");
           }
         break;
 
@@ -166,12 +178,12 @@ public class Station1_CLI
           List<Animal> animal = station1.getAllAnimals();
 
           for (Animal a : animal) {
-            System.out.println(a.getId() + ": weight '" + a.getWeight() + "kg'. Was dissected into AnimalParts '" + a.getPartList() + "'.");
+            System.out.println(a.getId() + ": weight '" + a.getWeight_kilogram() + "kg'. Was dissected into AnimalParts '" + a.getPartList() + "'.");
           }
 
-        } catch (Exception e) {
-          System.out.println("Invalid input!");
+        } catch (AnimalNotFoundException e) {
           e.printStackTrace();
+          System.out.println("Invalid input!");
         }
         break;
 

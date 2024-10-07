@@ -16,7 +16,7 @@ public class Animal_ToGrpc_AnimalData
 
     AnimalData.Builder animalBuilder = AnimalData.newBuilder()
         .setAnimalId(animal.getId())
-        .setAnimalWeight(animal.getWeight().toString());
+        .setAnimalWeight(animal.getWeight_kilogram().toString());
 
     return animalBuilder.build();
   }

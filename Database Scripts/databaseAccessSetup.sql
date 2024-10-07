@@ -26,6 +26,7 @@ CREATE USER slaughterhouseserver WITH PASSWORD 'CF(3''(]eA,JOty$WssTf^3';
     GRANT USAGE, UPDATE, SELECT ON SEQUENCE pro3_slaughterhouse.parttype_id_seq TO slaughterhouseserver;
     GRANT USAGE, UPDATE, SELECT ON SEQUENCE pro3_slaughterhouse.product_product_id_seq TO slaughterhouseserver;
     GRANT USAGE, UPDATE, SELECT ON SEQUENCE pro3_slaughterhouse.tray_tray_id_seq TO slaughterhouseserver;
+    GRANT USAGE, UPDATE, SELECT ON SEQUENCE pro3_slaughterhouse.traytoproducttransfer_tray_id_seq TO slaughterhouseserver;
 
 
 -- Ensure that this user also has access to future additions or alterations to tables within 'pro3_slaughterhouse' schema:

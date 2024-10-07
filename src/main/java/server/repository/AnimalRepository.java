@@ -1,142 +1,22 @@
 package server.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import server.repository.exceptions.DBInsertionException;
-import server.repository.exceptions.DBPrimaryKeyMatchNotFound;
-import server.repository.exceptions.DBPrimaryKeyRetrievalException;
 import shared.model.entities.Animal;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.List;
-
+/** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
+ * This interface replaces the old AnimalRepository implementation, and instead utilizes the flexibility of
+ * JPA (Java Persistence API) with Spring Boot, instead of the old manual implementation through JDBC.<br>
+ * This @Repository interface extends JpaRepository and provides access to paging, sorting and CRUD operations on the database.
+ * It is automatically populated by Spring Boot JPA, so no implementation class is needed for the proper Database access operations.<br>
+ * JPA specification states that each Entity in the database must have a java annotated @Entity object in the Java code.
+ * JPA also states that for each @Entity there must be a corresponding @Repository similar to this.
+ * </p>
+ * <p>More info can be found here:<br>https://www.geeksforgeeks.org/spring-boot-difference-between-crudrepository-and-jparepository<br>
+ * and here:<br> https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d</p>*/
 @Repository
-public class AnimalRepository
+public interface AnimalRepository extends JpaRepository<Animal, Long> // <-- Primary key of Entity must be provided as the Type to JpaRepository!
 {
-  private final JdbcTemplate jdbcTemplate;
-
-  @Autowired //Signals to Spring Boot, that it should utilize dependency injection to fill out parameters, i.e. the JdbcTemplate!
-  public AnimalRepository(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-  }
-
-
-  // RowMapper is responsible for mapping each resultSet into Java Objects!
-  private RowMapper<Animal> animalRowMapper = (resultSet, rowNum) -> {
-    Animal animal = new Animal();
-    animal.setId(resultSet.getLong("animal_id"));
-    animal.setWeight(resultSet.getBigDecimal("weight_kilogram"));
-    return animal;
-  };
-
-
-  public List<Animal> getAllAnimalsFromDatabase() {
-    // The SQL statement to be executed on the database:
-    String sql = "SELECT * FROM animal";
-
-    try {
-      // Attempt to execute query on the database:
-      List<Animal> animals = jdbcTemplate.query(sql, animalRowMapper);
-
-      // TODO: Implement query to related table (AnimalPart), and fill Animal's animalPartList!
-
-      if (animals.isEmpty())
-        throw new DBPrimaryKeyRetrievalException("Unexpected exception occurred while retrieving animals from database");
-
-      return animals;
-
-    } catch (IncorrectResultSizeDataAccessException e) {
-      throw new DBPrimaryKeyMatchNotFound("Unexpected exception occurred while retrieving animals from database");
-    } catch (Exception e) {
-      throw new DBPrimaryKeyRetrievalException("Error looking up Animals in database");
-    }
-  }
-
-
-  public Animal getAnimalByIdFromDatabase(Long id) throws DBPrimaryKeyRetrievalException, DBPrimaryKeyMatchNotFound {
-
-    // The SQL statement to be executed on the database:
-    String sql = "SELECT animal_id, weight_kilogram FROM animal WHERE animal_id = ?";
-
-    try {
-      // Attempt to execute query on the database:
-      Animal animal = jdbcTemplate.queryForObject(sql, animalRowMapper, id);
-
-      if (animal != null) {
-        // TODO: Implement query related table (AnimalPart), and fill Animal's animalPartList!
-
-        return animal;
-      } else {
-        throw new DBPrimaryKeyRetrievalException("Failed to retrieve Animal with animal_id=" + id);
-      }
-    } catch (IncorrectResultSizeDataAccessException e) {
-      throw new DBPrimaryKeyMatchNotFound("No Animal with Primary Key animal_id=" + id + " found in database.");
-    } catch (Exception e) {
-      throw new DBPrimaryKeyRetrievalException("Error looking up Animal in database");
-    }
-  }
-
-
-  public Animal addNewAnimalToDatabase(Animal animal) throws DBInsertionException, DBPrimaryKeyRetrievalException {
-    try {
-      // The SQL statement to be executed on the database:
-      String sql = "INSERT INTO animal (weight_kilogram) VALUES (?) RETURNING animal_id";
-
-      // A container for the primary key, which is assigned to the newly added Animal
-      KeyHolder keyHolder = new GeneratedKeyHolder();
-
-      // Execution of the SQL statement on the database, using jdbcTemplate - a spring boot method! Also ensuring to return the generated key.
-      jdbcTemplate.update(connection -> {
-        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        ps.setBigDecimal(1, animal.getWeight());
-        return ps;
-      }, keyHolder);
-
-      // Create an Animal, to return with the proper id:
-      Animal createdAnimal = animal.copy();
-
-      // Retrieve the id from the generated key
-      Number key = keyHolder.getKey();
-
-      if (key != null) {
-        // Assign the created key id to the Animal, if such a key is not null.
-        createdAnimal.setId(key.longValue());
-        return createdAnimal;
-      } else {
-        throw new DBPrimaryKeyRetrievalException("Failed to retrieve generated animal_id primary key.");
-      }
-    } catch (Exception e) {
-      throw new DBInsertionException("Error inserting Animal into database");
-    }
-  }
-
-
-  public boolean updateExistingAnimalInDatabase(Animal animal) throws DBInsertionException, DBPrimaryKeyMatchNotFound {
-    // The SQL statement to be executed on the database:
-    String sql = "UPDATE animal SET weight_kilogram = ? WHERE animal_id = ?";
-
-    // Execute the SQL statement on the database, using jdbcTemplate - a spring boot method!.
-    int updatedRows = jdbcTemplate.update(sql, animal.getWeight(), animal.getId());
-
-    // Evaluate and return response.
-    if(updatedRows == 1) // Exactly one row was updated in database:
-      return true;
-    else if (updatedRows == 0)
-      throw new DBPrimaryKeyMatchNotFound("No Animals with Primary Key animal_id=" + animal.getId() + " found in database.");
-    else
-      throw new DBInsertionException("Multiple Animals with animal_id=" + animal.getId() + " found in database. Update aborted!");
-  }
-
-
-  //TODO MISSING IMPLEMENTATION
-  /*public int deleteExistingAnimalFromDatabase(Long id) {
-    String sql = "DELETE FROM animal WHERE id = ?";
-    return jdbcTemplate.update(sql, id);
-  }*/
+  // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.
+  // If additional functionality is required, it can be added below.
 }

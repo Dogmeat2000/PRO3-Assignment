@@ -6,4 +6,16 @@
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/protobuf/java" isTestSource="false" generated="true" />
     </content>
   </component>
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="entityManagerFactory" value="95e28238-54e5-47bc-914a-68198dcb8b94" />
+        </datasource-mapping>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+  </component>
 </module>

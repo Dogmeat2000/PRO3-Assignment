@@ -1,22 +1,19 @@
 package server.service;
 
+import jakarta.persistence.PersistenceException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.repository.AnimalRepository;
-import server.repository.exceptions.DBInsertionException;
-import server.repository.exceptions.DBPrimaryKeyMatchNotFound;
-import server.repository.exceptions.DBPrimaryKeyRetrievalException;
 import shared.model.entities.Animal;
-import shared.model.entities.Product;
 import shared.model.exceptions.AnimalNotFoundException;
-import shared.model.exceptions.UpdateFailedException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class AnimalService implements AnimalRegistryInterface
@@ -32,15 +29,13 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public Animal registerAnimal(Animal data) {
-    // Perform Data Validation:
-    // if (weightInKilogram.compareTo(BigDecimal.ZERO) < 0) throw new ValidationException("price must be greater than zero");
-    // TODO: More data validation?
+  @Override public Animal registerAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
+    // Validate received data, before passing to repository/database:
+    validateWeight(data.getWeight_kilogram());
 
     // Attempt to add Animal to DB:
     try {
-      logger.debug("Adding Animal to DB with weight: {}", data.getWeight());
-      Animal newAnimal = animalRepository.addNewAnimalToDatabase(data);
+      Animal newAnimal = animalRepository.save(data);
       logger.info("Animal added to DB with ID: {}", newAnimal.getId());
 
       // Attempt to add Animal to local cache:
@@ -48,20 +43,22 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal saved to local cache with ID: {}", newAnimal.getId());
 
       return newAnimal;
-    } catch (DBInsertionException e) {
-      // TODO: Implement proper exception handling.
-      throw new RuntimeException(e);
-    } catch (DBPrimaryKeyRetrievalException e) {
-      // TODO: Implement proper exception handling.
-      throw new RuntimeException(e);
+
+    } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
+      logger.error("Unable to register Animal in DB with weight: {}, Reason: {}", data.getWeight_kilogram(), e.getMessage());
+      throw new DataIntegrityViolationException("Invalid Animal provided. Incompatible with database!");
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred while registering Animal with ID {}: {}", data.getId(), e.getMessage());
+      throw new PersistenceException(e);
     }
 
   }
 
 
-  @Override public Animal readAnimal(long animalId) {
-    // Perform Data Validation:
-    // TODO: Implement validation
+  @Override public Animal readAnimal(long animalId) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException {
+    // Validate received id, before passing to repository/database:
+    validateId(animalId);
 
     // Attempt to read Animal from local cache first:
     if(animalCache.containsKey(animalId)) {
@@ -71,93 +68,145 @@ public class AnimalService implements AnimalRegistryInterface
 
     // Animal not found in local cache. Attempt to read from DB:
     try {
-      Animal animal = animalRepository.getAnimalByIdFromDatabase(animalId);
+      logger.info("Animal not found in local cache with ID: {}. Looking up in database...", animalId);
+
+      // Causes the repository to query the database. If no match is found, an error is thrown immediately.
+      Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new AnimalNotFoundException("No Animal found in database with matching id=" + animalId));
+
       logger.info("Animal read from database with ID: {}", animalId);
 
       // Add found Animal to local cache, to improve performance next time Animal is requested.
-      if(animal != null) {
-        animalCache.put(animalId, animal);
-        logger.info("Animal added to local cache with ID: {}", animalId);
-      }
+      animalCache.put(animal.getId(), animal);
+      logger.info("Animal added to local cache with ID: {}", animal.getId());
       return animal;
-    } catch (DBPrimaryKeyRetrievalException e) {
-      // TODO: Implement proper exception handling.
-      logger.info("ERROR: Unable to find Animal with ID: {}", animalId);
-      throw new AnimalNotFoundException("No Animal found in database with matching id.");
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred while registering Animal with ID {}: {}", animalId, e.getMessage());
+      throw new PersistenceException(e);
     }
   }
 
 
-  @Override public boolean updateAnimal(Animal data) {
-    // Perform Data Validation:
-    // TODO: Implement validation
+  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Override public boolean updateAnimal(Animal data) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException {
+    // Validate received data, before passing to repository/database:
+    validateAnimal(data);
 
     // Attempt to update Animal in database:
     try {
-      if(animalRepository.updateExistingAnimalInDatabase(data)) {
-        logger.info("Animal updated in database with ID: {}", data.getId());
-        // Update Animal in local cache also, overwriting any existing animal associated with given key:
-        animalCache.put(data.getId(), data);
-        logger.info("Animal updated in local cache with ID: {}", data.getId());
-        return true;
-      }
-      // Update same Animal in local cache, if exists:
-    } catch (DBPrimaryKeyMatchNotFound e) {
-      logger.info("ERROR: Unable to find Animal with ID: {}", data.getId());
-      throw new AnimalNotFoundException("No Animal found in database with matching id.");
-    } catch (DBInsertionException e) {
-      logger.info("ERROR: Unable to Update Animal with ID: {}", data.getId() + ". Multiple entries with this ID found.");
-      throw new UpdateFailedException("Animal Update failed. Found multiple entries of the same animal_id");
+      // Fetch the existing Entity from DB:
+      Animal animal = animalRepository.findById(data.getId()).orElseThrow(() -> new AnimalNotFoundException("No Animal found in database with matching id=" + data.getId()));
+
+      // Modify the database Entity locally:
+      animal.setWeight_kilogram(data.getWeight_kilogram());
+      animal.getPartList().clear();
+      animal.getPartList().addAll(data.getPartList());
+
+      // Save the modified entity back to database:
+      animalRepository.save(animal);
+      logger.info("Animal updated in database with ID: {}", animal.getId());
+
+      // Attempt to add Animal to local cache:
+      animalCache.put(animal.getId(), animal);
+      logger.info("Animal saved to local cache with ID: {}", animal.getId());
+
+      return true;
+
+    } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
+      logger.error("Unable to update Animal in DB with weight: {}, Reason: {}", data.getWeight_kilogram(), e.getMessage());
+      throw new DataIntegrityViolationException(e.getMessage());
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred while updating Animal with ID {}: {}", data.getId(), e.getMessage());
+      throw new PersistenceException(e);
     }
-    return false;
   }
 
 
-  @Override public boolean removeAnimal(Animal data) {
-    //TODO Not implemented yet
-    return false;
-  }
+  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Override public boolean removeAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
+    // Validate received data, before passing to repository/database:
+    validateAnimal(data);
 
-
-  @Override public List<Animal> getAllAnimals() {
-    // Compare last entry in database with last entry in local cache.
-    // If both are same, then no need to query database. Else query database for updated list,
-    // but only get the entries that are missing between local cache last entry and last entry in the database.
-    // TODO: Implement above!
-
-    //logger.info("Checking if local cache has the same number of Animal data entries as the database");
-    //logger.info("Database has more entries, than local cache. Retrieving the missing entries from database to local cache.");
-
-    // Below is temporary 'easy' implementation. TODO: Refactor the below code!
     try {
-      List<Animal> animals = animalRepository.getAllAnimalsFromDatabase();
+      // Attempt to delete the given Animal:
+      animalRepository.delete(data);
 
-      // Add found Animals to local cache, to improve performance next time Animal is requested.
+      // Confirm that the entity has been removed:
+      Optional<Animal> deletedAnimal = animalRepository.findById(data.getId());
+
+      if(deletedAnimal.isPresent()) {
+        // Animal was not removed from database.
+        logger.info("Animal was NOT deleted from database with ID: {}", data.getId());
+        throw new PersistenceException("Animal with ID " + data.getId() + " was not deleted!");
+      }
+
+      logger.info("Animal deleted from database with ID: {}", data.getId());
+      // Animal was removed from database. Now ensure that is it also removed from the local cache:
+      animalCache.remove(data.getId());
+      logger.info("Animal deleted from local cache with ID: {}", data.getId());
+      return true;
+
+    } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
+      logger.error("Unable to delete Animal in DB with id: {}, Reason: {}", data.getId(), e.getMessage());
+      throw new DataIntegrityViolationException(e.getMessage());
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Override public List<Animal> getAllAnimals() throws PersistenceException {
+
+    try {
+      List<Animal> animals = animalRepository.findAll();
+
+      // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
       animalCache.clear();
       for (Animal animal : animals) {
-        // Clear cache.
-        if(animal != null) {
+        if(animal != null)
           animalCache.put(animal.getId(), animal);
-          logger.info("Animal added to local cache with ID: {}", animal.getId());
-        }
       }
+      logger.info("Added all Animals from Database to Local Cache");
       return animals;
-    } catch (DBPrimaryKeyRetrievalException e) {
-      // TODO: Implement proper exception handling.
-      logger.info("ERROR: Exception occurred while attempting to query Animals from database.");
-      throw new AnimalNotFoundException("Did not find any Animals in the database!");
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
     }
   }
 
 
-  @Override public List<Animal> getAllAnimalsInProduct(long productId) {
-    //TODO Not implemented yet
-    return List.of();
+  private void validateAnimal(Animal animal) throws DataIntegrityViolationException {
+    // Animal cannot be null:
+    if(animal == null)
+      throw new DataIntegrityViolationException("Animal is null");
+
+    // Validate animal_id:
+    validateId(animal.getId());
+
+    // Animal weight must be larger than 0:
+    validateWeight(animal.getWeight_kilogram());
+
+    // Validation passed:
   }
 
 
-  @Override public List<Product> getAllProductsThatContainAnimal(long animalId) {
-    //TODO Not implemented yet
-    return List.of();
+  private void validateId(long animal_id) throws DataIntegrityViolationException {
+    // Animal_id must be larger than 0:
+    if(animal_id <= 0)
+      throw new DataIntegrityViolationException("animal_id is invalid (0 or less)");
+
+    // Validation passed:
+  }
+
+
+  private void validateWeight(BigDecimal weight) throws DataIntegrityViolationException {
+    // Animal weight must be larger than 0:
+    if(weight.compareTo(BigDecimal.valueOf(0)) <= 0)
+      throw new DataIntegrityViolationException("weight_kilogram is invalid (0 or less)");
+
+    // Validation passed:
   }
 }
