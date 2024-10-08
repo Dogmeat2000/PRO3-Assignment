@@ -3,6 +3,12 @@ option java_multiple_files = true;
 
 package grpc;
 
+message EmptyMessage {
+
+}
+
+
+// Animal entity:
 message AnimalData {
   int64 animalId = 1;
   string animalWeight = 2;
@@ -19,16 +25,13 @@ message AnimalsData {
 }
 
 
-message EmptyMessage {
-
-}
-
-
+// AnimalPart entity:
 message AnimalPartData {
   int64 animalPartId = 1;
   int64 partTypeId = 2;
   string partWeight = 3;
   int64 animalId = 4;
+  int64 trayId = 5;
 }
 
 
@@ -42,18 +45,31 @@ message AnimalPartsData {
 }
 
 
+// Tray entity:
 message TrayData {
   int64 trayId = 1;
   repeated AnimalPartId animalParts = 2;
 }
 
 
+// PartType entity:
 message PartTypeData {
   int64 partTypeId = 1;
   string partDesc = 2;
 }
 
 
+message PartTypeId {
+  int64 partTypeId = 1;
+}
+
+
+message PartTypesData {
+  repeated PartTypeData partTypes = 1;
+}
+
+
+// Product entity:
 message ProductData {
   int64 productId = 1;
   repeated TrayData trayIds = 2;
@@ -76,24 +92,29 @@ service SlaughterHouseService {
   rpc registerAnimal(AnimalData) returns (AnimalData);
   rpc registerAnimalPart(AnimalPartData) returns (AnimalPartData);
   rpc registerProduct(ProductData) returns (ProductData);
+  rpc registerPartType(PartTypeData) returns (PartTypeData);
 
   // Read:
   rpc readAnimal(AnimalId) returns (AnimalData);
   rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
   rpc readProduct(ProductId) returns (ProductData);
+  rpc readPartType(PartTypeId) returns (PartTypeData);
 
   // Update:
   rpc updateAnimal(AnimalData) returns (EmptyMessage);
   rpc updateAnimalPart(AnimalPartData) returns (EmptyMessage);
   rpc updateProduct(ProductData) returns (EmptyMessage);
+  rpc updatePartType(PartTypeData) returns (EmptyMessage);
 
   // Delete:
   rpc removeAnimal(AnimalData) returns (EmptyMessage);
   rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);
   rpc removeProduct(ProductData) returns (EmptyMessage);
+  rpc removePartType(PartTypeData) returns (EmptyMessage);
 
   // Get All:
   rpc getAllAnimals(EmptyMessage) returns (AnimalsData);
   rpc getAnimalParts(EmptyMessage) returns (AnimalPartsData);
   rpc getAllProducts(EmptyMessage) returns (ProductsData);
+  rpc getAllPartTypes(EmptyMessage) returns (PartTypesData);
 }

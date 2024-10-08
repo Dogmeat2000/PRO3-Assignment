@@ -84,13 +84,23 @@ public class AnimalPart implements Serializable
   }
 
 
-  public AnimalPart(Long part_id, BigDecimal weight, PartType type, Animal animal) {
+  public AnimalPart(Long part_id, BigDecimal weight, Long typeId, Long animalId, Long trayId) {
+    setPart_id(part_id);
+    setWeight(weight);
+    animal_id = animalId;
+    type_id = typeId;
+    tray_id = trayId;
+  }
+
+
+  public AnimalPart(Long part_id, BigDecimal weight, PartType type, Animal animal, Tray tray) {
     setPart_id(part_id);
     setWeight(weight);
     setAnimal(animal);
     setTray(null);
     setType(type);
     setProduct(null);
+    setTray(tray);
   }
 
 

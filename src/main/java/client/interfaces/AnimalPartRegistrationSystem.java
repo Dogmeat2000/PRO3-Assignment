@@ -1,6 +1,9 @@
 package client.interfaces;
 
 import shared.model.entities.Animal;
+import shared.model.entities.AnimalPart;
+import shared.model.entities.PartType;
+import shared.model.entities.Tray;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
@@ -10,17 +13,18 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
+// TODO: Update javaDocs!
 /**
  * <p>AnimalRegistrationSystem defines the interface responsible for the client side methods relating to Animal registration and management.</p>
  */
-public interface AnimalRegistrationSystem
+public interface AnimalPartRegistrationSystem
 {
   /** <p>Registers/Creates a new Animal in repository with the given parameters applied.</p>
    * @param weightInKilogram The animals weight in kilogram, decimal units are permitted.
    * @return The created Animal instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
-  Animal registerNewAnimal (BigDecimal weightInKilogram) throws CreateFailedException;
+  AnimalPart registerNewAnimalPart (Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) throws CreateFailedException;
 
 
   /** <p>Looks up any Animal entity with the specified id, in the repository</p>
@@ -28,7 +32,7 @@ public interface AnimalRegistrationSystem
    * @return The identified Animal instance.
    * @throws NotFoundException Thrown if Animal is not be found.
    */
-  Animal readAnimal (long animalId) throws NotFoundException;
+  AnimalPart readAnimalPart (Animal animal, PartType type, Tray tray) throws NotFoundException;
 
 
   /** <p>Updates the given Animal in the repository. Unique id is extracted from the Animal entity
@@ -37,7 +41,7 @@ public interface AnimalRegistrationSystem
    * @throws NotFoundException Thrown if no matching Animal could be found in the repository.
    * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified Animal entity.
    */
-  void updateAnimal (Animal data) throws UpdateFailedException, NotFoundException;
+  void updateAnimalPart (AnimalPart data) throws UpdateFailedException, NotFoundException;
 
 
   /** <p>Deletes the given Animal from the repository. Unique id is extracted from the Animal entity
@@ -47,12 +51,12 @@ public interface AnimalRegistrationSystem
    * @throws NotFoundException Thrown if no matching Animal could be found in the repository.
    * @throws DeleteFailedException Thrown if an error occurred while deleting the specified Animal entity.
    */
-  boolean removeAnimal (long animalId) throws DeleteFailedException, NotFoundException;
+  boolean removeAnimalPart (AnimalPart data) throws DeleteFailedException, NotFoundException;
 
 
   /** <p>Fetches all Animals from the repository.</p>
    * @return A List containing all Animal entities extracted from the repository.
    * @throws NotFoundException Thrown if no Animals could be found in the repository.
    */
-  List<Animal> getAllAnimals() throws NotFoundException;
+  List<AnimalPart> getAllAnimalParts() throws NotFoundException;
 }

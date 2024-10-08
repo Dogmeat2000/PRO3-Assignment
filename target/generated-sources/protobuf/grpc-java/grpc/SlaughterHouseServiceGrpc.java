@@ -108,6 +108,37 @@ public final class SlaughterHouseServiceGrpc {
     return getRegisterProductMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.PartTypeData> getRegisterPartTypeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "registerPartType",
+      requestType = grpc.PartTypeData.class,
+      responseType = grpc.PartTypeData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.PartTypeData> getRegisterPartTypeMethod() {
+    io.grpc.MethodDescriptor<grpc.PartTypeData, grpc.PartTypeData> getRegisterPartTypeMethod;
+    if ((getRegisterPartTypeMethod = SlaughterHouseServiceGrpc.getRegisterPartTypeMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getRegisterPartTypeMethod = SlaughterHouseServiceGrpc.getRegisterPartTypeMethod) == null) {
+          SlaughterHouseServiceGrpc.getRegisterPartTypeMethod = getRegisterPartTypeMethod =
+              io.grpc.MethodDescriptor.<grpc.PartTypeData, grpc.PartTypeData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "registerPartType"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("registerPartType"))
+              .build();
+        }
+      }
+    }
+    return getRegisterPartTypeMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalId,
       grpc.AnimalData> getReadAnimalMethod;
 
@@ -199,6 +230,37 @@ public final class SlaughterHouseServiceGrpc {
       }
     }
     return getReadProductMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.PartTypeId,
+      grpc.PartTypeData> getReadPartTypeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readPartType",
+      requestType = grpc.PartTypeId.class,
+      responseType = grpc.PartTypeData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.PartTypeId,
+      grpc.PartTypeData> getReadPartTypeMethod() {
+    io.grpc.MethodDescriptor<grpc.PartTypeId, grpc.PartTypeData> getReadPartTypeMethod;
+    if ((getReadPartTypeMethod = SlaughterHouseServiceGrpc.getReadPartTypeMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getReadPartTypeMethod = SlaughterHouseServiceGrpc.getReadPartTypeMethod) == null) {
+          SlaughterHouseServiceGrpc.getReadPartTypeMethod = getReadPartTypeMethod =
+              io.grpc.MethodDescriptor.<grpc.PartTypeId, grpc.PartTypeData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readPartType"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("readPartType"))
+              .build();
+        }
+      }
+    }
+    return getReadPartTypeMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalData,
@@ -294,6 +356,37 @@ public final class SlaughterHouseServiceGrpc {
     return getUpdateProductMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.EmptyMessage> getUpdatePartTypeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "updatePartType",
+      requestType = grpc.PartTypeData.class,
+      responseType = grpc.EmptyMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.EmptyMessage> getUpdatePartTypeMethod() {
+    io.grpc.MethodDescriptor<grpc.PartTypeData, grpc.EmptyMessage> getUpdatePartTypeMethod;
+    if ((getUpdatePartTypeMethod = SlaughterHouseServiceGrpc.getUpdatePartTypeMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getUpdatePartTypeMethod = SlaughterHouseServiceGrpc.getUpdatePartTypeMethod) == null) {
+          SlaughterHouseServiceGrpc.getUpdatePartTypeMethod = getUpdatePartTypeMethod =
+              io.grpc.MethodDescriptor.<grpc.PartTypeData, grpc.EmptyMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "updatePartType"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("updatePartType"))
+              .build();
+        }
+      }
+    }
+    return getUpdatePartTypeMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalData,
       grpc.EmptyMessage> getRemoveAnimalMethod;
 
@@ -385,6 +478,37 @@ public final class SlaughterHouseServiceGrpc {
       }
     }
     return getRemoveProductMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.EmptyMessage> getRemovePartTypeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "removePartType",
+      requestType = grpc.PartTypeData.class,
+      responseType = grpc.EmptyMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.PartTypeData,
+      grpc.EmptyMessage> getRemovePartTypeMethod() {
+    io.grpc.MethodDescriptor<grpc.PartTypeData, grpc.EmptyMessage> getRemovePartTypeMethod;
+    if ((getRemovePartTypeMethod = SlaughterHouseServiceGrpc.getRemovePartTypeMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getRemovePartTypeMethod = SlaughterHouseServiceGrpc.getRemovePartTypeMethod) == null) {
+          SlaughterHouseServiceGrpc.getRemovePartTypeMethod = getRemovePartTypeMethod =
+              io.grpc.MethodDescriptor.<grpc.PartTypeData, grpc.EmptyMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "removePartType"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("removePartType"))
+              .build();
+        }
+      }
+    }
+    return getRemovePartTypeMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
@@ -480,6 +604,37 @@ public final class SlaughterHouseServiceGrpc {
     return getGetAllProductsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
+      grpc.PartTypesData> getGetAllPartTypesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getAllPartTypes",
+      requestType = grpc.EmptyMessage.class,
+      responseType = grpc.PartTypesData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.EmptyMessage,
+      grpc.PartTypesData> getGetAllPartTypesMethod() {
+    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.PartTypesData> getGetAllPartTypesMethod;
+    if ((getGetAllPartTypesMethod = SlaughterHouseServiceGrpc.getGetAllPartTypesMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getGetAllPartTypesMethod = SlaughterHouseServiceGrpc.getGetAllPartTypesMethod) == null) {
+          SlaughterHouseServiceGrpc.getGetAllPartTypesMethod = getGetAllPartTypesMethod =
+              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.PartTypesData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getAllPartTypes"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypesData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("getAllPartTypes"))
+              .build();
+        }
+      }
+    }
+    return getGetAllPartTypesMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -553,6 +708,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void registerPartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRegisterPartTypeMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -574,6 +736,13 @@ public final class SlaughterHouseServiceGrpc {
     default void readProduct(grpc.ProductId request,
         io.grpc.stub.StreamObserver<grpc.ProductData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadProductMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void readPartType(grpc.PartTypeId request,
+        io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadPartTypeMethod(), responseObserver);
     }
 
     /**
@@ -601,6 +770,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void updatePartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdatePartTypeMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -625,6 +801,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void removePartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRemovePartTypeMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -646,6 +829,13 @@ public final class SlaughterHouseServiceGrpc {
     default void getAllProducts(grpc.EmptyMessage request,
         io.grpc.stub.StreamObserver<grpc.ProductsData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllProductsMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void getAllPartTypes(grpc.EmptyMessage request,
+        io.grpc.stub.StreamObserver<grpc.PartTypesData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllPartTypesMethod(), responseObserver);
     }
   }
 
@@ -704,6 +894,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void registerPartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRegisterPartTypeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -728,6 +926,14 @@ public final class SlaughterHouseServiceGrpc {
         io.grpc.stub.StreamObserver<grpc.ProductData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getReadProductMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void readPartType(grpc.PartTypeId request,
+        io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadPartTypeMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -758,6 +964,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void updatePartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdatePartTypeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -785,6 +999,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void removePartType(grpc.PartTypeData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRemovePartTypeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -809,6 +1031,14 @@ public final class SlaughterHouseServiceGrpc {
         io.grpc.stub.StreamObserver<grpc.ProductsData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllProductsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getAllPartTypes(grpc.EmptyMessage request,
+        io.grpc.stub.StreamObserver<grpc.PartTypesData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllPartTypesMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -853,6 +1083,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.PartTypeData registerPartType(grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRegisterPartTypeMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -874,6 +1111,13 @@ public final class SlaughterHouseServiceGrpc {
     public grpc.ProductData readProduct(grpc.ProductId request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getReadProductMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.PartTypeData readPartType(grpc.PartTypeId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadPartTypeMethod(), getCallOptions(), request);
     }
 
     /**
@@ -901,6 +1145,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.EmptyMessage updatePartType(grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdatePartTypeMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -925,6 +1176,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.EmptyMessage removePartType(grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRemovePartTypeMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -946,6 +1204,13 @@ public final class SlaughterHouseServiceGrpc {
     public grpc.ProductsData getAllProducts(grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllProductsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.PartTypesData getAllPartTypes(grpc.EmptyMessage request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllPartTypesMethod(), getCallOptions(), request);
     }
   }
 
@@ -993,6 +1258,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.PartTypeData> registerPartType(
+        grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRegisterPartTypeMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -1017,6 +1290,14 @@ public final class SlaughterHouseServiceGrpc {
         grpc.ProductId request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getReadProductMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.PartTypeData> readPartType(
+        grpc.PartTypeId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadPartTypeMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1047,6 +1328,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.EmptyMessage> updatePartType(
+        grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdatePartTypeMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -1071,6 +1360,14 @@ public final class SlaughterHouseServiceGrpc {
         grpc.ProductData request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRemoveProductMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.EmptyMessage> removePartType(
+        grpc.PartTypeData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRemovePartTypeMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1099,23 +1396,36 @@ public final class SlaughterHouseServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllProductsMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.PartTypesData> getAllPartTypes(
+        grpc.EmptyMessage request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllPartTypesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REGISTER_ANIMAL = 0;
   private static final int METHODID_REGISTER_ANIMAL_PART = 1;
   private static final int METHODID_REGISTER_PRODUCT = 2;
-  private static final int METHODID_READ_ANIMAL = 3;
-  private static final int METHODID_READ_ANIMAL_PART = 4;
-  private static final int METHODID_READ_PRODUCT = 5;
-  private static final int METHODID_UPDATE_ANIMAL = 6;
-  private static final int METHODID_UPDATE_ANIMAL_PART = 7;
-  private static final int METHODID_UPDATE_PRODUCT = 8;
-  private static final int METHODID_REMOVE_ANIMAL = 9;
-  private static final int METHODID_REMOVE_ANIMAL_PART = 10;
-  private static final int METHODID_REMOVE_PRODUCT = 11;
-  private static final int METHODID_GET_ALL_ANIMALS = 12;
-  private static final int METHODID_GET_ANIMAL_PARTS = 13;
-  private static final int METHODID_GET_ALL_PRODUCTS = 14;
+  private static final int METHODID_REGISTER_PART_TYPE = 3;
+  private static final int METHODID_READ_ANIMAL = 4;
+  private static final int METHODID_READ_ANIMAL_PART = 5;
+  private static final int METHODID_READ_PRODUCT = 6;
+  private static final int METHODID_READ_PART_TYPE = 7;
+  private static final int METHODID_UPDATE_ANIMAL = 8;
+  private static final int METHODID_UPDATE_ANIMAL_PART = 9;
+  private static final int METHODID_UPDATE_PRODUCT = 10;
+  private static final int METHODID_UPDATE_PART_TYPE = 11;
+  private static final int METHODID_REMOVE_ANIMAL = 12;
+  private static final int METHODID_REMOVE_ANIMAL_PART = 13;
+  private static final int METHODID_REMOVE_PRODUCT = 14;
+  private static final int METHODID_REMOVE_PART_TYPE = 15;
+  private static final int METHODID_GET_ALL_ANIMALS = 16;
+  private static final int METHODID_GET_ANIMAL_PARTS = 17;
+  private static final int METHODID_GET_ALL_PRODUCTS = 18;
+  private static final int METHODID_GET_ALL_PART_TYPES = 19;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1146,6 +1456,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.registerProduct((grpc.ProductData) request,
               (io.grpc.stub.StreamObserver<grpc.ProductData>) responseObserver);
           break;
+        case METHODID_REGISTER_PART_TYPE:
+          serviceImpl.registerPartType((grpc.PartTypeData) request,
+              (io.grpc.stub.StreamObserver<grpc.PartTypeData>) responseObserver);
+          break;
         case METHODID_READ_ANIMAL:
           serviceImpl.readAnimal((grpc.AnimalId) request,
               (io.grpc.stub.StreamObserver<grpc.AnimalData>) responseObserver);
@@ -1158,6 +1472,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.readProduct((grpc.ProductId) request,
               (io.grpc.stub.StreamObserver<grpc.ProductData>) responseObserver);
           break;
+        case METHODID_READ_PART_TYPE:
+          serviceImpl.readPartType((grpc.PartTypeId) request,
+              (io.grpc.stub.StreamObserver<grpc.PartTypeData>) responseObserver);
+          break;
         case METHODID_UPDATE_ANIMAL:
           serviceImpl.updateAnimal((grpc.AnimalData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
@@ -1168,6 +1486,10 @@ public final class SlaughterHouseServiceGrpc {
           break;
         case METHODID_UPDATE_PRODUCT:
           serviceImpl.updateProduct((grpc.ProductData) request,
+              (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
+          break;
+        case METHODID_UPDATE_PART_TYPE:
+          serviceImpl.updatePartType((grpc.PartTypeData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
           break;
         case METHODID_REMOVE_ANIMAL:
@@ -1182,6 +1504,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.removeProduct((grpc.ProductData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
           break;
+        case METHODID_REMOVE_PART_TYPE:
+          serviceImpl.removePartType((grpc.PartTypeData) request,
+              (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
+          break;
         case METHODID_GET_ALL_ANIMALS:
           serviceImpl.getAllAnimals((grpc.EmptyMessage) request,
               (io.grpc.stub.StreamObserver<grpc.AnimalsData>) responseObserver);
@@ -1193,6 +1519,10 @@ public final class SlaughterHouseServiceGrpc {
         case METHODID_GET_ALL_PRODUCTS:
           serviceImpl.getAllProducts((grpc.EmptyMessage) request,
               (io.grpc.stub.StreamObserver<grpc.ProductsData>) responseObserver);
+          break;
+        case METHODID_GET_ALL_PART_TYPES:
+          serviceImpl.getAllPartTypes((grpc.EmptyMessage) request,
+              (io.grpc.stub.StreamObserver<grpc.PartTypesData>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1234,6 +1564,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.ProductData>(
                 service, METHODID_REGISTER_PRODUCT)))
         .addMethod(
+          getRegisterPartTypeMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.PartTypeData,
+              grpc.PartTypeData>(
+                service, METHODID_REGISTER_PART_TYPE)))
+        .addMethod(
           getReadAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1254,6 +1591,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.ProductId,
               grpc.ProductData>(
                 service, METHODID_READ_PRODUCT)))
+        .addMethod(
+          getReadPartTypeMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.PartTypeId,
+              grpc.PartTypeData>(
+                service, METHODID_READ_PART_TYPE)))
         .addMethod(
           getUpdateAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1276,6 +1620,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage>(
                 service, METHODID_UPDATE_PRODUCT)))
         .addMethod(
+          getUpdatePartTypeMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.PartTypeData,
+              grpc.EmptyMessage>(
+                service, METHODID_UPDATE_PART_TYPE)))
+        .addMethod(
           getRemoveAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1297,6 +1648,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage>(
                 service, METHODID_REMOVE_PRODUCT)))
         .addMethod(
+          getRemovePartTypeMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.PartTypeData,
+              grpc.EmptyMessage>(
+                service, METHODID_REMOVE_PART_TYPE)))
+        .addMethod(
           getGetAllAnimalsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1317,6 +1675,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage,
               grpc.ProductsData>(
                 service, METHODID_GET_ALL_PRODUCTS)))
+        .addMethod(
+          getGetAllPartTypesMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.EmptyMessage,
+              grpc.PartTypesData>(
+                service, METHODID_GET_ALL_PART_TYPES)))
         .build();
   }
 
@@ -1368,18 +1733,23 @@ public final class SlaughterHouseServiceGrpc {
               .addMethod(getRegisterAnimalMethod())
               .addMethod(getRegisterAnimalPartMethod())
               .addMethod(getRegisterProductMethod())
+              .addMethod(getRegisterPartTypeMethod())
               .addMethod(getReadAnimalMethod())
               .addMethod(getReadAnimalPartMethod())
               .addMethod(getReadProductMethod())
+              .addMethod(getReadPartTypeMethod())
               .addMethod(getUpdateAnimalMethod())
               .addMethod(getUpdateAnimalPartMethod())
               .addMethod(getUpdateProductMethod())
+              .addMethod(getUpdatePartTypeMethod())
               .addMethod(getRemoveAnimalMethod())
               .addMethod(getRemoveAnimalPartMethod())
               .addMethod(getRemoveProductMethod())
+              .addMethod(getRemovePartTypeMethod())
               .addMethod(getGetAllAnimalsMethod())
               .addMethod(getGetAnimalPartsMethod())
               .addMethod(getGetAllProductsMethod())
+              .addMethod(getGetAllPartTypesMethod())
               .build();
         }
       }

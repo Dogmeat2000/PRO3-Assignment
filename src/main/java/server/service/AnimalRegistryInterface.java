@@ -3,7 +3,7 @@ package server.service;
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
 import shared.model.entities.Animal;
-import shared.model.exceptions.AnimalNotFoundException;
+import shared.model.exceptions.NotFoundException;
 
 import java.util.List;
 
@@ -24,22 +24,22 @@ public interface AnimalRegistryInterface
   /** <p>Looks up a Animal entity with the specified id, in the repository</p>
    * @param animalId A unique identifier assigned to the specific Animal to look up.
    * @return The identified Animal instance.
-   * @throws AnimalNotFoundException Thrown if Animal is not be found.
+   * @throws NotFoundException Thrown if Animal is not be found.
    * @throws PersistenceException Thrown if fetching Animal failed, due to system/persistence issues (i.e. Repository is offline, etc.)
    * @throws DataIntegrityViolationException Thrown if animal_id is invalid (i.e. 0 or negative id specified).
    */
-  Animal readAnimal (long animalId) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException;
+  Animal readAnimal (long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
   /** <p>Updates the given Animal in the repository. Unique id is extracted from the Animal entity
    * and is used to uniquely identify which Animal entity in the repository to apply the updated information to.</p>
    * @param data An Animal Entity, with proper id, weight, etc. applied to.
    * @return True, if Animal was successfully updated. Otherwise, returns false.
-   * @throws AnimalNotFoundException Thrown if no matching Animal could be found in the repository.
+   * @throws NotFoundException Thrown if no matching Animal could be found in the repository.
    * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
    * @throws DataIntegrityViolationException Thrown if Animal contains invalid attributes (i.e. 0 or negative id specified).
    */
-  boolean updateAnimal (Animal data) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException;
+  boolean updateAnimal (Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
   /** <p>Deletes the given Animal from the repository. Unique id is extracted from the Animal entity

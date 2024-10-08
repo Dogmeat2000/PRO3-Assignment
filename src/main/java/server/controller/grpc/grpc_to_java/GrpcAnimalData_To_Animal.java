@@ -1,4 +1,4 @@
-package server.controller.grpc;
+package server.controller.grpc.grpc_to_java;
 
 import grpc.AnimalData;
 import grpc.AnimalsData;

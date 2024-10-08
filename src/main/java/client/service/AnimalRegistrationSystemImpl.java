@@ -2,11 +2,12 @@ package client.service;
 
 import client.interfaces.AnimalRegistrationSystem;
 import grpc.*;
-import server.controller.grpc.Animal_ToGrpc_AnimalData;
-import shared.model.exceptions.AnimalNotFoundException;
+import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
+import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
+import shared.model.exceptions.NotFoundException;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
-import server.controller.grpc.GrpcAnimalData_To_Animal;
+import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.GrpcFactory;
 import shared.model.entities.Animal;
 import shared.model.exceptions.CreateFailedException;
@@ -19,9 +20,9 @@ import java.util.List;
 import static io.grpc.Status.INTERNAL;
 import static io.grpc.Status.NOT_FOUND;
 
-public class Station1_AnimalRegistration extends Client implements AnimalRegistrationSystem
+public class AnimalRegistrationSystemImpl extends Client implements AnimalRegistrationSystem
 {
-  public Station1_AnimalRegistration(String host, int port) {
+  public AnimalRegistrationSystemImpl(String host, int port) {
     super(host, port);
   }
 
@@ -52,7 +53,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
   }
 
 
-  @Override public Animal readAnimal(long animalId) throws AnimalNotFoundException {
+  @Override public Animal readAnimal(long animalId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -61,7 +62,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
       SlaughterHouseServiceGrpc.SlaughterHouseServiceBlockingStub stub = SlaughterHouseServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of AnimalId (AnimalData)
-      AnimalId id = GrpcFactory.buildGrpcAnimalId(animalId);
+      AnimalId id = LongId_ToGrpc_Id.convertToAnimalId(animalId);
 
       // Prompt gRPC to read the Animal:
       AnimalData foundAnimal = stub.readAnimal(id);
@@ -70,7 +71,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
       return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
 
     } catch (StatusRuntimeException e) {
-      throw new AnimalNotFoundException("No animal found with id '" + animalId);
+      throw new NotFoundException("No animal found with id '" + animalId);
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -78,7 +79,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
   }
 
 
-  @Override public void updateAnimal(Animal data) throws UpdateFailedException, AnimalNotFoundException {
+  @Override public void updateAnimal(Animal data) throws UpdateFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -87,7 +88,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
       SlaughterHouseServiceGrpc.SlaughterHouseServiceBlockingStub stub = SlaughterHouseServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (Convert Animal to AnimalData)
-      AnimalData animal = Animal_ToGrpc_AnimalData.ConvertToAnimalData(data);
+      AnimalData animal = Animal_ToGrpc_AnimalData.convertToAnimalData(data);
 
       // Prompt gRPC to update the Animal:
       EmptyMessage updated = stub.updateAnimal(animal);
@@ -97,7 +98,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
-        throw new AnimalNotFoundException("No animal found with id '" + data.getId() + "'");
+        throw new NotFoundException("No animal found with id '" + data.getId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
         throw new UpdateFailedException("Critical Error encountered. Failed to Update Animal with id '" + data.getId() + "'");
@@ -108,7 +109,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
   }
 
 
-  @Override public boolean removeAnimal(long animal_id) throws DeleteFailedException, AnimalNotFoundException {
+  @Override public boolean removeAnimal(long animal_id) throws DeleteFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -120,7 +121,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
       Animal animal = readAnimal(animal_id);
 
       // Create a gRPC compatible version of animal (Convert Animal to AnimalData)
-      AnimalData animalData = Animal_ToGrpc_AnimalData.ConvertToAnimalData(animal);
+      AnimalData animalData = Animal_ToGrpc_AnimalData.convertToAnimalData(animal);
 
       // Prompt gRPC to delete the Animal:
       EmptyMessage deleted = stub.removeAnimal(animalData);
@@ -131,7 +132,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
       return true;
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
-        throw new AnimalNotFoundException("No animal found with id '" + animal_id + "'");
+        throw new NotFoundException("No animal found with id '" + animal_id + "'");
       else
         throw new DeleteFailedException("Critical Error encountered. Failed to deleted Animal with id '" + animal_id + "'");
     }
@@ -142,7 +143,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
   }
 
 
-  @Override public List<Animal> getAllAnimals() throws AnimalNotFoundException {
+  @Override public List<Animal> getAllAnimals() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -158,7 +159,7 @@ public class Station1_AnimalRegistration extends Client implements AnimalRegistr
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
-        throw new AnimalNotFoundException("No animals found in database");
+        throw new NotFoundException("No animals found in database");
       else
         throw new RuntimeException("Critical Error encountered. Failed to Query for all Animals from the Database");
     } finally {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
-import shared.model.exceptions.AnimalNotFoundException;
+import shared.model.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -52,11 +52,10 @@ public class AnimalService implements AnimalRegistryInterface
       logger.error("Persistence exception occurred while registering Animal with ID {}: {}", data.getId(), e.getMessage());
       throw new PersistenceException(e);
     }
-
   }
 
 
-  @Override public Animal readAnimal(long animalId) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Override public Animal readAnimal(long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
     validateId(animalId);
 
@@ -71,7 +70,7 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal not found in local cache with ID: {}. Looking up in database...", animalId);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
-      Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new AnimalNotFoundException("No Animal found in database with matching id=" + animalId));
+      Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new NotFoundException("No Animal found in database with matching id=" + animalId));
 
       logger.info("Animal read from database with ID: {}", animalId);
 
@@ -87,14 +86,14 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean updateAnimal(Animal data) throws AnimalNotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Override public boolean updateAnimal(Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
     validateAnimal(data);
 
     // Attempt to update Animal in database:
     try {
       // Fetch the existing Entity from DB:
-      Animal animal = animalRepository.findById(data.getId()).orElseThrow(() -> new AnimalNotFoundException("No Animal found in database with matching id=" + data.getId()));
+      Animal animal = animalRepository.findById(data.getId()).orElseThrow(() -> new NotFoundException("No Animal found in database with matching id=" + data.getId()));
 
       // Modify the database Entity locally:
       animal.setWeight_kilogram(data.getWeight_kilogram());

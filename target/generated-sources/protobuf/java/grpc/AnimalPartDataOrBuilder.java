@@ -36,4 +36,10 @@ public interface AnimalPartDataOrBuilder extends
    * @return The animalId.
    */
   long getAnimalId();
+
+  /**
+   * <code>int64 trayId = 5;</code>
+   * @return The trayId.
+   */
+  long getTrayId();
 }

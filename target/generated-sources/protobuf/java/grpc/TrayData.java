@@ -4,6 +4,10 @@
 package grpc;
 
 /**
+ * <pre>
+ * Tray entity:
+ * </pre>
+ *
  * Protobuf type {@code grpc.TrayData}
  */
 public final class TrayData extends
@@ -320,6 +324,10 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   * Tray entity:
+   * </pre>
+   *
    * Protobuf type {@code grpc.TrayData}
    */
   public static final class Builder extends

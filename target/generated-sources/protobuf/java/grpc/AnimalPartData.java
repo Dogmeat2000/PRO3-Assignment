@@ -4,6 +4,10 @@
 package grpc;
 
 /**
+ * <pre>
+ * AnimalPart entity:
+ * </pre>
+ *
  * Protobuf type {@code grpc.AnimalPartData}
  */
 public final class AnimalPartData extends
@@ -68,6 +72,11 @@ private static final long serialVersionUID = 0L;
           case 32: {
 
             animalId_ = input.readInt64();
+            break;
+          }
+          case 40: {
+
+            trayId_ = input.readInt64();
             break;
           }
           default: {
@@ -173,6 +182,17 @@ private static final long serialVersionUID = 0L;
     return animalId_;
   }
 
+  public static final int TRAYID_FIELD_NUMBER = 5;
+  private long trayId_;
+  /**
+   * <code>int64 trayId = 5;</code>
+   * @return The trayId.
+   */
+  @java.lang.Override
+  public long getTrayId() {
+    return trayId_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -199,6 +219,9 @@ private static final long serialVersionUID = 0L;
     if (animalId_ != 0L) {
       output.writeInt64(4, animalId_);
     }
+    if (trayId_ != 0L) {
+      output.writeInt64(5, trayId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -223,6 +246,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt64Size(4, animalId_);
     }
+    if (trayId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(5, trayId_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -246,6 +273,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getPartWeight())) return false;
     if (getAnimalId()
         != other.getAnimalId()) return false;
+    if (getTrayId()
+        != other.getTrayId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -268,6 +297,9 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ANIMALID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getAnimalId());
+    hash = (37 * hash) + TRAYID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getTrayId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -364,6 +396,10 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   * AnimalPart entity:
+   * </pre>
+   *
    * Protobuf type {@code grpc.AnimalPartData}
    */
   public static final class Builder extends
@@ -409,6 +445,8 @@ private static final long serialVersionUID = 0L;
 
       animalId_ = 0L;
 
+      trayId_ = 0L;
+
       return this;
     }
 
@@ -439,6 +477,7 @@ private static final long serialVersionUID = 0L;
       result.partTypeId_ = partTypeId_;
       result.partWeight_ = partWeight_;
       result.animalId_ = animalId_;
+      result.trayId_ = trayId_;
       onBuilt();
       return result;
     }
@@ -499,6 +538,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getAnimalId() != 0L) {
         setAnimalId(other.getAnimalId());
+      }
+      if (other.getTrayId() != 0L) {
+        setTrayId(other.getTrayId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -694,6 +736,37 @@ private static final long serialVersionUID = 0L;
     public Builder clearAnimalId() {
       
       animalId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long trayId_ ;
+    /**
+     * <code>int64 trayId = 5;</code>
+     * @return The trayId.
+     */
+    @java.lang.Override
+    public long getTrayId() {
+      return trayId_;
+    }
+    /**
+     * <code>int64 trayId = 5;</code>
+     * @param value The trayId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTrayId(long value) {
+      
+      trayId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 trayId = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTrayId() {
+      
+      trayId_ = 0L;
       onChanged();
       return this;
     }

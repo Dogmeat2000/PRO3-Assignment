@@ -1,8 +1,9 @@
 package server.controller.grpc;
 
-import grpc.AnimalData;
-import grpc.AnimalId;
-import grpc.EmptyMessage;
+import grpc.*;
+import shared.model.entities.Animal;
+import shared.model.entities.PartType;
+import shared.model.entities.Tray;
 
 import java.math.BigDecimal;
 
@@ -16,14 +17,26 @@ public class GrpcFactory
         .build();
   }
 
-  public static AnimalId buildGrpcAnimalId (long id) {
-    return AnimalId.newBuilder()
-        .setAnimalId(id)
-        .build();
-  }
 
   public static EmptyMessage buildGrpcEmptyMessage () {
     return EmptyMessage.newBuilder().build();
+  }
+
+
+  public static AnimalPartData buildGrpcAnimalPartData (Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) {
+    return AnimalPartData.newBuilder()
+        .setAnimalId(animal.getId())
+        .setPartTypeId(type.getTypeId())
+        .setTrayId(tray.getTray_id())
+        .setPartWeight(weightInKilogram.toString())
+        .build();
+  }
+
+
+  public static PartTypeData buildGrpcPartTypeData (String desc) {
+    return PartTypeData.newBuilder()
+        .setPartDesc(desc)
+        .build();
   }
 
   //TODO MISSING IMPLEMENTATION

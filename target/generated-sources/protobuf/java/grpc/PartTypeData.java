@@ -4,6 +4,10 @@
 package grpc;
 
 /**
+ * <pre>
+ * PartType entity:
+ * </pre>
+ *
  * Protobuf type {@code grpc.PartTypeData}
  */
 public final class PartTypeData extends
@@ -308,6 +312,10 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   * PartType entity:
+   * </pre>
+   *
    * Protobuf type {@code grpc.PartTypeData}
    */
   public static final class Builder extends

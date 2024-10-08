@@ -4,6 +4,10 @@
 package grpc;
 
 /**
+ * <pre>
+ * Animal entity:
+ * </pre>
+ *
  * Protobuf type {@code grpc.AnimalData}
  */
 public final class AnimalData extends
@@ -308,6 +312,10 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
+   * <pre>
+   * Animal entity:
+   * </pre>
+   *
    * Protobuf type {@code grpc.AnimalData}
    */
   public static final class Builder extends
