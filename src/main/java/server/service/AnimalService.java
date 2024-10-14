@@ -157,7 +157,6 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Override public List<Animal> getAllAnimals() throws PersistenceException {
-
     try {
       List<Animal> animals = animalRepository.findAll();
 

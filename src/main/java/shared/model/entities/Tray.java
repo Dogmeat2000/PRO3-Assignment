@@ -54,10 +54,10 @@ public class Tray implements Serializable
   }
 
 
-  public Tray(Long tray_id, BigDecimal maxWeight_kilogram) {
+  public Tray(Long tray_id, BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram) {
     setTray_id(tray_id);
     setMaxWeight_kilogram(maxWeight_kilogram);
-    setWeight_kilogram(BigDecimal.valueOf(0));
+    setWeight_kilogram(weight_kilogram);
     this.contents = new ArrayList<>();
     this.deliveredToProducts = new ArrayList<>();
   }

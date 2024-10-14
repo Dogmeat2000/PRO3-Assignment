@@ -2,7 +2,6 @@ package server.service;
 
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.Animal;
 import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
 

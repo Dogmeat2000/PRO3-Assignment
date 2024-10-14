@@ -37,7 +37,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
       // Create a gRPC compatible version of AnimalPart (AnimalPartData)
       AnimalPartData data = GrpcFactory.buildGrpcAnimalPartData(animal, type, tray, weightInKilogram);
 
-      // Prompt gRPC to register the Animal:
+      // Prompt gRPC to register the AnimalPart:
       AnimalPartData createdAnimalPart = stub.registerAnimalPart(data);
 
       // Convert, and return, the AnimalData that was added to the DB into an application compatible format:

@@ -1,6 +1,5 @@
 package client.interfaces;
 
-import shared.model.entities.Animal;
 import shared.model.entities.PartType;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
@@ -23,7 +22,7 @@ public interface PartTypeRegistrationSystem
 
 
     /** <p>Looks up any PartType entity with the specified id, in the repository</p>
-     * @param typeId A unique identifier assigned to the specific Animal to look up.
+     * @param typeId A unique identifier assigned to the specific PartType to look up.
      * @return The identified PartType instance.
      * @throws NotFoundException Thrown if PartType is not be found.
      */

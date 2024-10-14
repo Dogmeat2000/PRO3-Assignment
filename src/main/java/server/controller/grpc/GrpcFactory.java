@@ -39,5 +39,14 @@ public class GrpcFactory
         .build();
   }
 
+
+  public static TrayData buildGrpcTrayData (BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram) {
+    return TrayData.newBuilder()
+        .setMaxWeightKilogram(maxWeight_kilogram.toString())
+        .setWeightKilogram(weight_kilogram.toString())
+        .build();
+  }
+
+
   //TODO MISSING IMPLEMENTATION
 }

@@ -5,7 +5,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.63.0)",
+    value = "by gRPC proto compiler (version 1.68.0)",
     comments = "Source: SlaughterHouseSim.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class SlaughterHouseServiceGrpc {
@@ -139,6 +139,37 @@ public final class SlaughterHouseServiceGrpc {
     return getRegisterPartTypeMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.TrayData> getRegisterTrayMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "registerTray",
+      requestType = grpc.TrayData.class,
+      responseType = grpc.TrayData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.TrayData> getRegisterTrayMethod() {
+    io.grpc.MethodDescriptor<grpc.TrayData, grpc.TrayData> getRegisterTrayMethod;
+    if ((getRegisterTrayMethod = SlaughterHouseServiceGrpc.getRegisterTrayMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getRegisterTrayMethod = SlaughterHouseServiceGrpc.getRegisterTrayMethod) == null) {
+          SlaughterHouseServiceGrpc.getRegisterTrayMethod = getRegisterTrayMethod =
+              io.grpc.MethodDescriptor.<grpc.TrayData, grpc.TrayData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "registerTray"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("registerTray"))
+              .build();
+        }
+      }
+    }
+    return getRegisterTrayMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalId,
       grpc.AnimalData> getReadAnimalMethod;
 
@@ -261,6 +292,37 @@ public final class SlaughterHouseServiceGrpc {
       }
     }
     return getReadPartTypeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.TrayId,
+      grpc.TrayData> getReadTrayMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readTray",
+      requestType = grpc.TrayId.class,
+      responseType = grpc.TrayData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.TrayId,
+      grpc.TrayData> getReadTrayMethod() {
+    io.grpc.MethodDescriptor<grpc.TrayId, grpc.TrayData> getReadTrayMethod;
+    if ((getReadTrayMethod = SlaughterHouseServiceGrpc.getReadTrayMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getReadTrayMethod = SlaughterHouseServiceGrpc.getReadTrayMethod) == null) {
+          SlaughterHouseServiceGrpc.getReadTrayMethod = getReadTrayMethod =
+              io.grpc.MethodDescriptor.<grpc.TrayId, grpc.TrayData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readTray"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("readTray"))
+              .build();
+        }
+      }
+    }
+    return getReadTrayMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalData,
@@ -387,6 +449,37 @@ public final class SlaughterHouseServiceGrpc {
     return getUpdatePartTypeMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.EmptyMessage> getUpdateTrayMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "updateTray",
+      requestType = grpc.TrayData.class,
+      responseType = grpc.EmptyMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.EmptyMessage> getUpdateTrayMethod() {
+    io.grpc.MethodDescriptor<grpc.TrayData, grpc.EmptyMessage> getUpdateTrayMethod;
+    if ((getUpdateTrayMethod = SlaughterHouseServiceGrpc.getUpdateTrayMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getUpdateTrayMethod = SlaughterHouseServiceGrpc.getUpdateTrayMethod) == null) {
+          SlaughterHouseServiceGrpc.getUpdateTrayMethod = getUpdateTrayMethod =
+              io.grpc.MethodDescriptor.<grpc.TrayData, grpc.EmptyMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "updateTray"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("updateTray"))
+              .build();
+        }
+      }
+    }
+    return getUpdateTrayMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<grpc.AnimalData,
       grpc.EmptyMessage> getRemoveAnimalMethod;
 
@@ -509,6 +602,37 @@ public final class SlaughterHouseServiceGrpc {
       }
     }
     return getRemovePartTypeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.EmptyMessage> getRemoveTrayMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "removeTray",
+      requestType = grpc.TrayData.class,
+      responseType = grpc.EmptyMessage.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.TrayData,
+      grpc.EmptyMessage> getRemoveTrayMethod() {
+    io.grpc.MethodDescriptor<grpc.TrayData, grpc.EmptyMessage> getRemoveTrayMethod;
+    if ((getRemoveTrayMethod = SlaughterHouseServiceGrpc.getRemoveTrayMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getRemoveTrayMethod = SlaughterHouseServiceGrpc.getRemoveTrayMethod) == null) {
+          SlaughterHouseServiceGrpc.getRemoveTrayMethod = getRemoveTrayMethod =
+              io.grpc.MethodDescriptor.<grpc.TrayData, grpc.EmptyMessage>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "removeTray"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayData.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("removeTray"))
+              .build();
+        }
+      }
+    }
+    return getRemoveTrayMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
@@ -635,6 +759,37 @@ public final class SlaughterHouseServiceGrpc {
     return getGetAllPartTypesMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.EmptyMessage,
+      grpc.TraysData> getGetAllTraysMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getAllTrays",
+      requestType = grpc.EmptyMessage.class,
+      responseType = grpc.TraysData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.EmptyMessage,
+      grpc.TraysData> getGetAllTraysMethod() {
+    io.grpc.MethodDescriptor<grpc.EmptyMessage, grpc.TraysData> getGetAllTraysMethod;
+    if ((getGetAllTraysMethod = SlaughterHouseServiceGrpc.getGetAllTraysMethod) == null) {
+      synchronized (SlaughterHouseServiceGrpc.class) {
+        if ((getGetAllTraysMethod = SlaughterHouseServiceGrpc.getGetAllTraysMethod) == null) {
+          SlaughterHouseServiceGrpc.getGetAllTraysMethod = getGetAllTraysMethod =
+              io.grpc.MethodDescriptor.<grpc.EmptyMessage, grpc.TraysData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getAllTrays"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.EmptyMessage.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TraysData.getDefaultInstance()))
+              .setSchemaDescriptor(new SlaughterHouseServiceMethodDescriptorSupplier("getAllTrays"))
+              .build();
+        }
+      }
+    }
+    return getGetAllTraysMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -715,6 +870,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void registerTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.TrayData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRegisterTrayMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -743,6 +905,13 @@ public final class SlaughterHouseServiceGrpc {
     default void readPartType(grpc.PartTypeId request,
         io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadPartTypeMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void readTray(grpc.TrayId request,
+        io.grpc.stub.StreamObserver<grpc.TrayData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadTrayMethod(), responseObserver);
     }
 
     /**
@@ -777,6 +946,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void updateTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateTrayMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -808,6 +984,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    default void removeTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRemoveTrayMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -836,6 +1019,13 @@ public final class SlaughterHouseServiceGrpc {
     default void getAllPartTypes(grpc.EmptyMessage request,
         io.grpc.stub.StreamObserver<grpc.PartTypesData> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllPartTypesMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void getAllTrays(grpc.EmptyMessage request,
+        io.grpc.stub.StreamObserver<grpc.TraysData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllTraysMethod(), responseObserver);
     }
   }
 
@@ -902,6 +1092,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void registerTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.TrayData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRegisterTrayMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -934,6 +1132,14 @@ public final class SlaughterHouseServiceGrpc {
         io.grpc.stub.StreamObserver<grpc.PartTypeData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getReadPartTypeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void readTray(grpc.TrayId request,
+        io.grpc.stub.StreamObserver<grpc.TrayData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadTrayMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -972,6 +1178,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void updateTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateTrayMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -1007,6 +1221,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public void removeTray(grpc.TrayData request,
+        io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRemoveTrayMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -1039,6 +1261,14 @@ public final class SlaughterHouseServiceGrpc {
         io.grpc.stub.StreamObserver<grpc.PartTypesData> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllPartTypesMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getAllTrays(grpc.EmptyMessage request,
+        io.grpc.stub.StreamObserver<grpc.TraysData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllTraysMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -1090,6 +1320,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.TrayData registerTray(grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRegisterTrayMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -1118,6 +1355,13 @@ public final class SlaughterHouseServiceGrpc {
     public grpc.PartTypeData readPartType(grpc.PartTypeId request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getReadPartTypeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.TrayData readTray(grpc.TrayId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadTrayMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1152,6 +1396,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.EmptyMessage updateTray(grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateTrayMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -1183,6 +1434,13 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public grpc.EmptyMessage removeTray(grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRemoveTrayMethod(), getCallOptions(), request);
+    }
+
+    /**
      * <pre>
      * Get All:
      * </pre>
@@ -1211,6 +1469,13 @@ public final class SlaughterHouseServiceGrpc {
     public grpc.PartTypesData getAllPartTypes(grpc.EmptyMessage request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllPartTypesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.TraysData getAllTrays(grpc.EmptyMessage request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllTraysMethod(), getCallOptions(), request);
     }
   }
 
@@ -1266,6 +1531,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.TrayData> registerTray(
+        grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRegisterTrayMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * Read:
      * </pre>
@@ -1298,6 +1571,14 @@ public final class SlaughterHouseServiceGrpc {
         grpc.PartTypeId request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getReadPartTypeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.TrayData> readTray(
+        grpc.TrayId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadTrayMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1336,6 +1617,14 @@ public final class SlaughterHouseServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.EmptyMessage> updateTray(
+        grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateTrayMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * Delete:
      * </pre>
@@ -1368,6 +1657,14 @@ public final class SlaughterHouseServiceGrpc {
         grpc.PartTypeData request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRemovePartTypeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.EmptyMessage> removeTray(
+        grpc.TrayData request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRemoveTrayMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1404,28 +1701,41 @@ public final class SlaughterHouseServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllPartTypesMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.TraysData> getAllTrays(
+        grpc.EmptyMessage request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllTraysMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_REGISTER_ANIMAL = 0;
   private static final int METHODID_REGISTER_ANIMAL_PART = 1;
   private static final int METHODID_REGISTER_PRODUCT = 2;
   private static final int METHODID_REGISTER_PART_TYPE = 3;
-  private static final int METHODID_READ_ANIMAL = 4;
-  private static final int METHODID_READ_ANIMAL_PART = 5;
-  private static final int METHODID_READ_PRODUCT = 6;
-  private static final int METHODID_READ_PART_TYPE = 7;
-  private static final int METHODID_UPDATE_ANIMAL = 8;
-  private static final int METHODID_UPDATE_ANIMAL_PART = 9;
-  private static final int METHODID_UPDATE_PRODUCT = 10;
-  private static final int METHODID_UPDATE_PART_TYPE = 11;
-  private static final int METHODID_REMOVE_ANIMAL = 12;
-  private static final int METHODID_REMOVE_ANIMAL_PART = 13;
-  private static final int METHODID_REMOVE_PRODUCT = 14;
-  private static final int METHODID_REMOVE_PART_TYPE = 15;
-  private static final int METHODID_GET_ALL_ANIMALS = 16;
-  private static final int METHODID_GET_ANIMAL_PARTS = 17;
-  private static final int METHODID_GET_ALL_PRODUCTS = 18;
-  private static final int METHODID_GET_ALL_PART_TYPES = 19;
+  private static final int METHODID_REGISTER_TRAY = 4;
+  private static final int METHODID_READ_ANIMAL = 5;
+  private static final int METHODID_READ_ANIMAL_PART = 6;
+  private static final int METHODID_READ_PRODUCT = 7;
+  private static final int METHODID_READ_PART_TYPE = 8;
+  private static final int METHODID_READ_TRAY = 9;
+  private static final int METHODID_UPDATE_ANIMAL = 10;
+  private static final int METHODID_UPDATE_ANIMAL_PART = 11;
+  private static final int METHODID_UPDATE_PRODUCT = 12;
+  private static final int METHODID_UPDATE_PART_TYPE = 13;
+  private static final int METHODID_UPDATE_TRAY = 14;
+  private static final int METHODID_REMOVE_ANIMAL = 15;
+  private static final int METHODID_REMOVE_ANIMAL_PART = 16;
+  private static final int METHODID_REMOVE_PRODUCT = 17;
+  private static final int METHODID_REMOVE_PART_TYPE = 18;
+  private static final int METHODID_REMOVE_TRAY = 19;
+  private static final int METHODID_GET_ALL_ANIMALS = 20;
+  private static final int METHODID_GET_ANIMAL_PARTS = 21;
+  private static final int METHODID_GET_ALL_PRODUCTS = 22;
+  private static final int METHODID_GET_ALL_PART_TYPES = 23;
+  private static final int METHODID_GET_ALL_TRAYS = 24;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1460,6 +1770,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.registerPartType((grpc.PartTypeData) request,
               (io.grpc.stub.StreamObserver<grpc.PartTypeData>) responseObserver);
           break;
+        case METHODID_REGISTER_TRAY:
+          serviceImpl.registerTray((grpc.TrayData) request,
+              (io.grpc.stub.StreamObserver<grpc.TrayData>) responseObserver);
+          break;
         case METHODID_READ_ANIMAL:
           serviceImpl.readAnimal((grpc.AnimalId) request,
               (io.grpc.stub.StreamObserver<grpc.AnimalData>) responseObserver);
@@ -1476,6 +1790,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.readPartType((grpc.PartTypeId) request,
               (io.grpc.stub.StreamObserver<grpc.PartTypeData>) responseObserver);
           break;
+        case METHODID_READ_TRAY:
+          serviceImpl.readTray((grpc.TrayId) request,
+              (io.grpc.stub.StreamObserver<grpc.TrayData>) responseObserver);
+          break;
         case METHODID_UPDATE_ANIMAL:
           serviceImpl.updateAnimal((grpc.AnimalData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
@@ -1490,6 +1808,10 @@ public final class SlaughterHouseServiceGrpc {
           break;
         case METHODID_UPDATE_PART_TYPE:
           serviceImpl.updatePartType((grpc.PartTypeData) request,
+              (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
+          break;
+        case METHODID_UPDATE_TRAY:
+          serviceImpl.updateTray((grpc.TrayData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
           break;
         case METHODID_REMOVE_ANIMAL:
@@ -1508,6 +1830,10 @@ public final class SlaughterHouseServiceGrpc {
           serviceImpl.removePartType((grpc.PartTypeData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
           break;
+        case METHODID_REMOVE_TRAY:
+          serviceImpl.removeTray((grpc.TrayData) request,
+              (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
+          break;
         case METHODID_GET_ALL_ANIMALS:
           serviceImpl.getAllAnimals((grpc.EmptyMessage) request,
               (io.grpc.stub.StreamObserver<grpc.AnimalsData>) responseObserver);
@@ -1523,6 +1849,10 @@ public final class SlaughterHouseServiceGrpc {
         case METHODID_GET_ALL_PART_TYPES:
           serviceImpl.getAllPartTypes((grpc.EmptyMessage) request,
               (io.grpc.stub.StreamObserver<grpc.PartTypesData>) responseObserver);
+          break;
+        case METHODID_GET_ALL_TRAYS:
+          serviceImpl.getAllTrays((grpc.EmptyMessage) request,
+              (io.grpc.stub.StreamObserver<grpc.TraysData>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1571,6 +1901,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.PartTypeData>(
                 service, METHODID_REGISTER_PART_TYPE)))
         .addMethod(
+          getRegisterTrayMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.TrayData,
+              grpc.TrayData>(
+                service, METHODID_REGISTER_TRAY)))
+        .addMethod(
           getReadAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1598,6 +1935,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.PartTypeId,
               grpc.PartTypeData>(
                 service, METHODID_READ_PART_TYPE)))
+        .addMethod(
+          getReadTrayMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.TrayId,
+              grpc.TrayData>(
+                service, METHODID_READ_TRAY)))
         .addMethod(
           getUpdateAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1627,6 +1971,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage>(
                 service, METHODID_UPDATE_PART_TYPE)))
         .addMethod(
+          getUpdateTrayMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.TrayData,
+              grpc.EmptyMessage>(
+                service, METHODID_UPDATE_TRAY)))
+        .addMethod(
           getRemoveAnimalMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1655,6 +2006,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage>(
                 service, METHODID_REMOVE_PART_TYPE)))
         .addMethod(
+          getRemoveTrayMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.TrayData,
+              grpc.EmptyMessage>(
+                service, METHODID_REMOVE_TRAY)))
+        .addMethod(
           getGetAllAnimalsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
@@ -1682,6 +2040,13 @@ public final class SlaughterHouseServiceGrpc {
               grpc.EmptyMessage,
               grpc.PartTypesData>(
                 service, METHODID_GET_ALL_PART_TYPES)))
+        .addMethod(
+          getGetAllTraysMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.EmptyMessage,
+              grpc.TraysData>(
+                service, METHODID_GET_ALL_TRAYS)))
         .build();
   }
 
@@ -1734,22 +2099,27 @@ public final class SlaughterHouseServiceGrpc {
               .addMethod(getRegisterAnimalPartMethod())
               .addMethod(getRegisterProductMethod())
               .addMethod(getRegisterPartTypeMethod())
+              .addMethod(getRegisterTrayMethod())
               .addMethod(getReadAnimalMethod())
               .addMethod(getReadAnimalPartMethod())
               .addMethod(getReadProductMethod())
               .addMethod(getReadPartTypeMethod())
+              .addMethod(getReadTrayMethod())
               .addMethod(getUpdateAnimalMethod())
               .addMethod(getUpdateAnimalPartMethod())
               .addMethod(getUpdateProductMethod())
               .addMethod(getUpdatePartTypeMethod())
+              .addMethod(getUpdateTrayMethod())
               .addMethod(getRemoveAnimalMethod())
               .addMethod(getRemoveAnimalPartMethod())
               .addMethod(getRemoveProductMethod())
               .addMethod(getRemovePartTypeMethod())
+              .addMethod(getRemoveTrayMethod())
               .addMethod(getGetAllAnimalsMethod())
               .addMethod(getGetAnimalPartsMethod())
               .addMethod(getGetAllProductsMethod())
               .addMethod(getGetAllPartTypesMethod())
+              .addMethod(getGetAllTraysMethod())
               .build();
         }
       }

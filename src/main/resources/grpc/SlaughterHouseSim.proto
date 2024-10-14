@@ -48,7 +48,19 @@ message AnimalPartsData {
 // Tray entity:
 message TrayData {
   int64 trayId = 1;
-  repeated AnimalPartId animalParts = 2;
+  string maxWeight_kilogram = 2;
+  string weight_kilogram = 3;
+  repeated AnimalPartId animalParts = 4;
+}
+
+
+message TrayId {
+  int64 trayId = 1;
+}
+
+
+message TraysData {
+  repeated TrayData trays = 1;
 }
 
 
@@ -93,28 +105,33 @@ service SlaughterHouseService {
   rpc registerAnimalPart(AnimalPartData) returns (AnimalPartData);
   rpc registerProduct(ProductData) returns (ProductData);
   rpc registerPartType(PartTypeData) returns (PartTypeData);
+  rpc registerTray(TrayData) returns (TrayData);
 
   // Read:
   rpc readAnimal(AnimalId) returns (AnimalData);
   rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
   rpc readProduct(ProductId) returns (ProductData);
   rpc readPartType(PartTypeId) returns (PartTypeData);
+  rpc readTray(TrayId) returns (TrayData);
 
   // Update:
   rpc updateAnimal(AnimalData) returns (EmptyMessage);
   rpc updateAnimalPart(AnimalPartData) returns (EmptyMessage);
   rpc updateProduct(ProductData) returns (EmptyMessage);
   rpc updatePartType(PartTypeData) returns (EmptyMessage);
+  rpc updateTray(TrayData) returns (EmptyMessage);
 
   // Delete:
   rpc removeAnimal(AnimalData) returns (EmptyMessage);
   rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);
   rpc removeProduct(ProductData) returns (EmptyMessage);
   rpc removePartType(PartTypeData) returns (EmptyMessage);
+  rpc removeTray(TrayData) returns (EmptyMessage);
 
   // Get All:
   rpc getAllAnimals(EmptyMessage) returns (AnimalsData);
   rpc getAnimalParts(EmptyMessage) returns (AnimalPartsData);
   rpc getAllProducts(EmptyMessage) returns (ProductsData);
   rpc getAllPartTypes(EmptyMessage) returns (PartTypesData);
+  rpc getAllTrays(EmptyMessage) returns (TraysData);
 }

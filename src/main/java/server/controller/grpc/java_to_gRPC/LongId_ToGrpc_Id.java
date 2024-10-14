@@ -2,6 +2,7 @@ package server.controller.grpc.java_to_gRPC;
 
 import grpc.AnimalId;
 import grpc.PartTypeId;
+import grpc.TrayId;
 
 /** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
 public class LongId_ToGrpc_Id
@@ -30,6 +31,20 @@ public class LongId_ToGrpc_Id
 
     PartTypeId.Builder idBuilder = PartTypeId.newBuilder()
         .setPartTypeId(partTypeId);
+
+    return idBuilder.build();
+  }
+
+
+  /** <p>Converts a long id into a database/gRPC compatible TrayId format</p>
+   * @param trayId The id (primary key) for an Tray entity
+   * @return a gRPC compatible format of this id */
+  public static TrayId convertToTrayId(long trayId) {
+    if (trayId == 0)
+      return null;
+
+    TrayId.Builder idBuilder = TrayId.newBuilder()
+        .setTrayId(trayId);
 
     return idBuilder.build();
   }
