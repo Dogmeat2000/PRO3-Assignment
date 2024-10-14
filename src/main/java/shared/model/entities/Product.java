@@ -29,18 +29,28 @@ public class Product implements Serializable
 
   // Special Note: JPA works with Database entities as objects, so the join table is here modelled as its own object. This allows for future scalability,
   // where I can decide to add timestamp, etc. to the join table without much change to this code!
-  // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the TrayToProductTransfer entity,
-  // also that TrayToProductTransfer entity should 'own' the mapping (using the product attribute in its class).
-  // This makes logical sense, since it is from within the TrayToProductTransfer class that references to the Product are stored in the DB, between Product and Tray.
-  @OneToMany(mappedBy="product")
-  private List<TrayToProductTransfer> traySupplyList;
+  // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the TrayToProductTransferRepository entity,
+  // also that TrayToProductTransferRepository entity should 'own' the mapping (using the product attribute in its class).
+  // This makes logical sense, since it is from within the TrayToProductTransferRepository class that references to the Product are stored in the DB, between Product and Tray.
+  @OneToMany(mappedBy="product", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<TrayToProductTransfer> traySupplyJoinList;
 
-
-  // A no-args constructor, as required by tje Java Data API (JPA) specifications. Should not be used directly, thus protected!
+  // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Product() {
     //Note: Do not set the product_id here, since JPA auto-sets this by using the database.
     contentList = new ArrayList<>();
-    traySupplyList = new ArrayList<>();
+    traySupplyJoinList = new ArrayList<>();
+  }
+
+
+  public Product(long id, List<AnimalPart> contentList, List<TrayToProductTransfer> traySupplyJoinList) {
+    setProduct_id(id);
+
+    this.contentList = new ArrayList<>();
+    getContentList().addAll(contentList);
+
+    this.traySupplyJoinList = new ArrayList<>();
+    getTraySupplyJoinList().addAll(traySupplyJoinList);
   }
 
 
@@ -59,8 +69,8 @@ public class Product implements Serializable
   }
 
 
-  public List<TrayToProductTransfer> getTraySupplyList() {
-    return traySupplyList;
+  public List<TrayToProductTransfer> getTraySupplyJoinList() {
+    return traySupplyJoinList;
   }
 
 
@@ -71,18 +81,18 @@ public class Product implements Serializable
 
     return Objects.equals(getProduct_id(), ((Product) o).getProduct_id())
         && Objects.equals(getContentList(), ((Product) o).getContentList()) //TODO Confirm that this equals method also performs equals check on contents.
-        && Objects.equals(getTraySupplyList(), ((Product) o).getTraySupplyList()); //TODO Confirm that this equals method also performs equals check on contents.
+        && Objects.equals(getTraySupplyJoinList(), ((Product) o).getTraySupplyJoinList()); //TODO Confirm that this equals method also performs equals check on contents.
   }
 
 
   // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(getProduct_id(), getContentList(), getTraySupplyList());
+    return Objects.hash(getProduct_id(), getContentList(), getTraySupplyJoinList());
   }
 
 
   // Required by Spring Boot JPA:
   @Override public String toString() {
-    return "Product{" + "product_id='" + product_id + '\'' + ", contentList=" + contentList + ", traySupplyList=" + traySupplyList + '}';
+    return "Product{" + "product_id='" + product_id + '\'' + ", contentList=" + contentList + ", traySupplyList=" + traySupplyJoinList + '}';
   }
 }

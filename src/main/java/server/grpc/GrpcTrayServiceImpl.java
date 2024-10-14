@@ -1,22 +1,16 @@
 package server.grpc;
 
-import grpc.EmptyMessage;
-import grpc.SlaughterHouseServiceGrpc;
-import grpc.TrayData;
-import grpc.TrayId;
+import grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcTrayData_To_Tray;
-import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
 import server.service.TrayRegistryInterface;
-import shared.model.entities.Animal;
 import shared.model.entities.Tray;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
@@ -58,7 +52,7 @@ public class GrpcTrayServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHous
 
 
   @Override
-  public void readTray(TrayId request, StreamObserver<grpc.TrayData> responseObserver) {
+  public void readTray(TrayId request, StreamObserver<TrayData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible type,
       // and attempt to read the Tray with the provided ID:
@@ -80,7 +74,7 @@ public class GrpcTrayServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHous
 
 
   @Override
-  public void updateTray(TrayData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
+  public void updateTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Tray with the provided ID:
@@ -101,7 +95,7 @@ public class GrpcTrayServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHous
 
 
   @Override
-  public void removeTray(TrayData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
+  public void removeTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Tray with the provided ID:
@@ -122,7 +116,7 @@ public class GrpcTrayServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHous
 
 
   @Override
-  public void getAllTrays(EmptyMessage request, StreamObserver<grpc.TraysData> responseObserver) {
+  public void getAllTrays(EmptyMessage request, StreamObserver<TraysData> responseObserver) {
     try {
       // Attempt to retrieve all Trays:
       List<Tray> trays = trayService.getAllTrays();

@@ -1,7 +1,5 @@
 package server.service;
 
-import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
 import shared.model.entities.Product;
 
 import java.util.List;
@@ -12,13 +10,13 @@ public interface ProductRegistryInterface
   Product registerProduct (Product data);
 
   // Read:
-  Product readProduct (String productId);
+  Product readProduct (long productId);
 
   // Update:
-  void updateProduct (Product data);
+  boolean updateProduct (Product data);
 
   // Delete:
-  void removeProduct (Product data);
+  boolean removeProduct (Product data);
 
   // Get All:
   List<Product> getAllProducts();

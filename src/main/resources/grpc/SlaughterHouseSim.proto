@@ -84,8 +84,8 @@ message PartTypesData {
 // Product entity:
 message ProductData {
   int64 productId = 1;
-  repeated TrayData trayIds = 2;
-  repeated AnimalPartId animalPartIds = 3;
+  repeated TrayToProductTransferData trayToProductTransfersList = 2;
+  repeated AnimalPartData animalPartList = 3;
 }
 
 
@@ -99,6 +99,24 @@ message ProductsData {
 }
 
 
+// TrayToProductTransfer entity:
+message TrayToProductTransferData {
+  TrayId trayId = 1;
+  ProductId productId = 2;
+}
+
+
+message TrayToProductTransferId {
+  ProductId productId = 1;
+  TrayId trayId = 2;
+}
+
+
+message TrayToProductTransfersData {
+  repeated TrayToProductTransferData transferDataList = 1;
+}
+
+
 service SlaughterHouseService {
   // Create:
   rpc registerAnimal(AnimalData) returns (AnimalData);
@@ -106,6 +124,7 @@ service SlaughterHouseService {
   rpc registerProduct(ProductData) returns (ProductData);
   rpc registerPartType(PartTypeData) returns (PartTypeData);
   rpc registerTray(TrayData) returns (TrayData);
+  //rpc registerTrayToProductTransfer(TrayToProductTransferData) returns (TrayToProductTransferData);
 
   // Read:
   rpc readAnimal(AnimalId) returns (AnimalData);
@@ -113,6 +132,7 @@ service SlaughterHouseService {
   rpc readProduct(ProductId) returns (ProductData);
   rpc readPartType(PartTypeId) returns (PartTypeData);
   rpc readTray(TrayId) returns (TrayData);
+  //rpc readTrayToProductTransfer(TrayToProductTransferId) returns (TrayToProductTransferData);
 
   // Update:
   rpc updateAnimal(AnimalData) returns (EmptyMessage);
@@ -120,6 +140,7 @@ service SlaughterHouseService {
   rpc updateProduct(ProductData) returns (EmptyMessage);
   rpc updatePartType(PartTypeData) returns (EmptyMessage);
   rpc updateTray(TrayData) returns (EmptyMessage);
+  //rpc updateTrayToProductTransfer(TrayToProductTransferData) returns (EmptyMessage);
 
   // Delete:
   rpc removeAnimal(AnimalData) returns (EmptyMessage);
@@ -127,6 +148,7 @@ service SlaughterHouseService {
   rpc removeProduct(ProductData) returns (EmptyMessage);
   rpc removePartType(PartTypeData) returns (EmptyMessage);
   rpc removeTray(TrayData) returns (EmptyMessage);
+  //rpc removeTrayToProductTransfer(TrayToProductTransferId) returns (EmptyMessage);
 
   // Get All:
   rpc getAllAnimals(EmptyMessage) returns (AnimalsData);
@@ -134,4 +156,5 @@ service SlaughterHouseService {
   rpc getAllProducts(EmptyMessage) returns (ProductsData);
   rpc getAllPartTypes(EmptyMessage) returns (PartTypesData);
   rpc getAllTrays(EmptyMessage) returns (TraysData);
+  //rpc getAllTrayToProductTransfers(EmptyMessage) returns (TrayToProductTransfersData);
 }

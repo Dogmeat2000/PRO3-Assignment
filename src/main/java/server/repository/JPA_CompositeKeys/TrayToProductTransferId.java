@@ -3,7 +3,7 @@ package server.repository.JPA_CompositeKeys;
 import java.io.Serializable;
 import java.util.Objects;
 
-// Defines the Composite Primary Key belonging to the Database Entity 'TrayToProductTransfer'.
+// Defines the Composite Primary Key belonging to the Database Entity 'TrayToProductTransferRepository'.
 public class TrayToProductTransferId implements Serializable
 {
   private long tray_id;

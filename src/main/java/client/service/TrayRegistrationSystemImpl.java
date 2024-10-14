@@ -71,7 +71,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       return GrpcTrayData_To_Tray.convertToTray(foundTray);
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No Tray found with id '" + trayId);
+      throw new NotFoundException("No Tray found with id '" + trayId + "'");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -127,7 +127,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       EmptyMessage deleted = stub.removeTray(trayData);
 
       if(deleted == null && trayData != null)
-        throw new DeleteFailedException("Failed to delete Tray with id '" + trayId);
+        throw new DeleteFailedException("Failed to delete Tray with id '" + trayId + "'");
 
       return true;
     } catch (StatusRuntimeException e) {

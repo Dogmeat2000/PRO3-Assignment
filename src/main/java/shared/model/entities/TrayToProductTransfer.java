@@ -23,7 +23,7 @@ public class TrayToProductTransfer
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Tray entity,
-  // and that the Tray entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'TrayToProductTransfer' entity should be prioritized.
+  // and that the Tray entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'TrayToProductTransferRepository' entity should be prioritized.
   // This makes logical sense, since it is from within this Tray Entity that references to the Tray are stored as Foreign Keys, and not in the Tray entity!
   @ManyToOne
   @JoinColumn(name = "tray_id", referencedColumnName = "tray_id", nullable = false) // Tells Spring Boot, that the designated column in the Tray entity should be used when joining tables. Additionally, the name of the column is 'tray_id' in both tables.
@@ -31,7 +31,7 @@ public class TrayToProductTransfer
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Tray entity,
-  // and that the Tray entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'TrayToProductTransfer' entity should be prioritized.
+  // and that the Tray entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'TrayToProductTransferRepository' entity should be prioritized.
   // This makes logical sense, since it is from within this Tray Entity that references to the Tray are stored as Foreign Keys, and not in the Tray entity!
   @ManyToOne
   @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false) // Tells Spring Boot, that the designated column in the Tray entity should be used when joining tables. Additionally, the name of the column is 'tray_id' in both tables.
@@ -48,6 +48,37 @@ public class TrayToProductTransfer
     this.product = product;
   }
 
+  public long getTray_id() {
+    return tray_id;
+  }
+
+  public void setTray_id(long tray_id) {
+    this.tray_id = tray_id;
+  }
+
+  public long getProduct_id() {
+    return product_id;
+  }
+
+  public void setProduct_id(long product_id) {
+    this.product_id = product_id;
+  }
+
+  public Tray getTray() {
+    return tray;
+  }
+
+  public void setTray(Tray tray) {
+    this.tray = tray;
+  }
+
+  public Product getProduct() {
+    return product;
+  }
+
+  public void setProduct(Product product) {
+    this.product = product;
+  }
 
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {

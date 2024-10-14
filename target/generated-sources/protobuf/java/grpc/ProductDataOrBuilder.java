@@ -16,50 +16,50 @@ public interface ProductDataOrBuilder extends
   long getProductId();
 
   /**
-   * <code>repeated .grpc.TrayData trayIds = 2;</code>
+   * <code>repeated .grpc.TrayToProductTransferData trayToProductTransfersList = 2;</code>
    */
-  java.util.List<grpc.TrayData> 
-      getTrayIdsList();
+  java.util.List<grpc.TrayToProductTransferData> 
+      getTrayToProductTransfersListList();
   /**
-   * <code>repeated .grpc.TrayData trayIds = 2;</code>
+   * <code>repeated .grpc.TrayToProductTransferData trayToProductTransfersList = 2;</code>
    */
-  grpc.TrayData getTrayIds(int index);
+  grpc.TrayToProductTransferData getTrayToProductTransfersList(int index);
   /**
-   * <code>repeated .grpc.TrayData trayIds = 2;</code>
+   * <code>repeated .grpc.TrayToProductTransferData trayToProductTransfersList = 2;</code>
    */
-  int getTrayIdsCount();
+  int getTrayToProductTransfersListCount();
   /**
-   * <code>repeated .grpc.TrayData trayIds = 2;</code>
+   * <code>repeated .grpc.TrayToProductTransferData trayToProductTransfersList = 2;</code>
    */
-  java.util.List<? extends grpc.TrayDataOrBuilder> 
-      getTrayIdsOrBuilderList();
+  java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+      getTrayToProductTransfersListOrBuilderList();
   /**
-   * <code>repeated .grpc.TrayData trayIds = 2;</code>
+   * <code>repeated .grpc.TrayToProductTransferData trayToProductTransfersList = 2;</code>
    */
-  grpc.TrayDataOrBuilder getTrayIdsOrBuilder(
+  grpc.TrayToProductTransferDataOrBuilder getTrayToProductTransfersListOrBuilder(
       int index);
 
   /**
-   * <code>repeated .grpc.AnimalPartId animalPartIds = 3;</code>
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
    */
-  java.util.List<grpc.AnimalPartId> 
-      getAnimalPartIdsList();
+  java.util.List<grpc.AnimalPartData> 
+      getAnimalPartListList();
   /**
-   * <code>repeated .grpc.AnimalPartId animalPartIds = 3;</code>
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
    */
-  grpc.AnimalPartId getAnimalPartIds(int index);
+  grpc.AnimalPartData getAnimalPartList(int index);
   /**
-   * <code>repeated .grpc.AnimalPartId animalPartIds = 3;</code>
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
    */
-  int getAnimalPartIdsCount();
+  int getAnimalPartListCount();
   /**
-   * <code>repeated .grpc.AnimalPartId animalPartIds = 3;</code>
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
    */
-  java.util.List<? extends grpc.AnimalPartIdOrBuilder> 
-      getAnimalPartIdsOrBuilderList();
+  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
+      getAnimalPartListOrBuilderList();
   /**
-   * <code>repeated .grpc.AnimalPartId animalPartIds = 3;</code>
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
    */
-  grpc.AnimalPartIdOrBuilder getAnimalPartIdsOrBuilder(
+  grpc.AnimalPartDataOrBuilder getAnimalPartListOrBuilder(
       int index);
 }

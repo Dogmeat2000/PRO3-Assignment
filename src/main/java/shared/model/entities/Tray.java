@@ -31,15 +31,15 @@ public class Tray implements Serializable
   // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the AnimalPart entity,
   // and that the AnimalPart entity should 'own' the mapping. In other words, the tray_id assigned in the 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within the AnimalPart class that references to the Tray are stored!
-  @OneToMany(mappedBy= "tray")
+  @OneToMany(mappedBy= "tray", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<AnimalPart> contents;
 
 
   // Special Note: JPA works with Database entities as objects, so the join table is here modelled as its own object. This allows for future scalability,
   // where I can decide to add timestamp, etc. to the join table without much change to this code!
-  // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the TrayToProductTransfer entity,
-  // also that TrayToProductTransfer entity should 'own' the mapping (using the tray attribute in its class).
-  // This makes logical sense, since it is from within the TrayToProductTransfer class that references to the Tray are stored in the DB, between Product and Tray.
+  // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the TrayToProductTransferRepository entity,
+  // also that TrayToProductTransferRepository entity should 'own' the mapping (using the tray attribute in its class).
+  // This makes logical sense, since it is from within the TrayToProductTransferRepository class that references to the Tray are stored in the DB, between Product and Tray.
   @OneToMany(mappedBy="tray")
   private List<TrayToProductTransfer> deliveredToProducts;
 

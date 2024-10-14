@@ -71,7 +71,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No animal found with id '" + animalId);
+      throw new NotFoundException("No animal found with id '" + animalId + "'");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -127,7 +127,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       EmptyMessage deleted = stub.removeAnimal(animalData);
 
       if(deleted == null && animal != null)
-        throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id);
+        throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id + "'");
 
       return true;
     } catch (StatusRuntimeException e) {
