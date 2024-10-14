@@ -106,6 +106,8 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update Product with id '" + data.getProduct_id() + "'");
 
+      // TODO: Update all TrayToProductTransfers this product is involved in:
+
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No Product found with id '" + data.getProduct_id() + "'");
@@ -138,6 +140,8 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       if(deleted == null && productData != null)
         throw new DeleteFailedException("Failed to delete Product with id '" + productId + "'");
+
+      // TODO: Delete all TrayToProductTransfers this product is involved in:
 
       return true;
     } catch (StatusRuntimeException e) {

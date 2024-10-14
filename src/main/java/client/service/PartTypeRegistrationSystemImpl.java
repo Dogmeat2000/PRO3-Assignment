@@ -14,6 +14,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -35,7 +36,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       SlaughterHouseServiceGrpc.SlaughterHouseServiceBlockingStub stub = SlaughterHouseServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of PartType (PartTypeData)
-      PartTypeData data = GrpcFactory.buildGrpcPartTypeData(desc);
+      PartTypeData data = GrpcFactory.buildGrpcPartTypeData(desc, new ArrayList<>());
 
       // Prompt gRPC to register the PartType:
       PartTypeData createdPartType = stub.registerPartType(data);
@@ -95,6 +96,8 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update PartType with id '" + data.getTypeId() + "'");
 
+      // TODO: Update all AnimalParts this PartType is involved in:
+
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No PartType found with id '" + data.getTypeId() + "'");
@@ -127,6 +130,8 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       if(deleted == null && partTypeData != null)
         throw new DeleteFailedException("Failed to delete PartType with id '" + typeId);
+
+      // TODO: Delete all AnimalParts this PartType is involved in:
 
       return true;
     } catch (StatusRuntimeException e) {

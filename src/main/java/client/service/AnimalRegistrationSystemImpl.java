@@ -15,6 +15,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -36,7 +37,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       SlaughterHouseServiceGrpc.SlaughterHouseServiceBlockingStub stub = SlaughterHouseServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (AnimalData)
-      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram);
+      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, new ArrayList<>());
 
       // Prompt gRPC to register the Animal:
       AnimalData createdAnimal = stub.registerAnimal(data);
@@ -96,6 +97,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update Animal with id '" + data.getId() + "'");
 
+      // TODO: Update all AnimalParts that includes this Animal!
+
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No animal found with id '" + data.getId() + "'");
@@ -125,6 +128,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
       // Prompt gRPC to delete the Animal:
       EmptyMessage deleted = stub.removeAnimal(animalData);
+
+      // TODO: Delete all AnimalParts that includes this Animal!
 
       if(deleted == null && animal != null)
         throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id + "'");

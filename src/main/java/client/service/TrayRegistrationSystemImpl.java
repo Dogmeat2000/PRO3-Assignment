@@ -15,6 +15,7 @@ import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -36,7 +37,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       SlaughterHouseServiceGrpc.SlaughterHouseServiceBlockingStub stub = SlaughterHouseServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Tray (TrayData)
-      TrayData data = GrpcFactory.buildGrpcTrayData(maxWeight_kilogram, currentWeight_kilogram);
+      TrayData data = GrpcFactory.buildGrpcTrayData(maxWeight_kilogram, currentWeight_kilogram, new ArrayList<>(), new ArrayList<>());
 
       // Prompt gRPC to register the Tray:
       TrayData createdTray = stub.registerTray(data);
@@ -96,6 +97,8 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update Tray with id '" + data.getTray_id() + "'");
 
+      // TODO: Update all TrayToProductTransfers and Products this tray is involved in:
+
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No Tray found with id '" + data.getTray_id() + "'");
@@ -128,6 +131,8 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
       if(deleted == null && trayData != null)
         throw new DeleteFailedException("Failed to delete Tray with id '" + trayId + "'");
+
+      // TODO: Delete all TrayToProductTransfers and Products this tray is involved in:
 
       return true;
     } catch (StatusRuntimeException e) {

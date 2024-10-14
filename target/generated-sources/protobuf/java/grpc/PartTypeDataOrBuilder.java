@@ -26,4 +26,28 @@ public interface PartTypeDataOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPartDescBytes();
+
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  java.util.List<grpc.AnimalPartData> 
+      getAnimalPartsOfThisTypeListList();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  grpc.AnimalPartData getAnimalPartsOfThisTypeList(int index);
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  int getAnimalPartsOfThisTypeListCount();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
+      getAnimalPartsOfThisTypeListOrBuilderList();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  grpc.AnimalPartDataOrBuilder getAnimalPartsOfThisTypeListOrBuilder(
+      int index);
 }

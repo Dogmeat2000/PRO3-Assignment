@@ -20,8 +20,9 @@ public class Tray_ToGrpc_TrayData
       TrayData.Builder builder = TrayData.newBuilder()
           .setTrayId(tray.getTray_id())
           .setMaxWeightKilogram(tray.getMaxWeight_kilogram().toString())
-          .setWeightKilogram(tray.getWeight_kilogram().toString());
-
+          .setWeightKilogram(tray.getWeight_kilogram().toString())
+          .addAllAnimalParts(tray.getContents().stream().map(AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
+          .addAllTrayToProducts(tray.getDeliveredToProducts().stream().map(server.controller.grpc.java_to_gRPC.TrayToProductTransfer_ToGrpc_TrayToProductTransferData::convertToTrayToProductTransferData).toList());
       return builder.build();
     }
 

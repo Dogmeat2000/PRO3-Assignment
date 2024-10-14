@@ -40,26 +40,50 @@ public interface TrayDataOrBuilder extends
       getWeightKilogramBytes();
 
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
-  java.util.List<grpc.AnimalPartId> 
+  java.util.List<grpc.AnimalPartData> 
       getAnimalPartsList();
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
-  grpc.AnimalPartId getAnimalParts(int index);
+  grpc.AnimalPartData getAnimalParts(int index);
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   int getAnimalPartsCount();
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
-  java.util.List<? extends grpc.AnimalPartIdOrBuilder> 
+  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
       getAnimalPartsOrBuilderList();
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
-  grpc.AnimalPartIdOrBuilder getAnimalPartsOrBuilder(
+  grpc.AnimalPartDataOrBuilder getAnimalPartsOrBuilder(
+      int index);
+
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  java.util.List<grpc.TrayToProductTransferData> 
+      getTrayToProductsList();
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  grpc.TrayToProductTransferData getTrayToProducts(int index);
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  int getTrayToProductsCount();
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+      getTrayToProductsOrBuilderList();
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  grpc.TrayToProductTransferDataOrBuilder getTrayToProductsOrBuilder(
       int index);
 }

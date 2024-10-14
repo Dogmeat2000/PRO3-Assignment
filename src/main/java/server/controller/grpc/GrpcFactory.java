@@ -1,8 +1,6 @@
 package server.controller.grpc;
 
 import grpc.*;
-import server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
 import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
 import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
 import shared.model.entities.*;
@@ -13,10 +11,11 @@ import java.util.List;
 /** Provides a host of static methods for building gRPC compatible application entities from given method/entity arguments/parameters */
 public class GrpcFactory
 {
-  public static AnimalData buildGrpcAnimal (BigDecimal weight) {
+  public static AnimalData buildGrpcAnimal (BigDecimal weight, List<AnimalPart> animalPartContentList) {
     return AnimalData.newBuilder()
         .setAnimalWeight(weight.toString())
-        .setAnimalId(0)
+        .setAnimalId(1)
+        .addAllAnimalPartList(animalPartContentList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
         .build();
   }
 
@@ -36,17 +35,20 @@ public class GrpcFactory
   }
 
 
-  public static PartTypeData buildGrpcPartTypeData (String desc) {
+  public static PartTypeData buildGrpcPartTypeData (String desc, List<AnimalPart> animalPartOfThisTypeList) {
     return PartTypeData.newBuilder()
         .setPartDesc(desc)
+        .addAllAnimalPartsOfThisTypeList(animalPartOfThisTypeList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
         .build();
   }
 
 
-  public static TrayData buildGrpcTrayData (BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram) {
+  public static TrayData buildGrpcTrayData (BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram, List<AnimalPart> animalPartContentList, List<TrayToProductTransfer> deliveredPartsToProductList) {
     return TrayData.newBuilder()
         .setMaxWeightKilogram(maxWeight_kilogram.toString())
         .setWeightKilogram(weight_kilogram.toString())
+        .addAllAnimalParts(animalPartContentList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
+        .addAllTrayToProducts(deliveredPartsToProductList.stream().map(server.controller.grpc.java_to_gRPC.TrayToProductTransfer_ToGrpc_TrayToProductTransferData::convertToTrayToProductTransferData).toList())
         .build();
   }
 

@@ -51,7 +51,8 @@ message TrayData {
   int64 trayId = 1;
   string maxWeight_kilogram = 2;
   string weight_kilogram = 3;
-  repeated AnimalPartId animalParts = 4;
+  repeated AnimalPartData animalParts = 4;
+  repeated TrayToProductTransferData trayToProducts = 5;
 }
 
 
@@ -69,6 +70,7 @@ message TraysData {
 message PartTypeData {
   int64 partTypeId = 1;
   string partDesc = 2;
+  repeated AnimalPartData animalPartsOfThisTypeList = 3;
 }
 
 

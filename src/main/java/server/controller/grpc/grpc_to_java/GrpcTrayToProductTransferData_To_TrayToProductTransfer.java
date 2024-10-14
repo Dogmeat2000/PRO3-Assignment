@@ -19,7 +19,6 @@ public class GrpcTrayToProductTransferData_To_TrayToProductTransfer
       Product product = GrpcProductData_To_Product.convertToProduct(TrayToProductTransferData.getProduct());
       Tray tray = GrpcTrayData_To_Tray.convertToTray(TrayToProductTransferData.getTray());
 
-
       // Construct and return a new Tray entity with the above read attributes set:
       return new TrayToProductTransfer(tray, product);
     }

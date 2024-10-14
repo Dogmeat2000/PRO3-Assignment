@@ -34,6 +34,7 @@ private static final long serialVersionUID = 0L;
     maxWeightKilogram_ = "";
     weightKilogram_ = "";
     animalParts_ = java.util.Collections.emptyList();
+    trayToProducts_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -140,43 +141,84 @@ private static final long serialVersionUID = 0L;
 
   public static final int ANIMALPARTS_FIELD_NUMBER = 4;
   @SuppressWarnings("serial")
-  private java.util.List<grpc.AnimalPartId> animalParts_;
+  private java.util.List<grpc.AnimalPartData> animalParts_;
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   @java.lang.Override
-  public java.util.List<grpc.AnimalPartId> getAnimalPartsList() {
+  public java.util.List<grpc.AnimalPartData> getAnimalPartsList() {
     return animalParts_;
   }
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends grpc.AnimalPartIdOrBuilder> 
+  public java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
       getAnimalPartsOrBuilderList() {
     return animalParts_;
   }
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   @java.lang.Override
   public int getAnimalPartsCount() {
     return animalParts_.size();
   }
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   @java.lang.Override
-  public grpc.AnimalPartId getAnimalParts(int index) {
+  public grpc.AnimalPartData getAnimalParts(int index) {
     return animalParts_.get(index);
   }
   /**
-   * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
    */
   @java.lang.Override
-  public grpc.AnimalPartIdOrBuilder getAnimalPartsOrBuilder(
+  public grpc.AnimalPartDataOrBuilder getAnimalPartsOrBuilder(
       int index) {
     return animalParts_.get(index);
+  }
+
+  public static final int TRAYTOPRODUCTS_FIELD_NUMBER = 5;
+  @SuppressWarnings("serial")
+  private java.util.List<grpc.TrayToProductTransferData> trayToProducts_;
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  @java.lang.Override
+  public java.util.List<grpc.TrayToProductTransferData> getTrayToProductsList() {
+    return trayToProducts_;
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+      getTrayToProductsOrBuilderList() {
+    return trayToProducts_;
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  @java.lang.Override
+  public int getTrayToProductsCount() {
+    return trayToProducts_.size();
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  @java.lang.Override
+  public grpc.TrayToProductTransferData getTrayToProducts(int index) {
+    return trayToProducts_.get(index);
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   */
+  @java.lang.Override
+  public grpc.TrayToProductTransferDataOrBuilder getTrayToProductsOrBuilder(
+      int index) {
+    return trayToProducts_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -205,6 +247,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < animalParts_.size(); i++) {
       output.writeMessage(4, animalParts_.get(i));
     }
+    for (int i = 0; i < trayToProducts_.size(); i++) {
+      output.writeMessage(5, trayToProducts_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -227,6 +272,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < animalParts_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, animalParts_.get(i));
+    }
+    for (int i = 0; i < trayToProducts_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, trayToProducts_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -251,6 +300,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getWeightKilogram())) return false;
     if (!getAnimalPartsList()
         .equals(other.getAnimalPartsList())) return false;
+    if (!getTrayToProductsList()
+        .equals(other.getTrayToProductsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -272,6 +323,10 @@ private static final long serialVersionUID = 0L;
     if (getAnimalPartsCount() > 0) {
       hash = (37 * hash) + ANIMALPARTS_FIELD_NUMBER;
       hash = (53 * hash) + getAnimalPartsList().hashCode();
+    }
+    if (getTrayToProductsCount() > 0) {
+      hash = (37 * hash) + TRAYTOPRODUCTS_FIELD_NUMBER;
+      hash = (53 * hash) + getTrayToProductsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -418,6 +473,13 @@ private static final long serialVersionUID = 0L;
         animalPartsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000008);
+      if (trayToProductsBuilder_ == null) {
+        trayToProducts_ = java.util.Collections.emptyList();
+      } else {
+        trayToProducts_ = null;
+        trayToProductsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -459,6 +521,15 @@ private static final long serialVersionUID = 0L;
         result.animalParts_ = animalParts_;
       } else {
         result.animalParts_ = animalPartsBuilder_.build();
+      }
+      if (trayToProductsBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0)) {
+          trayToProducts_ = java.util.Collections.unmodifiableList(trayToProducts_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.trayToProducts_ = trayToProducts_;
+      } else {
+        result.trayToProducts_ = trayToProductsBuilder_.build();
       }
     }
 
@@ -526,6 +597,32 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (trayToProductsBuilder_ == null) {
+        if (!other.trayToProducts_.isEmpty()) {
+          if (trayToProducts_.isEmpty()) {
+            trayToProducts_ = other.trayToProducts_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureTrayToProductsIsMutable();
+            trayToProducts_.addAll(other.trayToProducts_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.trayToProducts_.isEmpty()) {
+          if (trayToProductsBuilder_.isEmpty()) {
+            trayToProductsBuilder_.dispose();
+            trayToProductsBuilder_ = null;
+            trayToProducts_ = other.trayToProducts_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+            trayToProductsBuilder_ = 
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getTrayToProductsFieldBuilder() : null;
+          } else {
+            trayToProductsBuilder_.addAllMessages(other.trayToProducts_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -568,9 +665,9 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 26
             case 34: {
-              grpc.AnimalPartId m =
+              grpc.AnimalPartData m =
                   input.readMessage(
-                      grpc.AnimalPartId.parser(),
+                      grpc.AnimalPartData.parser(),
                       extensionRegistry);
               if (animalPartsBuilder_ == null) {
                 ensureAnimalPartsIsMutable();
@@ -580,6 +677,19 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 34
+            case 42: {
+              grpc.TrayToProductTransferData m =
+                  input.readMessage(
+                      grpc.TrayToProductTransferData.parser(),
+                      extensionRegistry);
+              if (trayToProductsBuilder_ == null) {
+                ensureTrayToProductsIsMutable();
+                trayToProducts_.add(m);
+              } else {
+                trayToProductsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -773,22 +883,22 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.util.List<grpc.AnimalPartId> animalParts_ =
+    private java.util.List<grpc.AnimalPartData> animalParts_ =
       java.util.Collections.emptyList();
     private void ensureAnimalPartsIsMutable() {
       if (!((bitField0_ & 0x00000008) != 0)) {
-        animalParts_ = new java.util.ArrayList<grpc.AnimalPartId>(animalParts_);
+        animalParts_ = new java.util.ArrayList<grpc.AnimalPartData>(animalParts_);
         bitField0_ |= 0x00000008;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilder<
-        grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder> animalPartsBuilder_;
+        grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder> animalPartsBuilder_;
 
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public java.util.List<grpc.AnimalPartId> getAnimalPartsList() {
+    public java.util.List<grpc.AnimalPartData> getAnimalPartsList() {
       if (animalPartsBuilder_ == null) {
         return java.util.Collections.unmodifiableList(animalParts_);
       } else {
@@ -796,7 +906,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public int getAnimalPartsCount() {
       if (animalPartsBuilder_ == null) {
@@ -806,9 +916,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public grpc.AnimalPartId getAnimalParts(int index) {
+    public grpc.AnimalPartData getAnimalParts(int index) {
       if (animalPartsBuilder_ == null) {
         return animalParts_.get(index);
       } else {
@@ -816,10 +926,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder setAnimalParts(
-        int index, grpc.AnimalPartId value) {
+        int index, grpc.AnimalPartData value) {
       if (animalPartsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -833,10 +943,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder setAnimalParts(
-        int index, grpc.AnimalPartId.Builder builderForValue) {
+        int index, grpc.AnimalPartData.Builder builderForValue) {
       if (animalPartsBuilder_ == null) {
         ensureAnimalPartsIsMutable();
         animalParts_.set(index, builderForValue.build());
@@ -847,9 +957,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public Builder addAnimalParts(grpc.AnimalPartId value) {
+    public Builder addAnimalParts(grpc.AnimalPartData value) {
       if (animalPartsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -863,10 +973,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder addAnimalParts(
-        int index, grpc.AnimalPartId value) {
+        int index, grpc.AnimalPartData value) {
       if (animalPartsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -880,10 +990,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder addAnimalParts(
-        grpc.AnimalPartId.Builder builderForValue) {
+        grpc.AnimalPartData.Builder builderForValue) {
       if (animalPartsBuilder_ == null) {
         ensureAnimalPartsIsMutable();
         animalParts_.add(builderForValue.build());
@@ -894,10 +1004,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder addAnimalParts(
-        int index, grpc.AnimalPartId.Builder builderForValue) {
+        int index, grpc.AnimalPartData.Builder builderForValue) {
       if (animalPartsBuilder_ == null) {
         ensureAnimalPartsIsMutable();
         animalParts_.add(index, builderForValue.build());
@@ -908,10 +1018,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder addAllAnimalParts(
-        java.lang.Iterable<? extends grpc.AnimalPartId> values) {
+        java.lang.Iterable<? extends grpc.AnimalPartData> values) {
       if (animalPartsBuilder_ == null) {
         ensureAnimalPartsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -923,7 +1033,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder clearAnimalParts() {
       if (animalPartsBuilder_ == null) {
@@ -936,7 +1046,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
     public Builder removeAnimalParts(int index) {
       if (animalPartsBuilder_ == null) {
@@ -949,16 +1059,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public grpc.AnimalPartId.Builder getAnimalPartsBuilder(
+    public grpc.AnimalPartData.Builder getAnimalPartsBuilder(
         int index) {
       return getAnimalPartsFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public grpc.AnimalPartIdOrBuilder getAnimalPartsOrBuilder(
+    public grpc.AnimalPartDataOrBuilder getAnimalPartsOrBuilder(
         int index) {
       if (animalPartsBuilder_ == null) {
         return animalParts_.get(index);  } else {
@@ -966,9 +1076,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public java.util.List<? extends grpc.AnimalPartIdOrBuilder> 
+    public java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
          getAnimalPartsOrBuilderList() {
       if (animalPartsBuilder_ != null) {
         return animalPartsBuilder_.getMessageOrBuilderList();
@@ -977,33 +1087,33 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public grpc.AnimalPartId.Builder addAnimalPartsBuilder() {
+    public grpc.AnimalPartData.Builder addAnimalPartsBuilder() {
       return getAnimalPartsFieldBuilder().addBuilder(
-          grpc.AnimalPartId.getDefaultInstance());
+          grpc.AnimalPartData.getDefaultInstance());
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public grpc.AnimalPartId.Builder addAnimalPartsBuilder(
+    public grpc.AnimalPartData.Builder addAnimalPartsBuilder(
         int index) {
       return getAnimalPartsFieldBuilder().addBuilder(
-          index, grpc.AnimalPartId.getDefaultInstance());
+          index, grpc.AnimalPartData.getDefaultInstance());
     }
     /**
-     * <code>repeated .grpc.AnimalPartId animalParts = 4;</code>
+     * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
      */
-    public java.util.List<grpc.AnimalPartId.Builder> 
+    public java.util.List<grpc.AnimalPartData.Builder> 
          getAnimalPartsBuilderList() {
       return getAnimalPartsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilder<
-        grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder> 
+        grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder> 
         getAnimalPartsFieldBuilder() {
       if (animalPartsBuilder_ == null) {
         animalPartsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-            grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder>(
+            grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder>(
                 animalParts_,
                 ((bitField0_ & 0x00000008) != 0),
                 getParentForChildren(),
@@ -1011,6 +1121,246 @@ private static final long serialVersionUID = 0L;
         animalParts_ = null;
       }
       return animalPartsBuilder_;
+    }
+
+    private java.util.List<grpc.TrayToProductTransferData> trayToProducts_ =
+      java.util.Collections.emptyList();
+    private void ensureTrayToProductsIsMutable() {
+      if (!((bitField0_ & 0x00000010) != 0)) {
+        trayToProducts_ = new java.util.ArrayList<grpc.TrayToProductTransferData>(trayToProducts_);
+        bitField0_ |= 0x00000010;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder> trayToProductsBuilder_;
+
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public java.util.List<grpc.TrayToProductTransferData> getTrayToProductsList() {
+      if (trayToProductsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(trayToProducts_);
+      } else {
+        return trayToProductsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public int getTrayToProductsCount() {
+      if (trayToProductsBuilder_ == null) {
+        return trayToProducts_.size();
+      } else {
+        return trayToProductsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public grpc.TrayToProductTransferData getTrayToProducts(int index) {
+      if (trayToProductsBuilder_ == null) {
+        return trayToProducts_.get(index);
+      } else {
+        return trayToProductsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder setTrayToProducts(
+        int index, grpc.TrayToProductTransferData value) {
+      if (trayToProductsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.set(index, value);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder setTrayToProducts(
+        int index, grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (trayToProductsBuilder_ == null) {
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        trayToProductsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder addTrayToProducts(grpc.TrayToProductTransferData value) {
+      if (trayToProductsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.add(value);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder addTrayToProducts(
+        int index, grpc.TrayToProductTransferData value) {
+      if (trayToProductsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.add(index, value);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder addTrayToProducts(
+        grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (trayToProductsBuilder_ == null) {
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.add(builderForValue.build());
+        onChanged();
+      } else {
+        trayToProductsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder addTrayToProducts(
+        int index, grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (trayToProductsBuilder_ == null) {
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        trayToProductsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder addAllTrayToProducts(
+        java.lang.Iterable<? extends grpc.TrayToProductTransferData> values) {
+      if (trayToProductsBuilder_ == null) {
+        ensureTrayToProductsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, trayToProducts_);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder clearTrayToProducts() {
+      if (trayToProductsBuilder_ == null) {
+        trayToProducts_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public Builder removeTrayToProducts(int index) {
+      if (trayToProductsBuilder_ == null) {
+        ensureTrayToProductsIsMutable();
+        trayToProducts_.remove(index);
+        onChanged();
+      } else {
+        trayToProductsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder getTrayToProductsBuilder(
+        int index) {
+      return getTrayToProductsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public grpc.TrayToProductTransferDataOrBuilder getTrayToProductsOrBuilder(
+        int index) {
+      if (trayToProductsBuilder_ == null) {
+        return trayToProducts_.get(index);  } else {
+        return trayToProductsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+         getTrayToProductsOrBuilderList() {
+      if (trayToProductsBuilder_ != null) {
+        return trayToProductsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(trayToProducts_);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder addTrayToProductsBuilder() {
+      return getTrayToProductsFieldBuilder().addBuilder(
+          grpc.TrayToProductTransferData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder addTrayToProductsBuilder(
+        int index) {
+      return getTrayToProductsFieldBuilder().addBuilder(
+          index, grpc.TrayToProductTransferData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+     */
+    public java.util.List<grpc.TrayToProductTransferData.Builder> 
+         getTrayToProductsBuilderList() {
+      return getTrayToProductsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder> 
+        getTrayToProductsFieldBuilder() {
+      if (trayToProductsBuilder_ == null) {
+        trayToProductsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder>(
+                trayToProducts_,
+                ((bitField0_ & 0x00000010) != 0),
+                getParentForChildren(),
+                isClean());
+        trayToProducts_ = null;
+      }
+      return trayToProductsBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:grpc.TrayData)

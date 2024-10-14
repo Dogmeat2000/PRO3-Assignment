@@ -32,6 +32,7 @@ private static final long serialVersionUID = 0L;
   }
   private PartTypeData() {
     partDesc_ = "";
+    animalPartsOfThisTypeList_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -97,6 +98,47 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int ANIMALPARTSOFTHISTYPELIST_FIELD_NUMBER = 3;
+  @SuppressWarnings("serial")
+  private java.util.List<grpc.AnimalPartData> animalPartsOfThisTypeList_;
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  @java.lang.Override
+  public java.util.List<grpc.AnimalPartData> getAnimalPartsOfThisTypeListList() {
+    return animalPartsOfThisTypeList_;
+  }
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
+      getAnimalPartsOfThisTypeListOrBuilderList() {
+    return animalPartsOfThisTypeList_;
+  }
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  @java.lang.Override
+  public int getAnimalPartsOfThisTypeListCount() {
+    return animalPartsOfThisTypeList_.size();
+  }
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  @java.lang.Override
+  public grpc.AnimalPartData getAnimalPartsOfThisTypeList(int index) {
+    return animalPartsOfThisTypeList_.get(index);
+  }
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+   */
+  @java.lang.Override
+  public grpc.AnimalPartDataOrBuilder getAnimalPartsOfThisTypeListOrBuilder(
+      int index) {
+    return animalPartsOfThisTypeList_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -117,6 +159,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(partDesc_)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 2, partDesc_);
     }
+    for (int i = 0; i < animalPartsOfThisTypeList_.size(); i++) {
+      output.writeMessage(3, animalPartsOfThisTypeList_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -132,6 +177,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(partDesc_)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(2, partDesc_);
+    }
+    for (int i = 0; i < animalPartsOfThisTypeList_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(3, animalPartsOfThisTypeList_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -152,6 +201,8 @@ private static final long serialVersionUID = 0L;
         != other.getPartTypeId()) return false;
     if (!getPartDesc()
         .equals(other.getPartDesc())) return false;
+    if (!getAnimalPartsOfThisTypeListList()
+        .equals(other.getAnimalPartsOfThisTypeListList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -168,6 +219,10 @@ private static final long serialVersionUID = 0L;
         getPartTypeId());
     hash = (37 * hash) + PARTDESC_FIELD_NUMBER;
     hash = (53 * hash) + getPartDesc().hashCode();
+    if (getAnimalPartsOfThisTypeListCount() > 0) {
+      hash = (37 * hash) + ANIMALPARTSOFTHISTYPELIST_FIELD_NUMBER;
+      hash = (53 * hash) + getAnimalPartsOfThisTypeListList().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -305,6 +360,13 @@ private static final long serialVersionUID = 0L;
       bitField0_ = 0;
       partTypeId_ = 0L;
       partDesc_ = "";
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        animalPartsOfThisTypeList_ = java.util.Collections.emptyList();
+      } else {
+        animalPartsOfThisTypeList_ = null;
+        animalPartsOfThisTypeListBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -331,9 +393,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public grpc.PartTypeData buildPartial() {
       grpc.PartTypeData result = new grpc.PartTypeData(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(grpc.PartTypeData result) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0)) {
+          animalPartsOfThisTypeList_ = java.util.Collections.unmodifiableList(animalPartsOfThisTypeList_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.animalPartsOfThisTypeList_ = animalPartsOfThisTypeList_;
+      } else {
+        result.animalPartsOfThisTypeList_ = animalPartsOfThisTypeListBuilder_.build();
+      }
     }
 
     private void buildPartial0(grpc.PartTypeData result) {
@@ -365,6 +440,32 @@ private static final long serialVersionUID = 0L;
         partDesc_ = other.partDesc_;
         bitField0_ |= 0x00000002;
         onChanged();
+      }
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        if (!other.animalPartsOfThisTypeList_.isEmpty()) {
+          if (animalPartsOfThisTypeList_.isEmpty()) {
+            animalPartsOfThisTypeList_ = other.animalPartsOfThisTypeList_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureAnimalPartsOfThisTypeListIsMutable();
+            animalPartsOfThisTypeList_.addAll(other.animalPartsOfThisTypeList_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.animalPartsOfThisTypeList_.isEmpty()) {
+          if (animalPartsOfThisTypeListBuilder_.isEmpty()) {
+            animalPartsOfThisTypeListBuilder_.dispose();
+            animalPartsOfThisTypeListBuilder_ = null;
+            animalPartsOfThisTypeList_ = other.animalPartsOfThisTypeList_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+            animalPartsOfThisTypeListBuilder_ = 
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getAnimalPartsOfThisTypeListFieldBuilder() : null;
+          } else {
+            animalPartsOfThisTypeListBuilder_.addAllMessages(other.animalPartsOfThisTypeList_);
+          }
+        }
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -402,6 +503,19 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 26: {
+              grpc.AnimalPartData m =
+                  input.readMessage(
+                      grpc.AnimalPartData.parser(),
+                      extensionRegistry);
+              if (animalPartsOfThisTypeListBuilder_ == null) {
+                ensureAnimalPartsOfThisTypeListIsMutable();
+                animalPartsOfThisTypeList_.add(m);
+              } else {
+                animalPartsOfThisTypeListBuilder_.addMessage(m);
+              }
+              break;
+            } // case 26
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -521,6 +635,246 @@ private static final long serialVersionUID = 0L;
       bitField0_ |= 0x00000002;
       onChanged();
       return this;
+    }
+
+    private java.util.List<grpc.AnimalPartData> animalPartsOfThisTypeList_ =
+      java.util.Collections.emptyList();
+    private void ensureAnimalPartsOfThisTypeListIsMutable() {
+      if (!((bitField0_ & 0x00000004) != 0)) {
+        animalPartsOfThisTypeList_ = new java.util.ArrayList<grpc.AnimalPartData>(animalPartsOfThisTypeList_);
+        bitField0_ |= 0x00000004;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder> animalPartsOfThisTypeListBuilder_;
+
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public java.util.List<grpc.AnimalPartData> getAnimalPartsOfThisTypeListList() {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(animalPartsOfThisTypeList_);
+      } else {
+        return animalPartsOfThisTypeListBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public int getAnimalPartsOfThisTypeListCount() {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        return animalPartsOfThisTypeList_.size();
+      } else {
+        return animalPartsOfThisTypeListBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public grpc.AnimalPartData getAnimalPartsOfThisTypeList(int index) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        return animalPartsOfThisTypeList_.get(index);
+      } else {
+        return animalPartsOfThisTypeListBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder setAnimalPartsOfThisTypeList(
+        int index, grpc.AnimalPartData value) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.set(index, value);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder setAnimalPartsOfThisTypeList(
+        int index, grpc.AnimalPartData.Builder builderForValue) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder addAnimalPartsOfThisTypeList(grpc.AnimalPartData value) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.add(value);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder addAnimalPartsOfThisTypeList(
+        int index, grpc.AnimalPartData value) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.add(index, value);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder addAnimalPartsOfThisTypeList(
+        grpc.AnimalPartData.Builder builderForValue) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.add(builderForValue.build());
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder addAnimalPartsOfThisTypeList(
+        int index, grpc.AnimalPartData.Builder builderForValue) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder addAllAnimalPartsOfThisTypeList(
+        java.lang.Iterable<? extends grpc.AnimalPartData> values) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, animalPartsOfThisTypeList_);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder clearAnimalPartsOfThisTypeList() {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        animalPartsOfThisTypeList_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public Builder removeAnimalPartsOfThisTypeList(int index) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        ensureAnimalPartsOfThisTypeListIsMutable();
+        animalPartsOfThisTypeList_.remove(index);
+        onChanged();
+      } else {
+        animalPartsOfThisTypeListBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public grpc.AnimalPartData.Builder getAnimalPartsOfThisTypeListBuilder(
+        int index) {
+      return getAnimalPartsOfThisTypeListFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public grpc.AnimalPartDataOrBuilder getAnimalPartsOfThisTypeListOrBuilder(
+        int index) {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        return animalPartsOfThisTypeList_.get(index);  } else {
+        return animalPartsOfThisTypeListBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
+         getAnimalPartsOfThisTypeListOrBuilderList() {
+      if (animalPartsOfThisTypeListBuilder_ != null) {
+        return animalPartsOfThisTypeListBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(animalPartsOfThisTypeList_);
+      }
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public grpc.AnimalPartData.Builder addAnimalPartsOfThisTypeListBuilder() {
+      return getAnimalPartsOfThisTypeListFieldBuilder().addBuilder(
+          grpc.AnimalPartData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public grpc.AnimalPartData.Builder addAnimalPartsOfThisTypeListBuilder(
+        int index) {
+      return getAnimalPartsOfThisTypeListFieldBuilder().addBuilder(
+          index, grpc.AnimalPartData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.AnimalPartData animalPartsOfThisTypeList = 3;</code>
+     */
+    public java.util.List<grpc.AnimalPartData.Builder> 
+         getAnimalPartsOfThisTypeListBuilderList() {
+      return getAnimalPartsOfThisTypeListFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder> 
+        getAnimalPartsOfThisTypeListFieldBuilder() {
+      if (animalPartsOfThisTypeListBuilder_ == null) {
+        animalPartsOfThisTypeListBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            grpc.AnimalPartData, grpc.AnimalPartData.Builder, grpc.AnimalPartDataOrBuilder>(
+                animalPartsOfThisTypeList_,
+                ((bitField0_ & 0x00000004) != 0),
+                getParentForChildren(),
+                isClean());
+        animalPartsOfThisTypeList_ = null;
+      }
+      return animalPartsOfThisTypeListBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:grpc.PartTypeData)
