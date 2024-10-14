@@ -3,6 +3,8 @@ package server.controller.grpc;
 import grpc.*;
 import server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
 import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
+import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
+import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
@@ -58,10 +60,10 @@ public class GrpcFactory
   }
 
 
-  public static TrayToProductTransferData buildGrpcTrayToProductTransferData (long productId, long trayId){
+  public static TrayToProductTransferData buildGrpcTrayToProductTransferData (Product product, Tray tray){
     return TrayToProductTransferData.newBuilder()
-        .setProductId(LongId_ToGrpc_Id.convertToProductId(productId))
-        .setTrayId(LongId_ToGrpc_Id.convertToTrayId(trayId))
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(product))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
         .build();
   }
 

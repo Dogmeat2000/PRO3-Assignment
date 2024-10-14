@@ -18,8 +18,8 @@ public class TrayToProductTransfer_ToGrpc_TrayToProductTransferData
       return null;
 
     TrayToProductTransferData.Builder builder = TrayToProductTransferData.newBuilder()
-        .setProductId(LongId_ToGrpc_Id.convertToProductId(transfer.getProduct_id()))
-        .setTrayId(LongId_ToGrpc_Id.convertToTrayId(transfer.getTray_id()));
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(transfer.getProduct()))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(transfer.getTray()));
 
     return builder.build();
   }

@@ -3,8 +3,10 @@ package server.controller.grpc.grpc_to_java;
 import grpc.AnimalData;
 import grpc.AnimalsData;
 import shared.model.entities.Animal;
+import shared.model.entities.AnimalPart;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
@@ -18,9 +20,12 @@ public class GrpcAnimalData_To_Animal
     // Read AnimalData information from the gRPC data:
     long id = animalData.getAnimalId();
     BigDecimal weight = new BigDecimal(animalData.getAnimalWeight());
+    List<AnimalPart> animalPartList = new ArrayList<>(animalData.getAnimalPartListList().stream().map(GrpcAnimalPartData_To_AnimalPart::convertToAnimalPart).toList());
 
     // Construct and return a new Animal entity with the above read attributes set:
-    return new Animal(id, weight);
+    Animal animal = new Animal(id, weight);
+    animal.getPartList().addAll(animalPartList);
+    return animal;
   }
 
   public static List<Animal> convertToAnimalList(AnimalsData data) {

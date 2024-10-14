@@ -12,6 +12,7 @@ message EmptyMessage {
 message AnimalData {
   int64 animalId = 1;
   string animalWeight = 2;
+  repeated AnimalPartData animalPartList = 3;
 }
 
 
@@ -101,8 +102,8 @@ message ProductsData {
 
 // TrayToProductTransfer entity:
 message TrayToProductTransferData {
-  TrayId trayId = 1;
-  ProductId productId = 2;
+  TrayData tray = 1;
+  ProductData product = 2;
 }
 
 

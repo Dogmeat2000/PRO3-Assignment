@@ -26,4 +26,28 @@ public interface AnimalDataOrBuilder extends
    */
   com.google.protobuf.ByteString
       getAnimalWeightBytes();
+
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   */
+  java.util.List<grpc.AnimalPartData> 
+      getAnimalPartListList();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   */
+  grpc.AnimalPartData getAnimalPartList(int index);
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   */
+  int getAnimalPartListCount();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   */
+  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
+      getAnimalPartListOrBuilderList();
+  /**
+   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   */
+  grpc.AnimalPartDataOrBuilder getAnimalPartListOrBuilder(
+      int index);
 }

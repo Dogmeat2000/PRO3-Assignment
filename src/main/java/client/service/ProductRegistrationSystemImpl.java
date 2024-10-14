@@ -45,7 +45,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       // Add associations between this Product and all the specified Trays delivering parts:
       for (Tray tray : receivedPartsFromTrayList) {
-        createdProduct.getTrayToProductTransfersListList().add(GrpcFactory.buildGrpcTrayToProductTransferData(createdProduct.getProductId(), tray.getTray_id()));
+        createdProduct.getTrayToProductTransfersListList().add(GrpcFactory.buildGrpcTrayToProductTransferData(GrpcProductData_To_Product.convertToProduct(createdProduct), tray));
       }
 
       // Update the repository with the updated connections:
