@@ -1,6 +1,7 @@
 package server.model.validation;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import shared.model.entities.AnimalPart;
 import shared.model.entities.Tray;
 
 import java.math.BigDecimal;
@@ -23,6 +24,16 @@ public class TrayValidation
 
     // Tray weight must be 0 or larger:
     validateWeight(tray.getWeight_kilogram());
+
+    // Tray must have 0 or more available space:
+    if(tray.getMaxWeight_kilogram().compareTo(tray.getWeight_kilogram()) < 0)
+      throw new DataIntegrityViolationException("Available tray weight is negative (" + tray.getMaxWeight_kilogram().compareTo(tray.getWeight_kilogram()) + "kg)");
+
+    // All contents must be of the same PartType:
+    for (AnimalPart animalPart : tray.getContents()) {
+      if(!animalPart.getType().equals(tray.getTrayType()))
+        throw new DataIntegrityViolationException("AnimalPart PartType mismatch with TrayType. Trays can only transport AnimalParts of the same PartType.");
+    }
 
     // Validation passed:
   }

@@ -18,7 +18,7 @@ import shared.model.exceptions.UpdateFailedException;
 import java.util.List;
 
 @GrpcService
-public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
+public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBase
 {
   private final AnimalRegistryInterface animalService;
 
@@ -129,7 +129,7 @@ public class GrpcAnimalServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHo
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No Animals found").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all animals").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all animals, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 }

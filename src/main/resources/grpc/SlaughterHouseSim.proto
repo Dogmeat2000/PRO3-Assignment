@@ -37,6 +37,12 @@ message AnimalPartData {
 }
 
 
+message UpdatedAnimalPartData {
+  AnimalPartData oldData = 1;
+  AnimalPartData newData = 2;
+}
+
+
 message AnimalPartId {
   int64 animalPartId = 1;
   AnimalId animalId = 2;
@@ -124,44 +130,91 @@ message TrayToProductTransfersData {
 }
 
 
-service SlaughterHouseService {
+service AnimalService {
   // Create:
   rpc registerAnimal(AnimalData) returns (AnimalData);
-  rpc registerAnimalPart(AnimalPartData) returns (AnimalPartData);
-  rpc registerProduct(ProductData) returns (ProductData);
-  rpc registerPartType(PartTypeData) returns (PartTypeData);
-  rpc registerTray(TrayData) returns (TrayData);
-  //rpc registerTrayToProductTransfer(TrayToProductTransferData) returns (TrayToProductTransferData);
 
   // Read:
   rpc readAnimal(AnimalId) returns (AnimalData);
-  rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
-  rpc readProduct(ProductId) returns (ProductData);
-  rpc readPartType(PartTypeId) returns (PartTypeData);
-  rpc readTray(TrayId) returns (TrayData);
-  //rpc readTrayToProductTransfer(TrayToProductTransferId) returns (TrayToProductTransferData);
 
   // Update:
   rpc updateAnimal(AnimalData) returns (EmptyMessage);
-  rpc updateAnimalPart(AnimalPartData) returns (EmptyMessage);
-  rpc updateProduct(ProductData) returns (EmptyMessage);
-  rpc updatePartType(PartTypeData) returns (EmptyMessage);
-  rpc updateTray(TrayData) returns (EmptyMessage);
-  //rpc updateTrayToProductTransfer(TrayToProductTransferData) returns (EmptyMessage);
 
   // Delete:
   rpc removeAnimal(AnimalData) returns (EmptyMessage);
-  rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);
-  rpc removeProduct(ProductData) returns (EmptyMessage);
-  rpc removePartType(PartTypeData) returns (EmptyMessage);
-  rpc removeTray(TrayData) returns (EmptyMessage);
-  //rpc removeTrayToProductTransfer(TrayToProductTransferId) returns (EmptyMessage);
 
   // Get All:
   rpc getAllAnimals(EmptyMessage) returns (AnimalsData);
+}
+
+
+service AnimalPartService {
+  // Create:
+  rpc registerAnimalPart(AnimalPartData) returns (AnimalPartData);
+
+  // Read:
+  rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
+
+  // Update:
+  rpc updateAnimalPart(UpdatedAnimalPartData) returns (EmptyMessage);
+
+  // Delete:
+  rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);
+
+  // Get All:
   rpc getAnimalParts(EmptyMessage) returns (AnimalPartsData);
+}
+
+
+service ProductService {
+  // Create:
+  rpc registerProduct(ProductData) returns (ProductData);
+
+  // Read:
+  rpc readProduct(ProductId) returns (ProductData);
+
+  // Update:
+  rpc updateProduct(ProductData) returns (EmptyMessage);
+
+  // Delete:
+  rpc removeProduct(ProductData) returns (EmptyMessage);
+
+  // Get All:
   rpc getAllProducts(EmptyMessage) returns (ProductsData);
-  rpc getAllPartTypes(EmptyMessage) returns (PartTypesData);
+}
+
+
+service TrayService {
+  // Create:
+  rpc registerTray(TrayData) returns (TrayData);
+
+  // Read:
+  rpc readTray(TrayId) returns (TrayData);
+
+  // Update:
+  rpc updateTray(TrayData) returns (EmptyMessage);
+
+  // Delete:
+  rpc removeTray(TrayData) returns (EmptyMessage);
+
+  // Get All:
   rpc getAllTrays(EmptyMessage) returns (TraysData);
-  //rpc getAllTrayToProductTransfers(EmptyMessage) returns (TrayToProductTransfersData);
+}
+
+
+service PartTypeService {
+  // Create:
+  rpc registerPartType(PartTypeData) returns (PartTypeData);
+
+  // Read:
+  rpc readPartType(PartTypeId) returns (PartTypeData);
+
+  // Update:
+  rpc updatePartType(PartTypeData) returns (EmptyMessage);
+
+  // Delete:
+  rpc removePartType(PartTypeData) returns (EmptyMessage);
+
+  // Get All:
+  rpc getAllPartTypes(EmptyMessage) returns (PartTypesData);
 }

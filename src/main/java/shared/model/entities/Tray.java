@@ -1,9 +1,12 @@
 package shared.model.entities;
 
 import jakarta.persistence.*;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +14,7 @@ import java.util.Objects;
 // Good guide on JPA here: https://www.infoworld.com/article/2259742/java-persistence-with-jpa-and-hibernate-part-1-entities-and-relationships.html
 // Find a good manual on how to use Spring Boot with JPA Database management here: https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d
 @Entity // Assigns this class as an Entity for Spring Boot, to use as a base for its Data Persistance interface.
-@Table(name="Tray") // Tells spring boot JPA, what the name of this database table is.
+@Table(name="tray") // Tells spring boot JPA, what the name of this database table is.
 public class Tray implements Serializable
 {
   @Id                                                   // Tells Spring Boot, that this value is the primary key.
@@ -20,11 +23,11 @@ public class Tray implements Serializable
   private long tray_id;
 
 
-  @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
+  @Column(name="maxweight_kilogram", nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
   private BigDecimal maxWeight_kilogram;
 
 
-  @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
+  @Column(name="weight_kilogram", nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
   private BigDecimal weight_kilogram;
 
 
@@ -43,8 +46,10 @@ public class Tray implements Serializable
   @OneToMany(mappedBy="tray")
   private List<TrayToProductTransfer> deliveredToProducts;
 
+  @Transient
+  private PartType trayType;
 
-  // A no-args constructor, as required by tje Java Data API (JPA) specifications. Should not be used directly, thus protected!
+  // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Tray() {
     //Note: Do not set the tray_id here, since JPA auto-sets this by using the database.
     setWeight_kilogram(BigDecimal.ZERO);
@@ -58,8 +63,11 @@ public class Tray implements Serializable
     setTray_id(tray_id);
     setMaxWeight_kilogram(maxWeight_kilogram);
     setWeight_kilogram(weight_kilogram);
-    this.contents = new ArrayList<>(contents);
     this.deliveredToProducts = new ArrayList<>(deliveredToProducts);
+
+    // Check each AnimalPart and add to Tray:
+    this.contents = new ArrayList<>();
+
   }
 
 
@@ -93,13 +101,64 @@ public class Tray implements Serializable
   }
 
 
+  /** Returns a copy of the contents. Any manipulation of the copy will NOT be saved to this object. */
   public List<AnimalPart> getContents() {
-    return contents;
+    return new ArrayList<>(contents);
+  }
+
+
+  public void addAnimalPart(AnimalPart animalPart) throws DataIntegrityViolationException {
+    // Check that there is room for more animalParts:
+    BigDecimal availableCapacity = getMaxWeight_kilogram().subtract(getWeight_kilogram());
+
+    if(getMaxWeight_kilogram().compareTo(availableCapacity.add(animalPart.getWeight_kilogram())) < 0) {
+      //There isn't space for this AnimalPart
+      throw new DataIntegrityViolationException("Unable to add AnimalPart. Tray available Capacity (" + availableCapacity + "kg) is less than required (" + availableCapacity.add(animalPart.getWeight_kilogram()) + ")");
+    }
+
+    // Check that AnimalPart has the same PartType association, as this Tray:
+    if (getTrayType() == null || getContents().isEmpty()) {
+      // This is the first AnimalPart being added. This part defines what AnimalParts this Tray may transport:
+      setTrayType(animalPart.getType());
+    } else {
+      if(!animalPart.getType().equals(getTrayType())) {
+        throw new DataIntegrityViolationException("Unable to add AnimalPart. Trays may only contain 1 AnimalPart type. Tray already contains '" + getTrayType().getTypeDesc() + "', but attempting to add '" + animalPart.getType().getTypeDesc() + "'");
+      }
+    }
+
+    // Add the AnimalPart:
+    contents.add(animalPart);
+  }
+
+
+  public void removeAnimalPart(AnimalPart animalPart) {
+    contents.remove(animalPart);
+  }
+
+
+  public void clearAnimalPartContents() {
+    contents.clear();
+  }
+
+
+  public void addAllAnimalParts (Collection<AnimalPart> animalPartCollection) throws DataIntegrityViolationException {
+    for (AnimalPart animalPart : animalPartCollection)
+      addAnimalPart(animalPart);
   }
 
 
   public List<TrayToProductTransfer> getDeliveredToProducts() {
     return deliveredToProducts;
+  }
+
+
+  public PartType getTrayType() {
+    return trayType;
+  }
+
+
+  public void setTrayType(PartType trayType) {
+    this.trayType = trayType;
   }
 
 

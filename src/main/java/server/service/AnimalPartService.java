@@ -1,10 +1,12 @@
 package server.service;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,62 +108,98 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean updateAnimalPart(AnimalPart data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Override public boolean updateAnimalPart(AnimalPart oldData, AnimalPart newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
-    AnimalPartValidation.validateAnimalPart(data);
+    AnimalPartValidation.validateAnimalPart(oldData);
+    AnimalPartValidation.validateAnimalPart(newData);
 
     // Attempt to update AnimalPart in database:
     try {
       // Fetch the existing Entity from DB:
-      AnimalPartId animalPartCompositeKey = new AnimalPartId(data.getPart_id(), data.getAnimal_id(), data.getType_id(), data.getTray_id());
-      AnimalPart animalPart = animalPartRepository.findById(animalPartCompositeKey).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + animalPartCompositeKey));
+      AnimalPartId oldAnimalPartCompositeKey = new AnimalPartId(oldData.getPart_id(), oldData.getAnimal_id(), oldData.getType_id(), oldData.getTray_id());
+      AnimalPart oldAnimalPart = animalPartRepository.findById(oldAnimalPartCompositeKey).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + oldAnimalPartCompositeKey));
 
       // Modify the database Entity locally:
-      animalPart.setWeight_kilogram(data.getWeight_kilogram());
-      animalPart.setAnimal(data.getAnimal());
-      animalPart.setType(data.getType());
-      animalPart.setTray(data.getTray());
-      animalPart.setProduct(data.getProduct());
+      AnimalPart newAnimalPart = oldAnimalPart.copy();
+      newAnimalPart.setWeight_kilogram(newData.getWeight_kilogram());
+      newAnimalPart.setAnimal(newData.getAnimal());
+      newAnimalPart.setType(newData.getType());
+      newAnimalPart.setTray(newData.getTray());
+      newAnimalPart.setProduct(newData.getProduct());
+      AnimalPartId newAnimalPartCompositeKey = new AnimalPartId(newAnimalPart.getPart_id(), newAnimalPart.getAnimal_id(), newAnimalPart.getType_id(), newAnimalPart.getTray_id());
 
-      // Save the modified entity back to database:
-      animalPartRepository.save(animalPart);
-      logger.info("AnimalPart updated in database with ID: {}", animalPartCompositeKey);
+      // Check if the newAnimalPart compositeKey is different from the oldAnimalParts.
+      if(!oldAnimalPartCompositeKey.equals(newAnimalPartCompositeKey)) {
+        //Composite keys have changed. We need to re-register the new AnimalPart:
+        registerAnimalPart(newAnimalPart);
 
-      // Attempt to update all associated Animal entities:
-      Animal animal = data.getAnimal();
-      animal.getPartList().remove(data);
-      animalRepository.updateAnimal(animal);
-
-      // Attempt to update all associated Tray entities:
-      Tray tray = data.getTray();
-      tray.getContents().remove(data);
-      trayRepository.updateTray(tray);
-
-      // Attempt to update all associated PartType entities:
-      PartType partType = data.getType();
-      partType.getPartList().remove(data);
-      partTypeRepository.updatePartType(partType);
-
-      // Attempt to update all associated Product entities:
-      if(data.getProduct() != null) {
-        Product product = data.getProduct();
-        product.getContentList().remove(data);
-        productRepository.updateProduct(product);
+        // Remove the now void AnimalPart:
+        removeAnimalPart(oldAnimalPart);
+      } else {
+        //Composite keys are identical. Update existing AnimalPart in place:
+        newAnimalPart = animalPartRepository.save(newAnimalPart);
+        logger.info("AnimalPart updated in database with ID: {}", newAnimalPartCompositeKey);
       }
 
-      // Attempt to add AnimalPart to local cache:
-      String hashMapKey = "" + animalPart.getPart_id() + animalPart.getAnimal_id() + animalPart.getType_id() + animalPart.getType_id();
-      animalPartCache.put(hashMapKey, animalPart);
-      logger.info("AnimalPart saved to local cache with ID: {}", animalPartCompositeKey);
+      // Attempt to update all associated Animal entities:
+      Animal oldAnimal = oldAnimalPart.getAnimal();
+      oldAnimal.getPartList().remove(oldAnimalPart);
+      animalRepository.updateAnimal(oldAnimal);
+
+      Animal newAnimal = newAnimalPart.getAnimal();
+      newAnimal.getPartList().add(newAnimalPart);
+      animalRepository.updateAnimal(newAnimal);
+
+
+      // Attempt to update all associated Tray entities:
+      Tray oldTray = oldAnimalPart.getTray();
+      oldTray.removeAnimalPart(oldAnimalPart);
+      trayRepository.updateTray(oldTray);
+
+      Tray newTray = newAnimalPart.getTray();
+      newTray.removeAnimalPart(oldAnimalPart);
+      trayRepository.updateTray(newTray);
+
+
+      // Attempt to update all associated PartType entities:
+      PartType oldPartType = oldAnimalPart.getType();
+      oldPartType.getPartList().remove(oldAnimalPart);
+      partTypeRepository.updatePartType(oldPartType);
+
+      PartType newPartType = newAnimalPart.getType();
+      newPartType.getPartList().add(newAnimalPart);
+      partTypeRepository.updatePartType(newPartType);
+
+
+      // Attempt to update all associated Product entities:
+      if(oldAnimalPart.getProduct() != null) {
+        Product oldProduct = oldAnimalPart.getProduct();
+        oldProduct.getContentList().remove(oldAnimalPart);
+        productRepository.updateProduct(oldProduct);
+      }
+
+      if(newAnimalPart.getProduct() != null) {
+        Product newProduct = newAnimalPart.getProduct();
+        newProduct.getContentList().remove(newAnimalPart);
+        productRepository.updateProduct(newProduct);
+      }
+
+      // Reset the local cache, since updates done inside the other service classes might not be downloaded from the Database:
+      animalPartCache.clear();
+
+      // Attempt to add new AnimalPart to local cache:
+      String hashMapKey = "" + newAnimalPart.getPart_id() + newAnimalPart.getAnimal_id() + newAnimalPart.getType_id() + newAnimalPart.getType_id();
+      animalPartCache.put(hashMapKey, newAnimalPart);
+      logger.info("AnimalPart saved to local cache with ID: {}", hashMapKey);
 
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", data.getPart_id(), e.getMessage());
+      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", oldData.getPart_id(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", data.getPart_id(), e.getMessage());
+      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", oldData.getPart_id(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -199,7 +237,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
       // Attempt to update all associated Tray entities:
       Tray tray = data.getTray();
-      tray.getContents().remove(data);
+      tray.removeAnimalPart(data);
       trayRepository.updateTray(tray);
 
       // Attempt to update all associated PartType entities:

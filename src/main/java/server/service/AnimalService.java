@@ -1,14 +1,17 @@
 package server.service;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalValidation;
+import server.repository.AnimalPartRepository;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
@@ -22,10 +25,10 @@ public class AnimalService implements AnimalRegistryInterface
   private final AnimalRepository animalRepository;
   private final Map<Long, Animal> animalCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalService.class);
-  private final AnimalPartRegistryInterface animalPartRepository;
+  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public AnimalService(AnimalRepository animalRepository, AnimalPartRegistryInterface animalPartRepository) {
+  public AnimalService(AnimalRepository animalRepository, AnimalPartRepository animalPartRepository) {
     this.animalRepository = animalRepository;
     this.animalPartRepository = animalPartRepository;
   }
@@ -61,6 +64,7 @@ public class AnimalService implements AnimalRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public Animal readAnimal(long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
     AnimalValidation.validateId(animalId);
@@ -120,13 +124,18 @@ public class AnimalService implements AnimalRegistryInterface
 
       // Update all still-existing AnimalPart compositions:
       for (AnimalPart animalPart : animal.getPartList()) {
+        AnimalPart oldAnimalPart = animalPart.copy();
         animalPart.setAnimal(animal);
-        animalPartRepository.updateAnimalPart(animalPart);
+        //animalPartRepository.updateAnimalPart(oldAnimalPart, animalPart);
+        animalPartRepository.save(animalPart);
       }
 
       // Delete any AnimalPart objects that are no longer associated with any Animal entity:
-      for (AnimalPart animalPart : listOfAnimalPartsNotInUpdatedAnimal)
-        animalPartRepository.removeAnimalPart(animalPart);
+      for (AnimalPart animalPart : listOfAnimalPartsNotInUpdatedAnimal){
+        //animalPartRepository.removeAnimalPart(animalPart);
+        animalPartRepository.delete(animalPart);
+      }
+
 
       return true;
 
@@ -165,8 +174,11 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal deleted from local cache with ID: {}", data.getId());
 
       // Attempt to delete all associated AnimalPart entities:
-      for (AnimalPart animalPart : data.getPartList())
-        animalPartRepository.removeAnimalPart(animalPart);
+      for (AnimalPart animalPart : data.getPartList()){
+        //animalPartRepository.removeAnimalPart(animalPart);
+        animalPartRepository.delete(animalPart);
+      }
+
 
       return true;
 
@@ -181,6 +193,7 @@ public class AnimalService implements AnimalRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public List<Animal> getAllAnimals() throws PersistenceException {
     try {
       List<Animal> animals = animalRepository.findAll();

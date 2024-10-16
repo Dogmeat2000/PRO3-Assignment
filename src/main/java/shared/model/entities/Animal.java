@@ -29,7 +29,7 @@ public class Animal implements Serializable
   // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the AnimalPart entity,
   // and that the AnimalPart entity should 'own' the mapping. In other words, the animal assigned in the 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within the AnimalPart class that references to the Animal are stored in the DB!
-  @OneToMany(mappedBy="animal")
+  @OneToMany(mappedBy="animal", fetch = FetchType.EAGER)
   private List<AnimalPart> partList;
 
 

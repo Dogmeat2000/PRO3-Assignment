@@ -1,6 +1,7 @@
 package server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import shared.model.entities.PartType;
 
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
@@ -11,6 +12,7 @@ import shared.model.entities.PartType;
  * </p>
  * <p>More info can be found here:<br><a href="https://www.geeksforgeeks.org/spring-boot-difference-between-crudrepository-and-jparepository">https://www.geeksforgeeks.org/spring-boot-difference-between-crudrepository-and-jparepository</a><br>
  * and here:<br> <a href="https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d">https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d</a></p>*/
+@Repository
 public interface PartTypeRepository extends JpaRepository<PartType, Long> // <-- Primary key of Entity must be provided as the Type to JpaRepository!
 {
   // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.

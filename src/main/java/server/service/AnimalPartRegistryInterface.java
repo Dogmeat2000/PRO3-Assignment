@@ -17,7 +17,7 @@ public interface AnimalPartRegistryInterface
   AnimalPart readAnimalPart (long part_id, long animalId, long typeId, long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
   // Update:
-  boolean updateAnimalPart (AnimalPart data) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
+  boolean updateAnimalPart (AnimalPart oldData, AnimalPart newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
   // Delete:
   boolean removeAnimalPart (AnimalPart data) throws PersistenceException, DataIntegrityViolationException;

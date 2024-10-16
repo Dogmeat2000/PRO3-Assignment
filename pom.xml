@@ -87,19 +87,19 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
-            <version>1.68.0</version>
+            <version>1.63.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
-            <version>1.68.0</version>
+            <version>1.63.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
-            <version>1.68.0</version>
+            <version>1.63.0</version>
         </dependency>
 
         <dependency>
@@ -136,7 +136,7 @@
                     <pluginId>grpc-java</pluginId>
 
                     <pluginArtifact>
-                        io.grpc:protoc-gen-grpc-java:1.68.0:exe:${os.detected.classifier}
+                        io.grpc:protoc-gen-grpc-java:1.63.0:exe:${os.detected.classifier}
                     </pluginArtifact>
 
                     <!-- Specify the source root where the .proto files are located, Because I want them somewhere else! -->

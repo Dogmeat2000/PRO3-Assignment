@@ -42,11 +42,12 @@ public interface AnimalPartRegistrationSystem
 
   /** <p>Updates the given AnimalPart in the repository. Unique id is extracted from the AnimalPart entity
    * and is used to uniquely identify which AnimalPart entity in the repository to apply the updated information to.</p>
-   * @param data An AnimalPart Entity, with proper id, weight, etc. applied to.
+   * @param oldData The unmodified AnimalPart Entity, with proper id, weight, etc. applied to.
+   * @param newData the modified AnimalPart Entity, with proper id, weight, etc. applied to.
    * @throws NotFoundException Thrown if no matching AnimalPart could be found in the repository.
    * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified AnimalPart entity.
    */
-  void updateAnimalPart (AnimalPart data) throws UpdateFailedException, NotFoundException;
+  void updateAnimalPart (AnimalPart oldData, AnimalPart newData) throws UpdateFailedException, NotFoundException;
 
 
   /** <p>Deletes the given AnimalPart from the repository. Unique id is extracted from the AnimalPart entity

@@ -3,7 +3,7 @@ package server.grpc;
 import grpc.EmptyMessage;
 import grpc.PartTypeData;
 import grpc.PartTypeId;
-import grpc.SlaughterHouseServiceGrpc;
+import grpc.PartTypeServiceGrpc;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -21,7 +21,7 @@ import shared.model.exceptions.UpdateFailedException;
 import java.util.List;
 
 @GrpcService
-public class GrpcPartTypeServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
+public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeServiceImplBase
 {
   private final PartTypeRegistryInterface partTypeService;
 

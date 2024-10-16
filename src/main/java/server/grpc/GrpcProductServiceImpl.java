@@ -18,7 +18,7 @@ import shared.model.exceptions.UpdateFailedException;
 import java.util.List;
 
 @GrpcService
-public class GrpcProductServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
+public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase
 {
   private final ProductRegistryInterface productService;
 

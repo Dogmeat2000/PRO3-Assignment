@@ -11,7 +11,7 @@ import java.util.Objects;
 // Good guide on JPA here: https://www.infoworld.com/article/2259742/java-persistence-with-jpa-and-hibernate-part-1-entities-and-relationships.html
 // Find a good manual on how to use Spring Boot with JPA Database management here: https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d
 @Entity // Assigns this class as an Entity for Spring Boot, to use as a base for its Data Persistance interface.
-@Table(name="Product") // Tells spring boot JPA, what the name of this database table is.
+@Table(name="product") // Tells spring boot JPA, what the name of this database table is.
 public class Product implements Serializable
 {
   @Id                                                   // Tells Spring Boot, that this value is part of the primary key.

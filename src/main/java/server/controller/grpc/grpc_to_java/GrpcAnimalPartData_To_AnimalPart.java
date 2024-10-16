@@ -2,6 +2,7 @@ package server.controller.grpc.grpc_to_java;
 
 import grpc.AnimalPartData;
 import grpc.AnimalPartsData;
+import grpc.UpdatedAnimalPartData;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;

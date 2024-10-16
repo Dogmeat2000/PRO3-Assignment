@@ -5,10 +5,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.TrayValidation;
+import server.repository.AnimalPartRepository;
 import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.TrayRepository;
 import server.repository.TrayToProductTransferRepository;
@@ -26,10 +28,10 @@ public class TrayService implements TrayRegistryInterface
   private final Map<Long, Tray> trayCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(TrayService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
-  private final AnimalPartRegistryInterface animalPartRepository;
+  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository, AnimalPartRegistryInterface animalPartRepository) {
+  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository, AnimalPartRepository animalPartRepository) {
     this.trayRepository = trayRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
     this.animalPartRepository = animalPartRepository;
@@ -51,10 +53,9 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray added to DB with ID: {}", newTray.getTray_id());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
-        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.save(transferId);
-      }
+      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.save(transferId);
+      trayToProductTransferRepository.saveAll(data.getDeliveredToProducts());
 
       // Attempt to add Tray to local cache:
       trayCache.put(newTray.getTray_id(), newTray);
@@ -62,8 +63,10 @@ public class TrayService implements TrayRegistryInterface
 
       // Update any associated AnimalPart with this new Tray info:
       for (AnimalPart animalPart : data.getContents()) {
+        AnimalPart oldAnimalPart = animalPart.copy();
         animalPart.setTray(newTray);
-        animalPartRepository.updateAnimalPart(animalPart);
+        //animalPartRepository.updateAnimalPart(oldAnimalPart, animalPart);
+        animalPartRepository.save(animalPart);
       }
 
       return newTray;
@@ -122,8 +125,8 @@ public class TrayService implements TrayRegistryInterface
       // Modify the database Entity locally:
       tray.setMaxWeight_kilogram(data.getMaxWeight_kilogram());
       tray.setWeight_kilogram(data.getWeight_kilogram());
-      tray.getContents().clear();
-      tray.getContents().addAll(data.getContents());
+      tray.clearAnimalPartContents();
+      tray.addAllAnimalParts(data.getContents());
       tray.getDeliveredToProducts().clear();
       tray.getDeliveredToProducts().addAll(data.getDeliveredToProducts());
 
@@ -132,10 +135,9 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray updated in database with ID: {}", tray.getTray_id());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
-        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.save(transferId);
-      }
+      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.save(transferId);
+      trayToProductTransferRepository.saveAll(data.getDeliveredToProducts());
 
       // Identify any AnimalParts that were removed from the Tray:
       List<AnimalPart> listOfRemovedAnimalParts = new ArrayList<>(data.getContents());
@@ -143,13 +145,18 @@ public class TrayService implements TrayRegistryInterface
 
       // Update all still-existing AnimalParts in this Tray:
       for (AnimalPart animalPart : listOfRemovedAnimalParts) {
+        AnimalPart oldAnimalPart = animalPart.copy();
         animalPart.setTray(tray);
-        animalPartRepository.updateAnimalPart(animalPart);
+        //animalPartRepository.updateAnimalPart(oldAnimalPart, animalPart);
+        animalPartRepository.save(animalPart);
       }
 
       // Remove all AnimalParts that no longer have any valid associations to a Tray:
-      for (AnimalPart animalPart : listOfRemovedAnimalParts)
-        animalPartRepository.removeAnimalPart(animalPart);
+      for (AnimalPart animalPart : listOfRemovedAnimalParts) {
+        //animalPartRepository.removeAnimalPart(animalPart);
+        animalPartRepository.delete(animalPart);
+      }
+
 
       // Attempt to add Tray to local cache:
       trayCache.put(tray.getTray_id(), tray);
@@ -192,10 +199,9 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray deleted from local cache with ID: {}", data.getTray_id());
 
       // Ensure that all associated TrayToProductTransfer transfers are removed:
-      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
-        TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.delete(id);
-      }
+      //TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.delete(id);
+      trayToProductTransferRepository.deleteAll(data.getDeliveredToProducts());
 
       return true;
 

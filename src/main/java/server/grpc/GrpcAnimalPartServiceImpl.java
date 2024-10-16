@@ -18,7 +18,7 @@ import shared.model.exceptions.UpdateFailedException;
 import java.util.List;
 
 @GrpcService
-public class GrpcAnimalPartServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
+public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartServiceImplBase
 {
   private final AnimalPartRegistryInterface animalPartService;
 
@@ -77,13 +77,15 @@ public class GrpcAnimalPartServiceImpl extends SlaughterHouseServiceGrpc.Slaught
 
 
   @Override
-  public void updateAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
+  public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
-      // Translate received gRPC information from the client, into Java compatible types,
+      // Translate received gRPC information from the client, into Java compatible types:
+      AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData());
+      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData());
       // and attempt to update the AnimalPart with the provided ID:
-      if (!animalPartService.updateAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request))) {
+      if (!animalPartService.updateAnimalPart(oldAnimalPart, newAnimalPart)) {
         // If AnimalPart update failed:
-        throw new UpdateFailedException("Error occurred while updated AnimalPart with id='" + request.getAnimalPartId() + "'");
+        throw new UpdateFailedException("Error occurred while updated AnimalPart with id='" + request.getOldData().getAnimalPartId() + "'");
       }
 
       // Signal to client to complete the gRPC operation:
@@ -92,7 +94,7 @@ public class GrpcAnimalPartServiceImpl extends SlaughterHouseServiceGrpc.Slaught
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getAnimalPartId() + "'").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getOldData().getAnimalPartId() + "'").withCause(e).asRuntimeException());
     }
   }
 

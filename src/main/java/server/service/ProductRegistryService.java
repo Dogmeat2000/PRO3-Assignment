@@ -5,6 +5,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,10 +57,9 @@ public class ProductRegistryService implements ProductRegistryInterface
       logger.info("Product saved to local cache with ID: {}", newProduct.getProduct_id());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
-        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.save(transferId);
-      }
+      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.save(transferId);
+      trayToProductTransferRepository.saveAll(data.getTraySupplyJoinList());
 
       // Ensure that all associated AnimalPart entities are updated:
       for (AnimalPart animalPart : data.getContentList()){
@@ -128,10 +128,9 @@ public class ProductRegistryService implements ProductRegistryInterface
       product.getTraySupplyJoinList().addAll(data.getTraySupplyJoinList());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      for (TrayToProductTransfer transfer : product.getTraySupplyJoinList()) {
-        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.save(transferId);
-      }
+      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.save(transferId);
+      trayToProductTransferRepository.saveAll(product.getTraySupplyJoinList());
 
       // Ensure that all associated AnimalPart entities are updated:
       for (AnimalPart animalPart : data.getContentList()){
@@ -179,10 +178,9 @@ public class ProductRegistryService implements ProductRegistryInterface
       }
 
       // Ensure that all TrayToProductTransfer transfers are deleted:
-      for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
-        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-        trayToProductTransferRepository.delete(transferId);
-      }
+      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+      //trayToProductTransferRepository.delete(transferId);
+      trayToProductTransferRepository.deleteAll(data.getTraySupplyJoinList());
 
       // Ensure that all associated AnimalPart entities are updated:
       for (AnimalPart animalPart : data.getContentList()){

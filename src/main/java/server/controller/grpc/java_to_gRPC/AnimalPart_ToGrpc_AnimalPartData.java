@@ -2,6 +2,7 @@ package server.controller.grpc.java_to_gRPC;
 
 import grpc.AnimalPartData;
 import grpc.AnimalPartsData;
+import grpc.UpdatedAnimalPartData;
 import shared.model.entities.AnimalPart;
 
 import java.util.List;
@@ -22,6 +23,17 @@ public class AnimalPart_ToGrpc_AnimalPartData
         .setTray(Tray_ToGrpc_TrayData.convertToTrayData(animalPart.getTray()))
         .setProduct(Product_ToGrpc_ProductData.convertToProductData(animalPart.getProduct()));
     return animalPartBuilder.build();
+  }
+
+  public static UpdatedAnimalPartData covertToUpdatedAnimalPartData(AnimalPart oldData, AnimalPart newData) {
+    if (oldData == null || newData == null)
+      return null;
+
+    UpdatedAnimalPartData.Builder updatedAnimalPartBuilder = UpdatedAnimalPartData.newBuilder()
+        .setOldData(convertToAnimalPartData(oldData))
+        .setNewData(convertToAnimalPartData(newData));
+
+    return updatedAnimalPartBuilder.build();
   }
 
 
