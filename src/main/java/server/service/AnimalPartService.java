@@ -9,10 +9,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalPartValidation;
-import server.model.validation.AnimalValidation;
 import server.repository.AnimalPartRepository;
 import server.repository.JPA_CompositeKeys.AnimalPartId;
-import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.exceptions.NotFoundException;
 
@@ -165,6 +163,9 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       String hashMapKey = "" + data.getPart_id() + data.getAnimal_id() + data.getType_id() + data.getType_id();
       animalPartCache.remove(hashMapKey);
       logger.info("AnimalPart deleted from local cache with ID: {}", hashMapKey);
+
+      // Attempt to update all associated Animal, Tray, PartType and Product entities:
+      // TODO: Missing implementation
 
       return true;
 

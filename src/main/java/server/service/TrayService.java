@@ -9,8 +9,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.TrayValidation;
+import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.TrayRepository;
+import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.Tray;
+import shared.model.entities.TrayToProductTransfer;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.HashMap;
@@ -24,10 +27,12 @@ public class TrayService implements TrayRegistryInterface
   private final TrayRepository trayRepository;
   private final Map<Long, Tray> trayCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(TrayService.class);
+  private final TrayToProductTransferRepository trayToProductTransferRepository;
 
   @Autowired
-  public TrayService(TrayRepository trayRepository) {
+  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
     this.trayRepository = trayRepository;
+    this.trayToProductTransferRepository = trayToProductTransferRepository;
   }
 
 
@@ -44,6 +49,12 @@ public class TrayService implements TrayRegistryInterface
     try {
       Tray newTray = trayRepository.save(data);
       logger.info("Tray added to DB with ID: {}", newTray.getTray_id());
+
+      // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
+      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
+        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+        trayToProductTransferRepository.save(transferId);
+      }
 
       // Attempt to add Tray to local cache:
       trayCache.put(newTray.getTray_id(), newTray);
@@ -114,6 +125,12 @@ public class TrayService implements TrayRegistryInterface
       trayRepository.save(tray);
       logger.info("Tray updated in database with ID: {}", tray.getTray_id());
 
+      // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
+      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
+        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+        trayToProductTransferRepository.save(transferId);
+      }
+
       // Attempt to add Animal to local cache:
       trayCache.put(tray.getTray_id(), tray);
       logger.info("Tray saved to local cache with ID: {}", tray.getTray_id());
@@ -153,6 +170,10 @@ public class TrayService implements TrayRegistryInterface
       // Tray was removed from database. Now ensure that is it also removed from the local cache:
       trayCache.remove(data.getTray_id());
       logger.info("Tray deleted from local cache with ID: {}", data.getTray_id());
+
+      // Ensure that all associated TrayToProductTransfer transfers are removed:
+      // TODO: Missing implementation
+
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {

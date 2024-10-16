@@ -52,6 +52,12 @@ public class ProductRegistryService implements ProductRegistryInterface
       productCache.put(newProduct.getProduct_id(), newProduct);
       logger.info("Product saved to local cache with ID: {}", newProduct.getProduct_id());
 
+      // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
+      for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
+        TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+        trayToProductTransferRepository.save(transferId);
+      }
+
       return newProduct;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
@@ -112,11 +118,14 @@ public class ProductRegistryService implements ProductRegistryInterface
       product.getTraySupplyJoinList().clear();
       product.getTraySupplyJoinList().addAll(data.getTraySupplyJoinList());
 
-      // Ensure that all TrayToProductTransfer transfers are registered:
+      // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       for (TrayToProductTransfer transfer : product.getTraySupplyJoinList()) {
         TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
         trayToProductTransferRepository.save(transferId);
       }
+
+      // Ensure that all associated AnimalPart entities are updated:
+      // TODO: Missing implementation
 
       // Save the modified entity back to database:
       productRepository.save(product);

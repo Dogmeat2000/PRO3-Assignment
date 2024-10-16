@@ -1,10 +1,7 @@
 package server.controller.grpc.java_to_gRPC;
 
 import grpc.TrayToProductTransferData;
-import grpc.TrayToProductTransfersData;
 import shared.model.entities.TrayToProductTransfer;
-
-import java.util.List;
 
 /** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
 public class TrayToProductTransfer_ToGrpc_TrayToProductTransferData
@@ -22,17 +19,5 @@ public class TrayToProductTransfer_ToGrpc_TrayToProductTransferData
         .setTray(Tray_ToGrpc_TrayData.convertToTrayData(transfer.getTray()));
 
     return builder.build();
-  }
-
-
-  /** <p>Converts a List of TrayToProductTransfer into the gRPC compatible TrayToProductTransfersData format</p>
-   * @param transfers A list containing all the TrayToProductTransfer entities to convert.
-   * @return A gRPC compatible TrayToProductTransfersData data type, containing all the converted entities.*/
-  public static TrayToProductTransfersData convertToTrayToProductTransferDataList(List<TrayToProductTransfer> transfers) {
-    // Convert List of TrayToProductTransfer to a gRPC compatible list by iteration through each entry and running the method previously declared:
-    List<TrayToProductTransferData> list = transfers.stream().map(server.controller.grpc.java_to_gRPC.TrayToProductTransfer_ToGrpc_TrayToProductTransferData::convertToTrayToProductTransferData).toList();
-
-    // Construct and return a new List of AnimalData entities:
-    return TrayToProductTransfersData.newBuilder().addAllTransferDataList(list).build();
   }
 }

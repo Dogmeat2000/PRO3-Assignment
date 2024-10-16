@@ -111,6 +111,9 @@ public class AnimalService implements AnimalRegistryInterface
       animalCache.put(animal.getId(), animal);
       logger.info("Animal saved to local cache with ID: {}", animal.getId());
 
+      // Attempt to update all associated AnimalPart entities:
+      // TODO: Missing implementation
+
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
@@ -146,6 +149,10 @@ public class AnimalService implements AnimalRegistryInterface
       // Animal was removed from database. Now ensure that is it also removed from the local cache:
       animalCache.remove(data.getId());
       logger.info("Animal deleted from local cache with ID: {}", data.getId());
+
+      // Attempt to delete all associated AnimalPart entities:
+      // TODO: Missing implementation
+
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {

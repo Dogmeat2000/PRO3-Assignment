@@ -96,9 +96,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update PartType with id '" + data.getTypeId() + "'");
 
-      // TODO: Update all AnimalParts this PartType is involved in:
-      // TODO: This should be done in the repository methods instead. Not here...
-
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No PartType found with id '" + data.getTypeId() + "'");
@@ -131,9 +128,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       if(deleted == null && partTypeData != null)
         throw new DeleteFailedException("Failed to delete PartType with id '" + typeId);
-
-      // TODO: Delete all AnimalParts this PartType is involved in:
-      // TODO: This should be done in the repository methods instead. Not here...
 
       return true;
     } catch (StatusRuntimeException e) {

@@ -9,7 +9,7 @@ import java.util.List;
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
 public class GrpcPartTypeData_To_PartType
 {
-    /** Converts database/gRPC compatible PartTypeData information into a application compatible PartType entity */
+    /** Converts database/gRPC compatible PartTypeData information into an application compatible PartType entity */
     public static PartType convertToPartType(PartTypeData partTypeData) {
       if (partTypeData == null)
         return null;

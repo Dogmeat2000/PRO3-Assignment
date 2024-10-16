@@ -97,9 +97,6 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update Animal with id '" + data.getId() + "'");
 
-      // TODO: Update all AnimalParts that includes this Animal!
-      // TODO: This should be done in the repository methods instead. Not here...
-
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No animal found with id '" + data.getId() + "'");
@@ -129,9 +126,6 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
       // Prompt gRPC to delete the Animal:
       EmptyMessage deleted = stub.removeAnimal(animalData);
-
-      // TODO: Delete all AnimalParts that includes this Animal!
-      // TODO: This should be done in the repository methods instead. Not here...
 
       if(deleted == null && animal != null)
         throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id + "'");

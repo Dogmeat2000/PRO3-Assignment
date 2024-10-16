@@ -4,17 +4,12 @@ import grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcProductData_To_Product;
-import server.controller.grpc.grpc_to_java.GrpcTrayData_To_Tray;
 import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
-import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
 import server.service.ProductRegistryInterface;
 import shared.model.entities.Product;
-import shared.model.entities.Tray;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
@@ -25,8 +20,6 @@ import java.util.List;
 @GrpcService
 public class GrpcProductServiceImpl extends SlaughterHouseServiceGrpc.SlaughterHouseServiceImplBase
 {
-  private static final Logger logger = LoggerFactory.getLogger(GrpcProductServiceImpl.class);
-
   private final ProductRegistryInterface productService;
 
   @Autowired

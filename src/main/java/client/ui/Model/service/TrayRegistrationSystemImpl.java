@@ -97,9 +97,6 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update Tray with id '" + data.getTray_id() + "'");
 
-      // TODO: Update all TrayToProductTransfers and Products this tray is involved in:
-      // TODO: This should be done in the repository methods instead. Not here...
-
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No Tray found with id '" + data.getTray_id() + "'");
@@ -132,9 +129,6 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
       if(deleted == null && trayData != null)
         throw new DeleteFailedException("Failed to delete Tray with id '" + trayId + "'");
-
-      // TODO: Delete all TrayToProductTransfers and Products this tray is involved in:
-      // TODO: This should be done in the repository methods instead. Not here...
 
       return true;
     } catch (StatusRuntimeException e) {

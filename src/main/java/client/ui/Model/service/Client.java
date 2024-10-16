@@ -16,7 +16,7 @@ public class Client
   protected ManagedChannel channel() {
     return ManagedChannelBuilder
         .forAddress(host, port)
-        .usePlaintext() //TODO: Improve security by not using PlainText.
+        .usePlaintext()
         .build();
   }
 }

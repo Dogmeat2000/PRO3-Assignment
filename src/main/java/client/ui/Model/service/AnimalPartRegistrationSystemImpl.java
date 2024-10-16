@@ -99,9 +99,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
       if(updated == null && data != null)
         throw new UpdateFailedException("Failed to update AnimalPart with id '" + data.getPart_id() + "'");
 
-      // TODO: Update all Animals, Trays, PartTypes and Products that includes this AnimalPart!
-      // TODO: This should be done in the repository methods instead. Not here...
-
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
         throw new NotFoundException("No AnimalPart found with id '" + data.getPart_id() + "'");
@@ -132,9 +129,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
 
       // Prompt gRPC to delete the AnimalPart:
       EmptyMessage deleted = stub.removeAnimalPart(animalPartData);
-
-      // TODO: Delete all Animals, Trays, PartTypes and Products that includes this AnimalPart!
-      // TODO: This should be done in the repository methods instead. Not here...
 
       if(deleted == null && animalPart != null)
         throw new DeleteFailedException("Failed to delete AnimalPart with id '" + data.getPart_id() + "'");

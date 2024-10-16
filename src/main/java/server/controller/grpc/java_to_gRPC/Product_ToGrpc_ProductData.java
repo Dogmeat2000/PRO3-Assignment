@@ -1,10 +1,7 @@
 package server.controller.grpc.java_to_gRPC;
 
-import grpc.PartTypeData;
-import grpc.PartTypesData;
 import grpc.ProductData;
 import grpc.ProductsData;
-import shared.model.entities.PartType;
 import shared.model.entities.Product;
 
 import java.util.List;

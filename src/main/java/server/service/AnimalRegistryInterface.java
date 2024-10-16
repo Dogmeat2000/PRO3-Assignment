@@ -57,8 +57,4 @@ public interface AnimalRegistryInterface
    * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
    */
   List<Animal> getAllAnimals() throws PersistenceException;
-
-  // Recall functions:
-  //List<Animal> getAllAnimalsInProduct(long productId);
-  //List<Product> getAllProductsThatContainAnimal(long animalId);
 }

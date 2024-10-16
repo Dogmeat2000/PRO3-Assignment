@@ -117,6 +117,9 @@ public class PartTypeService implements PartTypeRegistryInterface
       partTypeCache.put(partType.getTypeId(), partType);
       logger.info("PartType saved to local cache with ID: {}", partType.getTypeId());
 
+      // Attempt to update all associated AnimalPart entities:
+      // TODO: Missing implementation
+
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
@@ -153,6 +156,10 @@ public class PartTypeService implements PartTypeRegistryInterface
       // PartType was removed from database. Now ensure that is it also removed from the local cache:
       partTypeCache.remove(data.getTypeId());
       logger.info("PartType deleted from local cache with ID: {}", data.getTypeId());
+
+      // Attempt to delete all associated AnimalPart entities:
+      // TODO: Missing implementation
+
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
