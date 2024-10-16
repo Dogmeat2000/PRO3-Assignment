@@ -16,7 +16,7 @@ public class GrpcAnimalPartData_To_AnimalPart
       return null;
 
     // Read AnimalPartData information from the gRPC data:
-    long partId = animalPartData.getAnimalPartId();
+    long partId = GrpcId_To_LongId.ConvertToLongId(animalPartData.getAnimalPartId());
     BigDecimal weight = new BigDecimal(animalPartData.getPartWeight());
     PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(animalPartData.getPartType());
     Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(animalPartData.getAnimal());

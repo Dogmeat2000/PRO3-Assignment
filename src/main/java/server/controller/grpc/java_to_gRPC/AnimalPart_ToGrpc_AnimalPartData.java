@@ -15,7 +15,7 @@ public class AnimalPart_ToGrpc_AnimalPartData
       return null;
 
     AnimalPartData.Builder animalPartBuilder = AnimalPartData.newBuilder()
-        .setAnimalPartId(animalPart.getPart_id())
+        .setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPart.getPart_id(), animalPart.getAnimal_id(), animalPart.getType_id(), animalPart.getTray_id()))
         .setPartWeight(animalPart.getWeight_kilogram().toString())
         .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(animalPart.getType()))
         .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animalPart.getAnimal()))
