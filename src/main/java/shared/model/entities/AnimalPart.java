@@ -146,6 +146,7 @@ public class AnimalPart implements Serializable
 
   public void setAnimal(Animal animal) {
     this.animal = animal;
+    setAnimal_id(animal.getId());
   }
 
 
@@ -156,6 +157,7 @@ public class AnimalPart implements Serializable
 
   public void setTray(Tray tray) {
     this.tray = tray;
+    setTray_id(tray.getTray_id());
   }
 
 
@@ -174,6 +176,7 @@ public class AnimalPart implements Serializable
 
   public void setType(PartType partType) {
     this.type = partType;
+    setType_id(partType.getTypeId());
   }
 
 

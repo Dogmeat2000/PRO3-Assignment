@@ -12,14 +12,12 @@ import server.model.validation.TrayValidation;
 import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.TrayRepository;
 import server.repository.TrayToProductTransferRepository;
+import shared.model.entities.AnimalPart;
 import shared.model.entities.Tray;
 import shared.model.entities.TrayToProductTransfer;
 import shared.model.exceptions.NotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TrayService implements TrayRegistryInterface
@@ -28,11 +26,13 @@ public class TrayService implements TrayRegistryInterface
   private final Map<Long, Tray> trayCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(TrayService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
+  private final AnimalPartRegistryInterface animalPartRepository;
 
   @Autowired
-  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
+  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository, AnimalPartRegistryInterface animalPartRepository) {
     this.trayRepository = trayRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
+    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -59,6 +59,12 @@ public class TrayService implements TrayRegistryInterface
       // Attempt to add Tray to local cache:
       trayCache.put(newTray.getTray_id(), newTray);
       logger.info("Tray saved to local cache with ID: {}", newTray.getTray_id());
+
+      // Update any associated AnimalPart with this new Tray info:
+      for (AnimalPart animalPart : data.getContents()) {
+        animalPart.setTray(newTray);
+        animalPartRepository.updateAnimalPart(animalPart);
+      }
 
       return newTray;
 
@@ -131,7 +137,21 @@ public class TrayService implements TrayRegistryInterface
         trayToProductTransferRepository.save(transferId);
       }
 
-      // Attempt to add Animal to local cache:
+      // Identify any AnimalParts that were removed from the Tray:
+      List<AnimalPart> listOfRemovedAnimalParts = new ArrayList<>(data.getContents());
+      listOfRemovedAnimalParts.removeAll(tray.getContents());
+
+      // Update all still-existing AnimalParts in this Tray:
+      for (AnimalPart animalPart : listOfRemovedAnimalParts) {
+        animalPart.setTray(tray);
+        animalPartRepository.updateAnimalPart(animalPart);
+      }
+
+      // Remove all AnimalParts that no longer have any valid associations to a Tray:
+      for (AnimalPart animalPart : listOfRemovedAnimalParts)
+        animalPartRepository.removeAnimalPart(animalPart);
+
+      // Attempt to add Tray to local cache:
       trayCache.put(tray.getTray_id(), tray);
       logger.info("Tray saved to local cache with ID: {}", tray.getTray_id());
 
@@ -172,7 +192,10 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray deleted from local cache with ID: {}", data.getTray_id());
 
       // Ensure that all associated TrayToProductTransfer transfers are removed:
-      // TODO: Missing implementation
+      for (TrayToProductTransfer transfer : data.getDeliveredToProducts()) {
+        TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
+        trayToProductTransferRepository.delete(id);
+      }
 
       return true;
 

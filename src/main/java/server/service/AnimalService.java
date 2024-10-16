@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalValidation;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
+import shared.model.entities.AnimalPart;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
@@ -21,10 +22,12 @@ public class AnimalService implements AnimalRegistryInterface
   private final AnimalRepository animalRepository;
   private final Map<Long, Animal> animalCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalService.class);
+  private final AnimalPartRegistryInterface animalPartRepository;
 
   @Autowired
-  public AnimalService(AnimalRepository animalRepository) {
+  public AnimalService(AnimalRepository animalRepository, AnimalPartRegistryInterface animalPartRepository) {
     this.animalRepository = animalRepository;
+    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -111,8 +114,19 @@ public class AnimalService implements AnimalRegistryInterface
       animalCache.put(animal.getId(), animal);
       logger.info("Animal saved to local cache with ID: {}", animal.getId());
 
-      // Attempt to update all associated AnimalPart entities:
-      // TODO: Missing implementation
+      // Get a list of AnimalParts that are no longer associated with this Animal:
+      List<AnimalPart> listOfAnimalPartsNotInUpdatedAnimal = new ArrayList<>(data.getPartList());
+      listOfAnimalPartsNotInUpdatedAnimal.removeAll(animal.getPartList());
+
+      // Update all still-existing AnimalPart compositions:
+      for (AnimalPart animalPart : animal.getPartList()) {
+        animalPart.setAnimal(animal);
+        animalPartRepository.updateAnimalPart(animalPart);
+      }
+
+      // Delete any AnimalPart objects that are no longer associated with any Animal entity:
+      for (AnimalPart animalPart : listOfAnimalPartsNotInUpdatedAnimal)
+        animalPartRepository.removeAnimalPart(animalPart);
 
       return true;
 
@@ -151,7 +165,8 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal deleted from local cache with ID: {}", data.getId());
 
       // Attempt to delete all associated AnimalPart entities:
-      // TODO: Missing implementation
+      for (AnimalPart animalPart : data.getPartList())
+        animalPartRepository.removeAnimalPart(animalPart);
 
       return true;
 

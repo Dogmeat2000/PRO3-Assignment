@@ -9,9 +9,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalPartValidation;
-import server.repository.AnimalPartRepository;
+import server.repository.*;
 import server.repository.JPA_CompositeKeys.AnimalPartId;
-import shared.model.entities.AnimalPart;
+import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.HashMap;
@@ -25,10 +25,19 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   private final AnimalPartRepository animalPartRepository;
   private final Map<String, AnimalPart> animalPartCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalPartService.class);
+  private final AnimalRegistryInterface animalRepository;
+  private final TrayRegistryInterface trayRepository;
+  private final PartTypeRegistryInterface partTypeRepository;
+  private final ProductRegistryInterface productRepository;
 
   @Autowired
-  public AnimalPartService(AnimalPartRepository animalPartRepository) {
+  public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRegistryInterface animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
+      ProductRegistryInterface productRepository) {
     this.animalPartRepository = animalPartRepository;
+    this.animalRepository = animalRepository;
+    this.trayRepository = trayRepository;
+    this.partTypeRepository = partTypeRepository;
+    this.productRepository = productRepository;
   }
 
 
@@ -118,8 +127,27 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       animalPartRepository.save(animalPart);
       logger.info("AnimalPart updated in database with ID: {}", animalPartCompositeKey);
 
-      // Attempt to update all associated Animal, Tray, PartType and Product entities:
-      // TODO: Missing implementation
+      // Attempt to update all associated Animal entities:
+      Animal animal = data.getAnimal();
+      animal.getPartList().remove(data);
+      animalRepository.updateAnimal(animal);
+
+      // Attempt to update all associated Tray entities:
+      Tray tray = data.getTray();
+      tray.getContents().remove(data);
+      trayRepository.updateTray(tray);
+
+      // Attempt to update all associated PartType entities:
+      PartType partType = data.getType();
+      partType.getPartList().remove(data);
+      partTypeRepository.updatePartType(partType);
+
+      // Attempt to update all associated Product entities:
+      if(data.getProduct() != null) {
+        Product product = data.getProduct();
+        product.getContentList().remove(data);
+        productRepository.updateProduct(product);
+      }
 
       // Attempt to add AnimalPart to local cache:
       String hashMapKey = "" + animalPart.getPart_id() + animalPart.getAnimal_id() + animalPart.getType_id() + animalPart.getType_id();
@@ -164,8 +192,27 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       animalPartCache.remove(hashMapKey);
       logger.info("AnimalPart deleted from local cache with ID: {}", hashMapKey);
 
-      // Attempt to update all associated Animal, Tray, PartType and Product entities:
-      // TODO: Missing implementation
+      // Attempt to update all associated Animal entities:
+      Animal animal = data.getAnimal();
+      animal.getPartList().remove(data);
+      animalRepository.updateAnimal(animal);
+
+      // Attempt to update all associated Tray entities:
+      Tray tray = data.getTray();
+      tray.getContents().remove(data);
+      trayRepository.updateTray(tray);
+
+      // Attempt to update all associated PartType entities:
+      PartType partType = data.getType();
+      partType.getPartList().remove(data);
+      partTypeRepository.updatePartType(partType);
+
+      // Attempt to update all associated Product entities:
+      if(data.getProduct() != null) {
+        Product product = data.getProduct();
+        product.getContentList().remove(data);
+        productRepository.updateProduct(product);
+      }
 
       return true;
 

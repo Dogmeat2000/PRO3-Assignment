@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.ProductValidation;
+import server.repository.AnimalPartRepository;
 import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.ProductRepository;
 import server.repository.TrayToProductTransferRepository;
@@ -27,11 +28,13 @@ public class ProductRegistryService implements ProductRegistryInterface
   private final Map<Long, Product> productCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(ProductRegistryService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
+  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
+  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository, AnimalPartRepository animalPartRepository) {
     this.productRepository = productRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
+    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -56,6 +59,12 @@ public class ProductRegistryService implements ProductRegistryInterface
       for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
         TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
         trayToProductTransferRepository.save(transferId);
+      }
+
+      // Ensure that all associated AnimalPart entities are updated:
+      for (AnimalPart animalPart : data.getContentList()){
+        animalPart.setProduct(newProduct);
+        animalPartRepository.save(animalPart);
       }
 
       return newProduct;
@@ -125,7 +134,10 @@ public class ProductRegistryService implements ProductRegistryInterface
       }
 
       // Ensure that all associated AnimalPart entities are updated:
-      // TODO: Missing implementation
+      for (AnimalPart animalPart : data.getContentList()){
+        animalPart.setProduct(product);
+        animalPartRepository.save(animalPart);
+      }
 
       // Save the modified entity back to database:
       productRepository.save(product);
@@ -170,6 +182,12 @@ public class ProductRegistryService implements ProductRegistryInterface
       for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
         TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
         trayToProductTransferRepository.delete(transferId);
+      }
+
+      // Ensure that all associated AnimalPart entities are updated:
+      for (AnimalPart animalPart : data.getContentList()){
+        animalPart.setProduct(null);
+        animalPartRepository.save(animalPart);
       }
 
       logger.info("Product deleted from database with ID: {}", data.getProduct_id());

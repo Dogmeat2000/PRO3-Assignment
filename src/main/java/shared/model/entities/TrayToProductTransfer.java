@@ -77,6 +77,7 @@ public class TrayToProductTransfer
 
   public void setTray(Tray tray) {
     this.tray = tray;
+    setTray_id(tray.getTray_id());
   }
 
 
@@ -87,6 +88,7 @@ public class TrayToProductTransfer
 
   public void setProduct(Product product) {
     this.product = product;
+    setProduct_id(product.getProduct_id());
   }
 
 

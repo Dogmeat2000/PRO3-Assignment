@@ -9,7 +9,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.PartTypeValidation;
+import server.repository.AnimalPartRepository;
 import server.repository.PartTypeRepository;
+import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
 
@@ -24,10 +26,12 @@ public class PartTypeService implements PartTypeRegistryInterface
   private final PartTypeRepository partTypeRepository;
   private final Map<Long, PartType> partTypeCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(PartTypeService.class);
+  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public PartTypeService(PartTypeRepository partTypeRepository) {
+  public PartTypeService(PartTypeRepository partTypeRepository, AnimalPartRepository animalPartRepository) {
     this.partTypeRepository = partTypeRepository;
+    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -118,7 +122,10 @@ public class PartTypeService implements PartTypeRegistryInterface
       logger.info("PartType saved to local cache with ID: {}", partType.getTypeId());
 
       // Attempt to update all associated AnimalPart entities:
-      // TODO: Missing implementation
+      for (AnimalPart animalPart : data.getPartList()) {
+        animalPart.setType(partType);
+        animalPartRepository.save(animalPart);
+      }
 
       return true;
 
@@ -158,7 +165,7 @@ public class PartTypeService implements PartTypeRegistryInterface
       logger.info("PartType deleted from local cache with ID: {}", data.getTypeId());
 
       // Attempt to delete all associated AnimalPart entities:
-      // TODO: Missing implementation
+      animalPartRepository.deleteAll(data.getPartList());
 
       return true;
 
