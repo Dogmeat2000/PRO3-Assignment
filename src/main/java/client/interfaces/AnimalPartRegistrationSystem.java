@@ -13,50 +13,55 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
-// TODO: Update javaDocs!
 /**
- * <p>AnimalRegistrationSystem defines the interface responsible for the client side methods relating to Animal registration and management.</p>
+ * <p>AnimalPartRegistrationSystem defines the interface responsible for the client side methods relating to AnimalPart registration and management.</p>
  */
 public interface AnimalPartRegistrationSystem
 {
-  /** <p>Registers/Creates a new Animal in repository with the given parameters applied.</p>
-   * @param weightInKilogram The animals weight in kilogram, decimal units are permitted.
-   * @return The created Animal instance.
+  /** <p>Registers/Creates a new AnimalPart in repository with the given parameters applied.</p>
+   * @param animal The associated Animal entity from where this AnimalPart was cut.
+   * @param type The associated PartType entity describing which type of part this is (i.e. inner thigh)
+   * @param tray The associated Tray entity into which this AnimalPart was placed directly after dissection.
+   * @param weightInKilogram The AnimalParts weight in kilogram, decimal units are permitted.
+   * @return The created AnimalPart instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
   AnimalPart registerNewAnimalPart (Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) throws CreateFailedException;
 
 
-  /** <p>Looks up any Animal entity with the specified id, in the repository</p>
-   * @param animalId A unique identifier assigned to the specific Animal to look up.
-   * @return The identified Animal instance.
-   * @throws NotFoundException Thrown if Animal is not be found.
+  /** <p>Looks up any AnimalPart entity with the specified id, in the repository</p>
+   * @param animalPartId A unique identifier assigned to the specific AnimalPart to look up.
+   * @param animal The associated Animal entity from where this AnimalPart was cut.
+   * @param type The associated PartType entity describing which type of part this is (i.e. inner thigh)
+   * @param tray The associated Tray entity into which this AnimalPart was placed directly after dissection.
+   * @return The identified AnimalPart instance.
+   * @throws NotFoundException Thrown if AnimalPart is not be found.
    */
   AnimalPart readAnimalPart (long animalPartId, Animal animal, PartType type, Tray tray) throws NotFoundException;
 
 
-  /** <p>Updates the given Animal in the repository. Unique id is extracted from the Animal entity
-   * and is used to uniquely identify which Animal entity in the repository to apply the updated information to.</p>
-   * @param data An Animal Entity, with proper id, weight, etc. applied to.
-   * @throws NotFoundException Thrown if no matching Animal could be found in the repository.
-   * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified Animal entity.
+  /** <p>Updates the given AnimalPart in the repository. Unique id is extracted from the AnimalPart entity
+   * and is used to uniquely identify which AnimalPart entity in the repository to apply the updated information to.</p>
+   * @param data An AnimalPart Entity, with proper id, weight, etc. applied to.
+   * @throws NotFoundException Thrown if no matching AnimalPart could be found in the repository.
+   * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified AnimalPart entity.
    */
   void updateAnimalPart (AnimalPart data) throws UpdateFailedException, NotFoundException;
 
 
-  /** <p>Deletes the given Animal from the repository. Unique id is extracted from the Animal entity
-   * and is used to uniquely identify which Animal entity in the repository.</p>
-   * @param animalId A unique identifier assigned to the specific Animal to look up.
-   * @return True, if Animal was successfully removed. Otherwise, returns false.
-   * @throws NotFoundException Thrown if no matching Animal could be found in the repository.
+  /** <p>Deletes the given AnimalPart from the repository. Unique id is extracted from the AnimalPart entity
+   * and is used to uniquely identify which AnimalPart entity in the repository.</p>
+   * @param data A unique identifier assigned to the specific AnimalPart to look up.
+   * @return True, if AnimalPart was successfully removed. Otherwise, returns false.
+   * @throws NotFoundException Thrown if no matching AnimalPart could be found in the repository.
    * @throws DeleteFailedException Thrown if an error occurred while deleting the specified Animal entity.
    */
   boolean removeAnimalPart (AnimalPart data) throws DeleteFailedException, NotFoundException;
 
 
-  /** <p>Fetches all Animals from the repository.</p>
-   * @return A List containing all Animal entities extracted from the repository.
-   * @throws NotFoundException Thrown if no Animals could be found in the repository.
+  /** <p>Fetches all AnimalParts from the repository.</p>
+   * @return A List containing all AnimalPart entities extracted from the repository.
+   * @throws NotFoundException Thrown if no AnimalParts could be found in the repository.
    */
   List<AnimalPart> getAllAnimalParts() throws NotFoundException;
 }
