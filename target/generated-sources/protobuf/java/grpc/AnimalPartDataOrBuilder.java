@@ -10,16 +10,34 @@ public interface AnimalPartDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>int64 animalPartId = 1;</code>
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+   * @return Whether the animalPartId field is set.
+   */
+  boolean hasAnimalPartId();
+  /**
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
    * @return The animalPartId.
    */
-  long getAnimalPartId();
+  grpc.AnimalPartId getAnimalPartId();
+  /**
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+   */
+  grpc.AnimalPartIdOrBuilder getAnimalPartIdOrBuilder();
 
   /**
-   * <code>int64 partTypeId = 2;</code>
-   * @return The partTypeId.
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   * @return Whether the partType field is set.
    */
-  long getPartTypeId();
+  boolean hasPartType();
+  /**
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   * @return The partType.
+   */
+  grpc.PartTypeData getPartType();
+  /**
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   */
+  grpc.PartTypeDataOrBuilder getPartTypeOrBuilder();
 
   /**
    * <code>string partWeight = 3;</code>
@@ -34,14 +52,47 @@ public interface AnimalPartDataOrBuilder extends
       getPartWeightBytes();
 
   /**
-   * <code>int64 animalId = 4;</code>
-   * @return The animalId.
+   * <code>.grpc.AnimalData animal = 4;</code>
+   * @return Whether the animal field is set.
    */
-  long getAnimalId();
+  boolean hasAnimal();
+  /**
+   * <code>.grpc.AnimalData animal = 4;</code>
+   * @return The animal.
+   */
+  grpc.AnimalData getAnimal();
+  /**
+   * <code>.grpc.AnimalData animal = 4;</code>
+   */
+  grpc.AnimalDataOrBuilder getAnimalOrBuilder();
 
   /**
-   * <code>int64 trayId = 5;</code>
-   * @return The trayId.
+   * <code>.grpc.TrayData tray = 5;</code>
+   * @return Whether the tray field is set.
    */
-  long getTrayId();
+  boolean hasTray();
+  /**
+   * <code>.grpc.TrayData tray = 5;</code>
+   * @return The tray.
+   */
+  grpc.TrayData getTray();
+  /**
+   * <code>.grpc.TrayData tray = 5;</code>
+   */
+  grpc.TrayDataOrBuilder getTrayOrBuilder();
+
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   * @return Whether the product field is set.
+   */
+  boolean hasProduct();
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   * @return The product.
+   */
+  grpc.ProductData getProduct();
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   */
+  grpc.ProductDataOrBuilder getProductOrBuilder();
 }

@@ -1,9 +1,6 @@
 package server.controller.grpc.java_to_gRPC;
 
-import grpc.AnimalId;
-import grpc.PartTypeId;
-import grpc.ProductId;
-import grpc.TrayId;
+import grpc.*;
 
 /** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
 public class LongId_ToGrpc_Id
@@ -11,56 +8,76 @@ public class LongId_ToGrpc_Id
 
   /** <p>Converts a long id into a database/gRPC compatible AnimalId format</p>
    * @param animal_id The id (primary key) for an Animal entity
-   * @return a gRPC compatible format of this id */
-  public static AnimalId convertToAnimalId(long animal_id) {
-    if (animal_id == 0)
-      return null;
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static AnimalId convertToAnimalId(long animal_id) throws NullPointerException {
+    if (animal_id <= 0)
+      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
 
     AnimalId.Builder idBuilder = AnimalId.newBuilder()
         .setAnimalId(animal_id);
-
     return idBuilder.build();
   }
 
 
   /** <p>Converts a long id into a database/gRPC compatible PartTypeId format</p>
    * @param partTypeId The id (primary key) for an PartType entity
-   * @return a gRPC compatible format of this id */
-  public static PartTypeId convertToPartTypeId(long partTypeId) {
-    if (partTypeId == 0)
-      return null;
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static PartTypeId convertToPartTypeId(long partTypeId) throws NullPointerException {
+    if (partTypeId <= 0)
+      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
 
     PartTypeId.Builder idBuilder = PartTypeId.newBuilder()
         .setPartTypeId(partTypeId);
-
     return idBuilder.build();
   }
 
 
   /** <p>Converts a long id into a database/gRPC compatible TrayId format</p>
-   * @param trayId The id (primary key) for an Tray entity
-   * @return a gRPC compatible format of this id */
-  public static TrayId convertToTrayId(long trayId) {
-    if (trayId == 0)
-      return null;
+   * @param trayId The id (primary key) for a Tray entity
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static TrayId convertToTrayId(long trayId) throws NullPointerException {
+    if (trayId <= 0)
+      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
 
     TrayId.Builder idBuilder = TrayId.newBuilder()
         .setTrayId(trayId);
-
     return idBuilder.build();
   }
 
 
   /** <p>Converts a long id into a database/gRPC compatible ProductId format</p>
    * @param productId The id (primary key) for a Product entity
-   * @return a gRPC compatible format of this id */
-  public static ProductId convertToProductId(long productId) {
-    if (productId == 0)
-      return null;
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static ProductId convertToProductId(long productId) throws NullPointerException {
+    if (productId <= 0)
+      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
 
     ProductId.Builder idBuilder = ProductId.newBuilder()
         .setProductId(productId);
+    return idBuilder.build();
+  }
 
+
+  /** <p>Converts a long id into a database/gRPC compatible AnimalPartId format</p>
+   * @param animalPartId The id (primary key) for a AnimalPart entity
+   * @param animalId the id (primary key) for the Animal entity associated with this AnimalPart
+   * @param typeId the id (primary key) for the PartType entity associated with this AnimalPart
+   * @param trayId the id (primary key) for the Tray entity associated with this AnimalPart
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static AnimalPartId convertToAnimalPartId(long animalPartId, long animalId, long typeId, long trayId) throws NullPointerException {
+    if (animalPartId <= 0 || animalId <= 0 || typeId <= 0 || trayId <= 0)
+      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
+
+    AnimalPartId.Builder idBuilder = AnimalPartId.newBuilder()
+        .setAnimalPartId(animalPartId)
+        .setAnimalId(convertToAnimalId(animalId))
+        .setTypeId(convertToPartTypeId(typeId))
+        .setTrayId(convertToTrayId(trayId));
     return idBuilder.build();
   }
 }

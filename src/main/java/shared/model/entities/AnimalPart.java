@@ -38,7 +38,7 @@ public class AnimalPart implements Serializable
 
 
   @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
-  private BigDecimal weight;
+  private BigDecimal weight_kilogram;
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Animal entity,
@@ -76,41 +76,56 @@ public class AnimalPart implements Serializable
   // A no-args constructor, as required by tje Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected AnimalPart() {
     //Note: Do not set the part_id here, since JPA auto-sets this by using the database.
-    setWeight(BigDecimal.valueOf(0));
+    setWeight_kilogram(BigDecimal.valueOf(0));
     setAnimal(animal);
-    setTray(null);
-    setType(null);
-    setProduct(null);
-  }
-
-
-  public AnimalPart(Long part_id, BigDecimal weight, Long typeId, Long animalId, Long trayId) {
-    setPart_id(part_id);
-    setWeight(weight);
-    animal_id = animalId;
-    type_id = typeId;
-    tray_id = trayId;
-  }
-
-
-  public AnimalPart(Long part_id, BigDecimal weight, PartType type, Animal animal, Tray tray) {
-    setPart_id(part_id);
-    setWeight(weight);
-    setAnimal(animal);
-    setTray(null);
-    setType(type);
-    setProduct(null);
     setTray(tray);
+    setType(type);
+    setProduct(product);
   }
 
 
-  public BigDecimal getWeight() {
-    return weight;
+  public AnimalPart(Long part_id, BigDecimal weight_kilogram, PartType type, Animal animal, Tray tray, Product product) {
+    setPart_id(part_id);
+    setWeight_kilogram(weight_kilogram);
+    setAnimal(animal);
+    setTray(tray);
+    setType(type);
+    setTray(tray);
+    setProduct(product);
   }
 
 
-  public void setWeight(BigDecimal weight) {
-    this.weight = weight;
+  public long getAnimal_id() {
+    return animal_id;
+  }
+
+  public void setAnimal_id(long animal_id) {
+    this.animal_id = animal_id;
+  }
+
+  public long getType_id() {
+    return type_id;
+  }
+
+  public void setType_id(long type_id) {
+    this.type_id = type_id;
+  }
+
+  public long getTray_id() {
+    return tray_id;
+  }
+
+  public void setTray_id(long tray_id) {
+    this.tray_id = tray_id;
+  }
+
+  public BigDecimal getWeight_kilogram() {
+    return weight_kilogram;
+  }
+
+
+  public void setWeight_kilogram(BigDecimal weight) {
+    this.weight_kilogram = weight;
   }
 
 
@@ -129,7 +144,7 @@ public class AnimalPart implements Serializable
   }
 
 
-  private void setAnimal(Animal animal) {
+  public void setAnimal(Animal animal) {
     this.animal = animal;
   }
 
@@ -162,12 +177,13 @@ public class AnimalPart implements Serializable
   }
 
 
+  // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
     if (o == null || this.getClass() != o.getClass())
       return false;
 
-    return Objects.equals(getWeight(), ((AnimalPart) o).getWeight())
+    return Objects.equals(getWeight_kilogram(), ((AnimalPart) o).getWeight_kilogram())
         && Objects.equals(getPart_id(), ((AnimalPart) o).getPart_id())
         && Objects.equals(getAnimal(), ((AnimalPart) o).getAnimal())
         && Objects.equals(getTray(), ((AnimalPart) o).getTray())
@@ -178,10 +194,10 @@ public class AnimalPart implements Serializable
 
   // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(getPart_id(), getWeight(), getAnimal(), getTray());
+    return Objects.hash(getPart_id(), getWeight_kilogram(), getAnimal(), getTray());
   }
 
   @Override public String toString() {
-    return "AnimalPart{" + "weight=" + weight + ", part_Id='" + part_id + '\'' + ", animal=" + animal + '}';
+    return "AnimalPart{" + "weight=" + weight_kilogram + ", part_Id='" + part_id + '\'' + ", animal=" + animal + '}';
   }
 }

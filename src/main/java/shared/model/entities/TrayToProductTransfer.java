@@ -17,6 +17,7 @@ public class TrayToProductTransfer
   @Column(name = "tray_id", nullable = false)
   private long tray_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
 
+
   @Id // Tells Spring Boot, that this value is part of the primary key.
   @Column(name = "product_id", nullable = false)
   private long product_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
@@ -48,38 +49,48 @@ public class TrayToProductTransfer
     this.product = product;
   }
 
+
   public long getTray_id() {
     return tray_id;
   }
+
 
   public void setTray_id(long tray_id) {
     this.tray_id = tray_id;
   }
 
+
   public long getProduct_id() {
     return product_id;
   }
+
 
   public void setProduct_id(long product_id) {
     this.product_id = product_id;
   }
 
+
   public Tray getTray() {
     return tray;
   }
+
 
   public void setTray(Tray tray) {
     this.tray = tray;
   }
 
+
   public Product getProduct() {
     return product;
   }
+
 
   public void setProduct(Product product) {
     this.product = product;
   }
 
+
+  // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
     if (this == o)

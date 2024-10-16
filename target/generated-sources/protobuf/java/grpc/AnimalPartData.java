@@ -47,26 +47,57 @@ private static final long serialVersionUID = 0L;
             grpc.AnimalPartData.class, grpc.AnimalPartData.Builder.class);
   }
 
+  private int bitField0_;
   public static final int ANIMALPARTID_FIELD_NUMBER = 1;
-  private long animalPartId_ = 0L;
+  private grpc.AnimalPartId animalPartId_;
   /**
-   * <code>int64 animalPartId = 1;</code>
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+   * @return Whether the animalPartId field is set.
+   */
+  @java.lang.Override
+  public boolean hasAnimalPartId() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
    * @return The animalPartId.
    */
   @java.lang.Override
-  public long getAnimalPartId() {
-    return animalPartId_;
+  public grpc.AnimalPartId getAnimalPartId() {
+    return animalPartId_ == null ? grpc.AnimalPartId.getDefaultInstance() : animalPartId_;
   }
-
-  public static final int PARTTYPEID_FIELD_NUMBER = 2;
-  private long partTypeId_ = 0L;
   /**
-   * <code>int64 partTypeId = 2;</code>
-   * @return The partTypeId.
+   * <code>.grpc.AnimalPartId animalPartId = 1;</code>
    */
   @java.lang.Override
-  public long getPartTypeId() {
-    return partTypeId_;
+  public grpc.AnimalPartIdOrBuilder getAnimalPartIdOrBuilder() {
+    return animalPartId_ == null ? grpc.AnimalPartId.getDefaultInstance() : animalPartId_;
+  }
+
+  public static final int PARTTYPE_FIELD_NUMBER = 2;
+  private grpc.PartTypeData partType_;
+  /**
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   * @return Whether the partType field is set.
+   */
+  @java.lang.Override
+  public boolean hasPartType() {
+    return ((bitField0_ & 0x00000002) != 0);
+  }
+  /**
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   * @return The partType.
+   */
+  @java.lang.Override
+  public grpc.PartTypeData getPartType() {
+    return partType_ == null ? grpc.PartTypeData.getDefaultInstance() : partType_;
+  }
+  /**
+   * <code>.grpc.PartTypeData partType = 2;</code>
+   */
+  @java.lang.Override
+  public grpc.PartTypeDataOrBuilder getPartTypeOrBuilder() {
+    return partType_ == null ? grpc.PartTypeData.getDefaultInstance() : partType_;
   }
 
   public static final int PARTWEIGHT_FIELD_NUMBER = 3;
@@ -108,26 +139,82 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ANIMALID_FIELD_NUMBER = 4;
-  private long animalId_ = 0L;
+  public static final int ANIMAL_FIELD_NUMBER = 4;
+  private grpc.AnimalData animal_;
   /**
-   * <code>int64 animalId = 4;</code>
-   * @return The animalId.
+   * <code>.grpc.AnimalData animal = 4;</code>
+   * @return Whether the animal field is set.
    */
   @java.lang.Override
-  public long getAnimalId() {
-    return animalId_;
+  public boolean hasAnimal() {
+    return ((bitField0_ & 0x00000004) != 0);
+  }
+  /**
+   * <code>.grpc.AnimalData animal = 4;</code>
+   * @return The animal.
+   */
+  @java.lang.Override
+  public grpc.AnimalData getAnimal() {
+    return animal_ == null ? grpc.AnimalData.getDefaultInstance() : animal_;
+  }
+  /**
+   * <code>.grpc.AnimalData animal = 4;</code>
+   */
+  @java.lang.Override
+  public grpc.AnimalDataOrBuilder getAnimalOrBuilder() {
+    return animal_ == null ? grpc.AnimalData.getDefaultInstance() : animal_;
   }
 
-  public static final int TRAYID_FIELD_NUMBER = 5;
-  private long trayId_ = 0L;
+  public static final int TRAY_FIELD_NUMBER = 5;
+  private grpc.TrayData tray_;
   /**
-   * <code>int64 trayId = 5;</code>
-   * @return The trayId.
+   * <code>.grpc.TrayData tray = 5;</code>
+   * @return Whether the tray field is set.
    */
   @java.lang.Override
-  public long getTrayId() {
-    return trayId_;
+  public boolean hasTray() {
+    return ((bitField0_ & 0x00000008) != 0);
+  }
+  /**
+   * <code>.grpc.TrayData tray = 5;</code>
+   * @return The tray.
+   */
+  @java.lang.Override
+  public grpc.TrayData getTray() {
+    return tray_ == null ? grpc.TrayData.getDefaultInstance() : tray_;
+  }
+  /**
+   * <code>.grpc.TrayData tray = 5;</code>
+   */
+  @java.lang.Override
+  public grpc.TrayDataOrBuilder getTrayOrBuilder() {
+    return tray_ == null ? grpc.TrayData.getDefaultInstance() : tray_;
+  }
+
+  public static final int PRODUCT_FIELD_NUMBER = 6;
+  private grpc.ProductData product_;
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   * @return Whether the product field is set.
+   */
+  @java.lang.Override
+  public boolean hasProduct() {
+    return ((bitField0_ & 0x00000010) != 0);
+  }
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   * @return The product.
+   */
+  @java.lang.Override
+  public grpc.ProductData getProduct() {
+    return product_ == null ? grpc.ProductData.getDefaultInstance() : product_;
+  }
+  /**
+   * <code>.grpc.ProductData product = 6;</code>
+   */
+  @java.lang.Override
+  public grpc.ProductDataOrBuilder getProductOrBuilder() {
+    return product_ == null ? grpc.ProductData.getDefaultInstance() : product_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -144,20 +231,23 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (animalPartId_ != 0L) {
-      output.writeInt64(1, animalPartId_);
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(1, getAnimalPartId());
     }
-    if (partTypeId_ != 0L) {
-      output.writeInt64(2, partTypeId_);
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeMessage(2, getPartType());
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(partWeight_)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 3, partWeight_);
     }
-    if (animalId_ != 0L) {
-      output.writeInt64(4, animalId_);
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeMessage(4, getAnimal());
     }
-    if (trayId_ != 0L) {
-      output.writeInt64(5, trayId_);
+    if (((bitField0_ & 0x00000008) != 0)) {
+      output.writeMessage(5, getTray());
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeMessage(6, getProduct());
     }
     getUnknownFields().writeTo(output);
   }
@@ -168,24 +258,28 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (animalPartId_ != 0L) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(1, animalPartId_);
+        .computeMessageSize(1, getAnimalPartId());
     }
-    if (partTypeId_ != 0L) {
+    if (((bitField0_ & 0x00000002) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(2, partTypeId_);
+        .computeMessageSize(2, getPartType());
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(partWeight_)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(3, partWeight_);
     }
-    if (animalId_ != 0L) {
+    if (((bitField0_ & 0x00000004) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(4, animalId_);
+        .computeMessageSize(4, getAnimal());
     }
-    if (trayId_ != 0L) {
+    if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeInt64Size(5, trayId_);
+        .computeMessageSize(5, getTray());
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, getProduct());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -202,16 +296,33 @@ private static final long serialVersionUID = 0L;
     }
     grpc.AnimalPartData other = (grpc.AnimalPartData) obj;
 
-    if (getAnimalPartId()
-        != other.getAnimalPartId()) return false;
-    if (getPartTypeId()
-        != other.getPartTypeId()) return false;
+    if (hasAnimalPartId() != other.hasAnimalPartId()) return false;
+    if (hasAnimalPartId()) {
+      if (!getAnimalPartId()
+          .equals(other.getAnimalPartId())) return false;
+    }
+    if (hasPartType() != other.hasPartType()) return false;
+    if (hasPartType()) {
+      if (!getPartType()
+          .equals(other.getPartType())) return false;
+    }
     if (!getPartWeight()
         .equals(other.getPartWeight())) return false;
-    if (getAnimalId()
-        != other.getAnimalId()) return false;
-    if (getTrayId()
-        != other.getTrayId()) return false;
+    if (hasAnimal() != other.hasAnimal()) return false;
+    if (hasAnimal()) {
+      if (!getAnimal()
+          .equals(other.getAnimal())) return false;
+    }
+    if (hasTray() != other.hasTray()) return false;
+    if (hasTray()) {
+      if (!getTray()
+          .equals(other.getTray())) return false;
+    }
+    if (hasProduct() != other.hasProduct()) return false;
+    if (hasProduct()) {
+      if (!getProduct()
+          .equals(other.getProduct())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -223,20 +334,28 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + ANIMALPARTID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getAnimalPartId());
-    hash = (37 * hash) + PARTTYPEID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getPartTypeId());
+    if (hasAnimalPartId()) {
+      hash = (37 * hash) + ANIMALPARTID_FIELD_NUMBER;
+      hash = (53 * hash) + getAnimalPartId().hashCode();
+    }
+    if (hasPartType()) {
+      hash = (37 * hash) + PARTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getPartType().hashCode();
+    }
     hash = (37 * hash) + PARTWEIGHT_FIELD_NUMBER;
     hash = (53 * hash) + getPartWeight().hashCode();
-    hash = (37 * hash) + ANIMALID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getAnimalId());
-    hash = (37 * hash) + TRAYID_FIELD_NUMBER;
-    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-        getTrayId());
+    if (hasAnimal()) {
+      hash = (37 * hash) + ANIMAL_FIELD_NUMBER;
+      hash = (53 * hash) + getAnimal().hashCode();
+    }
+    if (hasTray()) {
+      hash = (37 * hash) + TRAY_FIELD_NUMBER;
+      hash = (53 * hash) + getTray().hashCode();
+    }
+    if (hasProduct()) {
+      hash = (37 * hash) + PRODUCT_FIELD_NUMBER;
+      hash = (53 * hash) + getProduct().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -360,23 +479,54 @@ private static final long serialVersionUID = 0L;
 
     // Construct using grpc.AnimalPartData.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessage
+              .alwaysUseFieldBuilders) {
+        getAnimalPartIdFieldBuilder();
+        getPartTypeFieldBuilder();
+        getAnimalFieldBuilder();
+        getTrayFieldBuilder();
+        getProductFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
-      animalPartId_ = 0L;
-      partTypeId_ = 0L;
+      animalPartId_ = null;
+      if (animalPartIdBuilder_ != null) {
+        animalPartIdBuilder_.dispose();
+        animalPartIdBuilder_ = null;
+      }
+      partType_ = null;
+      if (partTypeBuilder_ != null) {
+        partTypeBuilder_.dispose();
+        partTypeBuilder_ = null;
+      }
       partWeight_ = "";
-      animalId_ = 0L;
-      trayId_ = 0L;
+      animal_ = null;
+      if (animalBuilder_ != null) {
+        animalBuilder_.dispose();
+        animalBuilder_ = null;
+      }
+      tray_ = null;
+      if (trayBuilder_ != null) {
+        trayBuilder_.dispose();
+        trayBuilder_ = null;
+      }
+      product_ = null;
+      if (productBuilder_ != null) {
+        productBuilder_.dispose();
+        productBuilder_ = null;
+      }
       return this;
     }
 
@@ -410,21 +560,41 @@ private static final long serialVersionUID = 0L;
 
     private void buildPartial0(grpc.AnimalPartData result) {
       int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.animalPartId_ = animalPartId_;
+        result.animalPartId_ = animalPartIdBuilder_ == null
+            ? animalPartId_
+            : animalPartIdBuilder_.build();
+        to_bitField0_ |= 0x00000001;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.partTypeId_ = partTypeId_;
+        result.partType_ = partTypeBuilder_ == null
+            ? partType_
+            : partTypeBuilder_.build();
+        to_bitField0_ |= 0x00000002;
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.partWeight_ = partWeight_;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.animalId_ = animalId_;
+        result.animal_ = animalBuilder_ == null
+            ? animal_
+            : animalBuilder_.build();
+        to_bitField0_ |= 0x00000004;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.trayId_ = trayId_;
+        result.tray_ = trayBuilder_ == null
+            ? tray_
+            : trayBuilder_.build();
+        to_bitField0_ |= 0x00000008;
       }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.product_ = productBuilder_ == null
+            ? product_
+            : productBuilder_.build();
+        to_bitField0_ |= 0x00000010;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -439,22 +609,25 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(grpc.AnimalPartData other) {
       if (other == grpc.AnimalPartData.getDefaultInstance()) return this;
-      if (other.getAnimalPartId() != 0L) {
-        setAnimalPartId(other.getAnimalPartId());
+      if (other.hasAnimalPartId()) {
+        mergeAnimalPartId(other.getAnimalPartId());
       }
-      if (other.getPartTypeId() != 0L) {
-        setPartTypeId(other.getPartTypeId());
+      if (other.hasPartType()) {
+        mergePartType(other.getPartType());
       }
       if (!other.getPartWeight().isEmpty()) {
         partWeight_ = other.partWeight_;
         bitField0_ |= 0x00000004;
         onChanged();
       }
-      if (other.getAnimalId() != 0L) {
-        setAnimalId(other.getAnimalId());
+      if (other.hasAnimal()) {
+        mergeAnimal(other.getAnimal());
       }
-      if (other.getTrayId() != 0L) {
-        setTrayId(other.getTrayId());
+      if (other.hasTray()) {
+        mergeTray(other.getTray());
+      }
+      if (other.hasProduct()) {
+        mergeProduct(other.getProduct());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -482,31 +655,46 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
-            case 8: {
-              animalPartId_ = input.readInt64();
+            case 10: {
+              input.readMessage(
+                  getAnimalPartIdFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000001;
               break;
-            } // case 8
-            case 16: {
-              partTypeId_ = input.readInt64();
+            } // case 10
+            case 18: {
+              input.readMessage(
+                  getPartTypeFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000002;
               break;
-            } // case 16
+            } // case 18
             case 26: {
               partWeight_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000004;
               break;
             } // case 26
-            case 32: {
-              animalId_ = input.readInt64();
+            case 34: {
+              input.readMessage(
+                  getAnimalFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000008;
               break;
-            } // case 32
-            case 40: {
-              trayId_ = input.readInt64();
+            } // case 34
+            case 42: {
+              input.readMessage(
+                  getTrayFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000010;
               break;
-            } // case 40
+            } // case 42
+            case 50: {
+              input.readMessage(
+                  getProductFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 50
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -524,68 +712,246 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private long animalPartId_ ;
+    private grpc.AnimalPartId animalPartId_;
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder> animalPartIdBuilder_;
     /**
-     * <code>int64 animalPartId = 1;</code>
-     * @return The animalPartId.
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     * @return Whether the animalPartId field is set.
      */
-    @java.lang.Override
-    public long getAnimalPartId() {
-      return animalPartId_;
+    public boolean hasAnimalPartId() {
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>int64 animalPartId = 1;</code>
-     * @param value The animalPartId to set.
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     * @return The animalPartId.
      */
-    public Builder setAnimalPartId(long value) {
-
-      animalPartId_ = value;
+    public grpc.AnimalPartId getAnimalPartId() {
+      if (animalPartIdBuilder_ == null) {
+        return animalPartId_ == null ? grpc.AnimalPartId.getDefaultInstance() : animalPartId_;
+      } else {
+        return animalPartIdBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     */
+    public Builder setAnimalPartId(grpc.AnimalPartId value) {
+      if (animalPartIdBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        animalPartId_ = value;
+      } else {
+        animalPartIdBuilder_.setMessage(value);
+      }
       bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 animalPartId = 1;</code>
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
      */
-    public Builder clearAnimalPartId() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      animalPartId_ = 0L;
+    public Builder setAnimalPartId(
+        grpc.AnimalPartId.Builder builderForValue) {
+      if (animalPartIdBuilder_ == null) {
+        animalPartId_ = builderForValue.build();
+      } else {
+        animalPartIdBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
-
-    private long partTypeId_ ;
     /**
-     * <code>int64 partTypeId = 2;</code>
-     * @return The partTypeId.
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
      */
-    @java.lang.Override
-    public long getPartTypeId() {
-      return partTypeId_;
+    public Builder mergeAnimalPartId(grpc.AnimalPartId value) {
+      if (animalPartIdBuilder_ == null) {
+        if (((bitField0_ & 0x00000001) != 0) &&
+          animalPartId_ != null &&
+          animalPartId_ != grpc.AnimalPartId.getDefaultInstance()) {
+          getAnimalPartIdBuilder().mergeFrom(value);
+        } else {
+          animalPartId_ = value;
+        }
+      } else {
+        animalPartIdBuilder_.mergeFrom(value);
+      }
+      if (animalPartId_ != null) {
+        bitField0_ |= 0x00000001;
+        onChanged();
+      }
+      return this;
     }
     /**
-     * <code>int64 partTypeId = 2;</code>
-     * @param value The partTypeId to set.
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
      */
-    public Builder setPartTypeId(long value) {
+    public Builder clearAnimalPartId() {
+      bitField0_ = (bitField0_ & ~0x00000001);
+      animalPartId_ = null;
+      if (animalPartIdBuilder_ != null) {
+        animalPartIdBuilder_.dispose();
+        animalPartIdBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     */
+    public grpc.AnimalPartId.Builder getAnimalPartIdBuilder() {
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return getAnimalPartIdFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     */
+    public grpc.AnimalPartIdOrBuilder getAnimalPartIdOrBuilder() {
+      if (animalPartIdBuilder_ != null) {
+        return animalPartIdBuilder_.getMessageOrBuilder();
+      } else {
+        return animalPartId_ == null ?
+            grpc.AnimalPartId.getDefaultInstance() : animalPartId_;
+      }
+    }
+    /**
+     * <code>.grpc.AnimalPartId animalPartId = 1;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder> 
+        getAnimalPartIdFieldBuilder() {
+      if (animalPartIdBuilder_ == null) {
+        animalPartIdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            grpc.AnimalPartId, grpc.AnimalPartId.Builder, grpc.AnimalPartIdOrBuilder>(
+                getAnimalPartId(),
+                getParentForChildren(),
+                isClean());
+        animalPartId_ = null;
+      }
+      return animalPartIdBuilder_;
+    }
 
-      partTypeId_ = value;
+    private grpc.PartTypeData partType_;
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.PartTypeData, grpc.PartTypeData.Builder, grpc.PartTypeDataOrBuilder> partTypeBuilder_;
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     * @return Whether the partType field is set.
+     */
+    public boolean hasPartType() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     * @return The partType.
+     */
+    public grpc.PartTypeData getPartType() {
+      if (partTypeBuilder_ == null) {
+        return partType_ == null ? grpc.PartTypeData.getDefaultInstance() : partType_;
+      } else {
+        return partTypeBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    public Builder setPartType(grpc.PartTypeData value) {
+      if (partTypeBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        partType_ = value;
+      } else {
+        partTypeBuilder_.setMessage(value);
+      }
       bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 partTypeId = 2;</code>
-     * @return This builder for chaining.
+     * <code>.grpc.PartTypeData partType = 2;</code>
      */
-    public Builder clearPartTypeId() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      partTypeId_ = 0L;
+    public Builder setPartType(
+        grpc.PartTypeData.Builder builderForValue) {
+      if (partTypeBuilder_ == null) {
+        partType_ = builderForValue.build();
+      } else {
+        partTypeBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    public Builder mergePartType(grpc.PartTypeData value) {
+      if (partTypeBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          partType_ != null &&
+          partType_ != grpc.PartTypeData.getDefaultInstance()) {
+          getPartTypeBuilder().mergeFrom(value);
+        } else {
+          partType_ = value;
+        }
+      } else {
+        partTypeBuilder_.mergeFrom(value);
+      }
+      if (partType_ != null) {
+        bitField0_ |= 0x00000002;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    public Builder clearPartType() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      partType_ = null;
+      if (partTypeBuilder_ != null) {
+        partTypeBuilder_.dispose();
+        partTypeBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    public grpc.PartTypeData.Builder getPartTypeBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getPartTypeFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    public grpc.PartTypeDataOrBuilder getPartTypeOrBuilder() {
+      if (partTypeBuilder_ != null) {
+        return partTypeBuilder_.getMessageOrBuilder();
+      } else {
+        return partType_ == null ?
+            grpc.PartTypeData.getDefaultInstance() : partType_;
+      }
+    }
+    /**
+     * <code>.grpc.PartTypeData partType = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.PartTypeData, grpc.PartTypeData.Builder, grpc.PartTypeDataOrBuilder> 
+        getPartTypeFieldBuilder() {
+      if (partTypeBuilder_ == null) {
+        partTypeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            grpc.PartTypeData, grpc.PartTypeData.Builder, grpc.PartTypeDataOrBuilder>(
+                getPartType(),
+                getParentForChildren(),
+                isClean());
+        partType_ = null;
+      }
+      return partTypeBuilder_;
     }
 
     private java.lang.Object partWeight_ = "";
@@ -660,68 +1026,367 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private long animalId_ ;
+    private grpc.AnimalData animal_;
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.AnimalData, grpc.AnimalData.Builder, grpc.AnimalDataOrBuilder> animalBuilder_;
     /**
-     * <code>int64 animalId = 4;</code>
-     * @return The animalId.
+     * <code>.grpc.AnimalData animal = 4;</code>
+     * @return Whether the animal field is set.
      */
-    @java.lang.Override
-    public long getAnimalId() {
-      return animalId_;
+    public boolean hasAnimal() {
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>int64 animalId = 4;</code>
-     * @param value The animalId to set.
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalData animal = 4;</code>
+     * @return The animal.
      */
-    public Builder setAnimalId(long value) {
-
-      animalId_ = value;
+    public grpc.AnimalData getAnimal() {
+      if (animalBuilder_ == null) {
+        return animal_ == null ? grpc.AnimalData.getDefaultInstance() : animal_;
+      } else {
+        return animalBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.grpc.AnimalData animal = 4;</code>
+     */
+    public Builder setAnimal(grpc.AnimalData value) {
+      if (animalBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        animal_ = value;
+      } else {
+        animalBuilder_.setMessage(value);
+      }
       bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 animalId = 4;</code>
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalData animal = 4;</code>
      */
-    public Builder clearAnimalId() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      animalId_ = 0L;
+    public Builder setAnimal(
+        grpc.AnimalData.Builder builderForValue) {
+      if (animalBuilder_ == null) {
+        animal_ = builderForValue.build();
+      } else {
+        animalBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
-
-    private long trayId_ ;
     /**
-     * <code>int64 trayId = 5;</code>
-     * @return The trayId.
+     * <code>.grpc.AnimalData animal = 4;</code>
      */
-    @java.lang.Override
-    public long getTrayId() {
-      return trayId_;
+    public Builder mergeAnimal(grpc.AnimalData value) {
+      if (animalBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          animal_ != null &&
+          animal_ != grpc.AnimalData.getDefaultInstance()) {
+          getAnimalBuilder().mergeFrom(value);
+        } else {
+          animal_ = value;
+        }
+      } else {
+        animalBuilder_.mergeFrom(value);
+      }
+      if (animal_ != null) {
+        bitField0_ |= 0x00000008;
+        onChanged();
+      }
+      return this;
     }
     /**
-     * <code>int64 trayId = 5;</code>
-     * @param value The trayId to set.
-     * @return This builder for chaining.
+     * <code>.grpc.AnimalData animal = 4;</code>
      */
-    public Builder setTrayId(long value) {
+    public Builder clearAnimal() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      animal_ = null;
+      if (animalBuilder_ != null) {
+        animalBuilder_.dispose();
+        animalBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.AnimalData animal = 4;</code>
+     */
+    public grpc.AnimalData.Builder getAnimalBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getAnimalFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.grpc.AnimalData animal = 4;</code>
+     */
+    public grpc.AnimalDataOrBuilder getAnimalOrBuilder() {
+      if (animalBuilder_ != null) {
+        return animalBuilder_.getMessageOrBuilder();
+      } else {
+        return animal_ == null ?
+            grpc.AnimalData.getDefaultInstance() : animal_;
+      }
+    }
+    /**
+     * <code>.grpc.AnimalData animal = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.AnimalData, grpc.AnimalData.Builder, grpc.AnimalDataOrBuilder> 
+        getAnimalFieldBuilder() {
+      if (animalBuilder_ == null) {
+        animalBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            grpc.AnimalData, grpc.AnimalData.Builder, grpc.AnimalDataOrBuilder>(
+                getAnimal(),
+                getParentForChildren(),
+                isClean());
+        animal_ = null;
+      }
+      return animalBuilder_;
+    }
 
-      trayId_ = value;
+    private grpc.TrayData tray_;
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.TrayData, grpc.TrayData.Builder, grpc.TrayDataOrBuilder> trayBuilder_;
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     * @return Whether the tray field is set.
+     */
+    public boolean hasTray() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     * @return The tray.
+     */
+    public grpc.TrayData getTray() {
+      if (trayBuilder_ == null) {
+        return tray_ == null ? grpc.TrayData.getDefaultInstance() : tray_;
+      } else {
+        return trayBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    public Builder setTray(grpc.TrayData value) {
+      if (trayBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        tray_ = value;
+      } else {
+        trayBuilder_.setMessage(value);
+      }
       bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
-     * <code>int64 trayId = 5;</code>
-     * @return This builder for chaining.
+     * <code>.grpc.TrayData tray = 5;</code>
      */
-    public Builder clearTrayId() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      trayId_ = 0L;
+    public Builder setTray(
+        grpc.TrayData.Builder builderForValue) {
+      if (trayBuilder_ == null) {
+        tray_ = builderForValue.build();
+      } else {
+        trayBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    public Builder mergeTray(grpc.TrayData value) {
+      if (trayBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0) &&
+          tray_ != null &&
+          tray_ != grpc.TrayData.getDefaultInstance()) {
+          getTrayBuilder().mergeFrom(value);
+        } else {
+          tray_ = value;
+        }
+      } else {
+        trayBuilder_.mergeFrom(value);
+      }
+      if (tray_ != null) {
+        bitField0_ |= 0x00000010;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    public Builder clearTray() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      tray_ = null;
+      if (trayBuilder_ != null) {
+        trayBuilder_.dispose();
+        trayBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    public grpc.TrayData.Builder getTrayBuilder() {
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return getTrayFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    public grpc.TrayDataOrBuilder getTrayOrBuilder() {
+      if (trayBuilder_ != null) {
+        return trayBuilder_.getMessageOrBuilder();
+      } else {
+        return tray_ == null ?
+            grpc.TrayData.getDefaultInstance() : tray_;
+      }
+    }
+    /**
+     * <code>.grpc.TrayData tray = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.TrayData, grpc.TrayData.Builder, grpc.TrayDataOrBuilder> 
+        getTrayFieldBuilder() {
+      if (trayBuilder_ == null) {
+        trayBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            grpc.TrayData, grpc.TrayData.Builder, grpc.TrayDataOrBuilder>(
+                getTray(),
+                getParentForChildren(),
+                isClean());
+        tray_ = null;
+      }
+      return trayBuilder_;
+    }
+
+    private grpc.ProductData product_;
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.ProductData, grpc.ProductData.Builder, grpc.ProductDataOrBuilder> productBuilder_;
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     * @return Whether the product field is set.
+     */
+    public boolean hasProduct() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     * @return The product.
+     */
+    public grpc.ProductData getProduct() {
+      if (productBuilder_ == null) {
+        return product_ == null ? grpc.ProductData.getDefaultInstance() : product_;
+      } else {
+        return productBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public Builder setProduct(grpc.ProductData value) {
+      if (productBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        product_ = value;
+      } else {
+        productBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public Builder setProduct(
+        grpc.ProductData.Builder builderForValue) {
+      if (productBuilder_ == null) {
+        product_ = builderForValue.build();
+      } else {
+        productBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public Builder mergeProduct(grpc.ProductData value) {
+      if (productBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0) &&
+          product_ != null &&
+          product_ != grpc.ProductData.getDefaultInstance()) {
+          getProductBuilder().mergeFrom(value);
+        } else {
+          product_ = value;
+        }
+      } else {
+        productBuilder_.mergeFrom(value);
+      }
+      if (product_ != null) {
+        bitField0_ |= 0x00000020;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public Builder clearProduct() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      product_ = null;
+      if (productBuilder_ != null) {
+        productBuilder_.dispose();
+        productBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public grpc.ProductData.Builder getProductBuilder() {
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return getProductFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    public grpc.ProductDataOrBuilder getProductOrBuilder() {
+      if (productBuilder_ != null) {
+        return productBuilder_.getMessageOrBuilder();
+      } else {
+        return product_ == null ?
+            grpc.ProductData.getDefaultInstance() : product_;
+      }
+    }
+    /**
+     * <code>.grpc.ProductData product = 6;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilder<
+        grpc.ProductData, grpc.ProductData.Builder, grpc.ProductDataOrBuilder> 
+        getProductFieldBuilder() {
+      if (productBuilder_ == null) {
+        productBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+            grpc.ProductData, grpc.ProductData.Builder, grpc.ProductDataOrBuilder>(
+                getProduct(),
+                getParentForChildren(),
+                isClean());
+        product_ = null;
+      }
+      return productBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:grpc.AnimalPartData)

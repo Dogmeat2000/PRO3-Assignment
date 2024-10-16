@@ -1,10 +1,7 @@
 package server.controller.grpc.java_to_gRPC;
 
-import grpc.AnimalData;
 import grpc.AnimalPartData;
 import grpc.AnimalPartsData;
-import grpc.AnimalsData;
-import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 
 import java.util.List;
@@ -18,11 +15,12 @@ public class AnimalPart_ToGrpc_AnimalPartData
       return null;
 
     AnimalPartData.Builder animalPartBuilder = AnimalPartData.newBuilder()
-        .setAnimalId(animalPart.getPart_id())
-        .setPartTypeId(animalPart.getType().getTypeId())
-        .setTrayId(animalPart.getTray().getTray_id())
-        .setPartWeight(animalPart.getWeight().toString());
-
+        .setAnimalPartId(animalPart.getPart_id())
+        .setPartWeight(animalPart.getWeight_kilogram().toString())
+        .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(animalPart.getType()))
+        .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animalPart.getAnimal()))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(animalPart.getTray()))
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(animalPart.getProduct()));
     return animalPartBuilder.build();
   }
 

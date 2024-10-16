@@ -2,7 +2,7 @@ package server.controller.grpc.grpc_to_java;
 
 import grpc.AnimalPartData;
 import grpc.AnimalPartsData;
-import shared.model.entities.AnimalPart;
+import shared.model.entities.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,16 +15,19 @@ public class GrpcAnimalPartData_To_AnimalPart
     if (animalPartData == null)
       return null;
 
-    // Read AnimalData information from the gRPC data:
-    long id = animalPartData.getAnimalId();
-    long animalId = animalPartData.getAnimalId();
-    long trayId = animalPartData.getTrayId();
-    long typeId = animalPartData.getPartTypeId();
+    // Read AnimalPartData information from the gRPC data:
+    long partId = animalPartData.getAnimalPartId();
     BigDecimal weight = new BigDecimal(animalPartData.getPartWeight());
+    PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(animalPartData.getPartType());
+    Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(animalPartData.getAnimal());
+    Tray tray = GrpcTrayData_To_Tray.convertToTray(animalPartData.getTray());
+    Product product = GrpcProductData_To_Product.convertToProduct(animalPartData.getProduct());
+
 
     // Construct and return a new Animal entity with the above read attributes set:
-    return new AnimalPart(id, weight, typeId, animalId, trayId);
+    return new AnimalPart(partId, weight, partType, animal, tray, product);
   }
+
 
   public static List<AnimalPart> convertToAnimalPartList(AnimalPartsData data) {
 

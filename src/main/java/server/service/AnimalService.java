@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.validation.AnimalValidation;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
 import shared.model.exceptions.NotFoundException;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -30,8 +30,11 @@ public class AnimalService implements AnimalRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public Animal registerAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
+    // Override any set animal_id, since the database is responsible for setting this value:
+    data.setId(1);
+
     // Validate received data, before passing to repository/database:
-    validateWeight(data.getWeight_kilogram());
+    AnimalValidation.validateAnimal(data);
 
     // Attempt to add Animal to DB:
     try {
@@ -57,7 +60,7 @@ public class AnimalService implements AnimalRegistryInterface
 
   @Override public Animal readAnimal(long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
-    validateId(animalId);
+    AnimalValidation.validateId(animalId);
 
     // Attempt to read Animal from local cache first:
     if(animalCache.containsKey(animalId)) {
@@ -88,7 +91,7 @@ public class AnimalService implements AnimalRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateAnimal(Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
-    validateAnimal(data);
+    AnimalValidation.validateAnimal(data);
 
     // Attempt to update Animal in database:
     try {
@@ -124,7 +127,7 @@ public class AnimalService implements AnimalRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean removeAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
-    validateAnimal(data);
+    AnimalValidation.validateAnimal(data);
 
     try {
       // Attempt to delete the given Animal:
@@ -173,38 +176,5 @@ public class AnimalService implements AnimalRegistryInterface
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
-  }
-
-
-  private void validateAnimal(Animal animal) throws DataIntegrityViolationException {
-    // Animal cannot be null:
-    if(animal == null)
-      throw new DataIntegrityViolationException("Animal is null");
-
-    // Validate animal_id:
-    validateId(animal.getId());
-
-    // Animal weight must be larger than 0:
-    validateWeight(animal.getWeight_kilogram());
-
-    // Validation passed:
-  }
-
-
-  private void validateId(long animal_id) throws DataIntegrityViolationException {
-    // Animal_id must be larger than 0:
-    if(animal_id <= 0)
-      throw new DataIntegrityViolationException("animal_id is invalid (0 or less)");
-
-    // Validation passed:
-  }
-
-
-  private void validateWeight(BigDecimal weight) throws DataIntegrityViolationException {
-    // Animal weight must be larger than 0:
-    if(weight.compareTo(BigDecimal.valueOf(0)) <= 0)
-      throw new DataIntegrityViolationException("weight_kilogram is invalid (0 or less)");
-
-    // Validation passed:
   }
 }

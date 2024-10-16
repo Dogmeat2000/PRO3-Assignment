@@ -1,4 +1,4 @@
-package client.service;
+package client.ui.Model.service;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

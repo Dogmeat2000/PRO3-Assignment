@@ -14,4 +14,49 @@ public interface AnimalPartIdOrBuilder extends
    * @return The animalPartId.
    */
   long getAnimalPartId();
+
+  /**
+   * <code>.grpc.AnimalId animalId = 2;</code>
+   * @return Whether the animalId field is set.
+   */
+  boolean hasAnimalId();
+  /**
+   * <code>.grpc.AnimalId animalId = 2;</code>
+   * @return The animalId.
+   */
+  grpc.AnimalId getAnimalId();
+  /**
+   * <code>.grpc.AnimalId animalId = 2;</code>
+   */
+  grpc.AnimalIdOrBuilder getAnimalIdOrBuilder();
+
+  /**
+   * <code>.grpc.PartTypeId typeId = 3;</code>
+   * @return Whether the typeId field is set.
+   */
+  boolean hasTypeId();
+  /**
+   * <code>.grpc.PartTypeId typeId = 3;</code>
+   * @return The typeId.
+   */
+  grpc.PartTypeId getTypeId();
+  /**
+   * <code>.grpc.PartTypeId typeId = 3;</code>
+   */
+  grpc.PartTypeIdOrBuilder getTypeIdOrBuilder();
+
+  /**
+   * <code>.grpc.TrayId trayId = 4;</code>
+   * @return Whether the trayId field is set.
+   */
+  boolean hasTrayId();
+  /**
+   * <code>.grpc.TrayId trayId = 4;</code>
+   * @return The trayId.
+   */
+  grpc.TrayId getTrayId();
+  /**
+   * <code>.grpc.TrayId trayId = 4;</code>
+   */
+  grpc.TrayIdOrBuilder getTrayIdOrBuilder();
 }

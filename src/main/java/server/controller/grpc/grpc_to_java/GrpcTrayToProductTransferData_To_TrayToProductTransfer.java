@@ -24,9 +24,9 @@ public class GrpcTrayToProductTransferData_To_TrayToProductTransfer
     }
 
 
-    public static List<TrayToProductTransfer> convertToTrayToProductTransferList(TrayToProductTransfersData data) {
+    /*public static List<TrayToProductTransfer> convertToTrayToProductTransferList(TrayToProductTransfersData data) {
 
       // Construct and return a new List of Animal entities:
       return data.getTransferDataListList().stream().map(server.controller.grpc.grpc_to_java.GrpcTrayToProductTransferData_To_TrayToProductTransfer::convertToTrayToProductTransfer).toList();
-    }
+    }*/
 }

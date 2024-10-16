@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.validation.PartTypeValidation;
 import server.repository.PartTypeRepository;
 import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
@@ -33,8 +34,11 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override
   public PartType registerPartType (PartType data) throws PersistenceException, DataIntegrityViolationException {
+    // Override any set partTypeId, since the database is responsible for setting this value:
+    data.setTypeId(1);
+
     // Validate received data, before passing to repository/database:
-    validateDesc(data.getTypeDesc());
+    PartTypeValidation.validatePartType(data);
 
     // Attempt to add PartType to DB:
     try {
@@ -61,7 +65,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Override
   public PartType readPartType (long typeId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
-    validateId(typeId);
+    PartTypeValidation.validateId(typeId);
 
     // Attempt to read PartType from local cache first:
     if(partTypeCache.containsKey(typeId)) {
@@ -93,7 +97,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Override
   public boolean updatePartType (PartType data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
-    validatePartType(data);
+    PartTypeValidation.validatePartType(data);
 
     // Attempt to update PartType in database:
     try {
@@ -130,7 +134,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Override
   public boolean removePartType (PartType data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
-    validatePartType(data);
+    PartTypeValidation.validatePartType(data);
 
     try {
       // Attempt to delete the given PartType:
@@ -181,38 +185,5 @@ public class PartTypeService implements PartTypeRegistryInterface
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
-  }
-
-
-  private void validatePartType(PartType partType) throws DataIntegrityViolationException {
-    // PartType cannot be null:
-    if(partType == null)
-      throw new DataIntegrityViolationException("PartType is null");
-
-    // Validate typeId:
-    validateId(partType.getTypeId());
-
-    // Desc weight must not be empty, null or blank:
-    validateDesc(partType.getTypeDesc());
-
-    // Validation passed:
-  }
-
-
-  private void validateId(long typeId) throws DataIntegrityViolationException {
-    // Animal_id must be larger than 0:
-    if(typeId <= 0)
-      throw new DataIntegrityViolationException("typeId is invalid (0 or less)");
-
-    // Validation passed:
-  }
-
-
-  private void validateDesc(String desc) throws DataIntegrityViolationException {
-    // Animal weight must be larger than 0:
-    if(desc == null || desc.isEmpty() || desc.isBlank())
-      throw new DataIntegrityViolationException("desc is empty or blank");
-
-    // Validation passed:
   }
 }

@@ -19,8 +19,8 @@ public class PartType_ToGrpc_PartTypeData
 
     PartTypeData.Builder builder = PartTypeData.newBuilder()
         .setPartTypeId(partType.getTypeId())
-        .setPartDesc(partType.getTypeDesc());
-
+        .setPartDesc(partType.getTypeDesc())
+        .addAllAnimalPartsOfThisTypeList(partType.getPartList().stream().map(AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList());
     return builder.build();
   }
 

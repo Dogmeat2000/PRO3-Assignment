@@ -1,7 +1,7 @@
 package client;
 
 import client.interfaces.AnimalRegistrationSystem;
-import client.service.AnimalRegistrationSystemImpl;
+import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import shared.model.entities.Animal;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.CreateFailedException;

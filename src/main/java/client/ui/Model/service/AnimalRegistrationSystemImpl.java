@@ -1,4 +1,4 @@
-package client.service;
+package client.ui.Model.service;
 
 import client.interfaces.AnimalRegistrationSystem;
 import grpc.*;
@@ -98,6 +98,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
         throw new UpdateFailedException("Failed to update Animal with id '" + data.getId() + "'");
 
       // TODO: Update all AnimalParts that includes this Animal!
+      // TODO: This should be done in the repository methods instead. Not here...
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
@@ -130,6 +131,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       EmptyMessage deleted = stub.removeAnimal(animalData);
 
       // TODO: Delete all AnimalParts that includes this Animal!
+      // TODO: This should be done in the repository methods instead. Not here...
 
       if(deleted == null && animal != null)
         throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id + "'");

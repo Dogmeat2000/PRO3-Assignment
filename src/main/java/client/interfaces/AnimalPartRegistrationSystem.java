@@ -32,7 +32,7 @@ public interface AnimalPartRegistrationSystem
    * @return The identified Animal instance.
    * @throws NotFoundException Thrown if Animal is not be found.
    */
-  AnimalPart readAnimalPart (Animal animal, PartType type, Tray tray) throws NotFoundException;
+  AnimalPart readAnimalPart (long animalPartId, Animal animal, PartType type, Tray tray) throws NotFoundException;
 
 
   /** <p>Updates the given Animal in the repository. Unique id is extracted from the Animal entity

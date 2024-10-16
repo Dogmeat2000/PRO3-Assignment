@@ -4,6 +4,7 @@ import shared.model.entities.Product;
 
 import java.util.List;
 
+// TODO: Add javaDocs description
 public interface ProductRegistryInterface
 {
   // Create:

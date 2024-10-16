@@ -1,4 +1,4 @@
-package client.service;
+package client.ui.Model.service;
 
 import client.interfaces.TrayRegistrationSystem;
 import grpc.*;
@@ -98,6 +98,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
         throw new UpdateFailedException("Failed to update Tray with id '" + data.getTray_id() + "'");
 
       // TODO: Update all TrayToProductTransfers and Products this tray is involved in:
+      // TODO: This should be done in the repository methods instead. Not here...
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().equals(NOT_FOUND))
@@ -133,6 +134,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
         throw new DeleteFailedException("Failed to delete Tray with id '" + trayId + "'");
 
       // TODO: Delete all TrayToProductTransfers and Products this tray is involved in:
+      // TODO: This should be done in the repository methods instead. Not here...
 
       return true;
     } catch (StatusRuntimeException e) {

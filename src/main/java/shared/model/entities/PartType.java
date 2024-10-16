@@ -70,6 +70,7 @@ public class PartType implements Serializable
   }
 
 
+  // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
     if (this == o)

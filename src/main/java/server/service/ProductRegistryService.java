@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.validation.ProductValidation;
 import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.ProductRepository;
 import server.repository.TrayToProductTransferRepository;
@@ -23,15 +24,13 @@ import java.util.Optional;
 public class ProductRegistryService implements ProductRegistryInterface
 {
   private final ProductRepository productRepository;
-  private final TrayToProductTransferRepository transferRepository;
   private final Map<Long, Product> productCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(ProductRegistryService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
 
   @Autowired
-  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository transferRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
+  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
     this.productRepository = productRepository;
-    this.transferRepository = transferRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
   }
 
@@ -42,7 +41,7 @@ public class ProductRegistryService implements ProductRegistryInterface
     data.setProduct_id(1);
 
     // Validate received data, before passing to repository/database:
-    validateProduct(data);
+    ProductValidation.validateProduct(data);
 
     // Attempt to add Product to DB:
     try {
@@ -68,7 +67,7 @@ public class ProductRegistryService implements ProductRegistryInterface
 
   @Override public Product readProduct(long productId) {
     // Validate received id, before passing to repository/database:
-    validateId(productId);
+    ProductValidation.validateId(productId);
 
     // Attempt to read Product from local cache first:
     if(productCache.containsKey(productId)) {
@@ -99,7 +98,7 @@ public class ProductRegistryService implements ProductRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateProduct(Product data) {
     // Validate received data, before passing to repository/database:
-    validateProduct(data);
+    ProductValidation.validateProduct(data);
 
     // Attempt to update Product in database:
     try {
@@ -143,7 +142,7 @@ public class ProductRegistryService implements ProductRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean removeProduct(Product data) {
     // Validate received data, before passing to repository/database:
-    validateProduct(data);
+    ProductValidation.validateProduct(data);
 
     try {
       // Attempt to delete the given Tray:
@@ -198,50 +197,5 @@ public class ProductRegistryService implements ProductRegistryInterface
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
-  }
-
-
-  private void validateProduct(Product product) throws DataIntegrityViolationException {
-    // Product cannot be null:
-    if(product == null)
-      throw new DataIntegrityViolationException("Product is null");
-
-    // Validate productId:
-    validateId(product.getProduct_id());
-
-    // Product must contain at least 1 AnimalPart
-    validateContents(product.getContentList());
-
-    // Product must have received animalParts from at least 1 Tray:
-    validateTraySupplyList(product.getTraySupplyJoinList());
-
-    // Validation passed:
-  }
-
-
-  private void validateId(long productId) throws DataIntegrityViolationException {
-    // productId must be larger than 0:
-    if(productId <= 0)
-      throw new DataIntegrityViolationException("productId is invalid (0 or less)");
-
-    // Validation passed:
-  }
-
-
-  private void validateContents(List<AnimalPart> contentList) throws DataIntegrityViolationException {
-    // Must have received AnimalParts from at least 1 Animal:
-    if(contentList.isEmpty())
-      throw new DataIntegrityViolationException("List<AnimalPart> is invalid (0 items)");
-
-    // Validation passed:
-  }
-
-
-  private void validateTraySupplyList(List<TrayToProductTransfer> supplyList) throws DataIntegrityViolationException {
-    // Must have received AnimalParts from at least 1 Tray:
-    if(supplyList.isEmpty())
-      throw new DataIntegrityViolationException("List<TrayToProductTransfer> is invalid (0 items)");
-
-    // Validation passed:
   }
 }

@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.validation.TrayValidation;
 import server.repository.TrayRepository;
 import shared.model.entities.Tray;
 import shared.model.exceptions.NotFoundException;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class TrayService implements TrayRegistryInterface
       data.setTray_id(1);
 
     // Validate received data, before passing to repository/database:
-    validateTray(data);
+    TrayValidation.validateTray(data);
 
     // Attempt to add Tray to DB:
     try {
@@ -64,7 +64,7 @@ public class TrayService implements TrayRegistryInterface
 
   @Override public Tray readTray(long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
-    validateId(trayId);
+    TrayValidation.validateId(trayId);
 
     // Attempt to read Tray from local cache first:
     if(trayCache.containsKey(trayId)) {
@@ -95,7 +95,7 @@ public class TrayService implements TrayRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateTray(Tray data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
-    validateTray(data);
+    TrayValidation.validateTray(data);
 
     // Attempt to update Tray in database:
     try {
@@ -134,7 +134,7 @@ public class TrayService implements TrayRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean removeTray(Tray data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
-    validateTray(data);
+    TrayValidation.validateTray(data);
 
     try {
       // Attempt to delete the given Tray:
@@ -183,41 +183,5 @@ public class TrayService implements TrayRegistryInterface
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
-  }
-
-
-  private void validateTray(Tray tray) throws DataIntegrityViolationException {
-    // Tray cannot be null:
-    if(tray == null)
-      throw new DataIntegrityViolationException("Tray is null");
-
-    // Validate trayId:
-    validateId(tray.getTray_id());
-
-    // Tray maxWeight must be 0 or larger:
-    validateWeight(tray.getMaxWeight_kilogram());
-
-    // Tray weight must be 0 or larger:
-    validateWeight(tray.getWeight_kilogram());
-
-    // Validation passed:
-  }
-
-
-  private void validateId(long trayId) throws DataIntegrityViolationException {
-    // trayId must be larger than 0:
-    if(trayId <= 0)
-      throw new DataIntegrityViolationException("trayId is invalid (0 or less)");
-
-    // Validation passed:
-  }
-
-
-  private void validateWeight(BigDecimal weight) throws DataIntegrityViolationException {
-    // Tray weight must be larger than, or equal to 0:
-    if(weight.compareTo(BigDecimal.valueOf(0)) < 0)
-      throw new DataIntegrityViolationException("weight_kilogram is invalid (less than zero)");
-
-    // Validation passed:
   }
 }

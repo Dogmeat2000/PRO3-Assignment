@@ -1,8 +1,7 @@
 package server.controller.grpc;
 
 import grpc.*;
-import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
-import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
+import server.controller.grpc.java_to_gRPC.*;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
@@ -25,11 +24,12 @@ public class GrpcFactory
   }
 
 
-  public static AnimalPartData buildGrpcAnimalPartData (Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) {
+  public static AnimalPartData buildGrpcAnimalPartData (long animalPartId, Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) {
     return AnimalPartData.newBuilder()
-        .setAnimalId(animal.getId())
-        .setPartTypeId(type.getTypeId())
-        .setTrayId(tray.getTray_id())
+        .setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId, animal.getId(), type.getTypeId(), tray.getTray_id()))
+        .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal))
+        .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(type))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
         .setPartWeight(weightInKilogram.toString())
         .build();
   }
@@ -68,7 +68,4 @@ public class GrpcFactory
         .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
         .build();
   }
-
-
-  //TODO MISSING IMPLEMENTATION
 }

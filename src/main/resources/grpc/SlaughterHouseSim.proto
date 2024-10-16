@@ -28,16 +28,20 @@ message AnimalsData {
 
 // AnimalPart entity:
 message AnimalPartData {
-  int64 animalPartId = 1;
-  int64 partTypeId = 2;
+  AnimalPartId animalPartId = 1;
+  PartTypeData partType = 2;
   string partWeight = 3;
-  int64 animalId = 4;
-  int64 trayId = 5;
+  AnimalData animal = 4;
+  TrayData tray = 5;
+  ProductData product = 6;
 }
 
 
 message AnimalPartId {
   int64 animalPartId = 1;
+  AnimalId animalId = 2;
+  PartTypeId typeId = 3;
+  TrayId trayId = 4;
 }
 
 
