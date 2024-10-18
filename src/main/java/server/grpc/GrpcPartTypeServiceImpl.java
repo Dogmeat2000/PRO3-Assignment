@@ -18,6 +18,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
+import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
@@ -37,17 +38,17 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the PartType:
-      PartType createdPartType = partTypeService.registerPartType(GrpcPartTypeData_To_PartType.convertToPartType(request));
+      PartType createdPartType = partTypeService.registerPartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
       // If partType creation fails
       if (createdPartType == null)
         throw new CreateFailedException("PartType could not be created");
 
       // Translate the created PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(createdPartType));
+      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(createdPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error registering partType").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error registering partType, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -63,12 +64,12 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
         throw new NotFoundException("PartType not found");
 
       // Translate the found PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType));
+      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("PartType with id " + request.getPartTypeId() + "not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error reading partType").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error reading partType, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -77,7 +78,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the PartType with the provided ID:
-      if (!partTypeService.updatePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
+      if (!partTypeService.updatePartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If PartType update failed:
         throw new UpdateFailedException("Error occurred while updated partType with id='" + request.getPartTypeId() + "'");
       }
@@ -88,7 +89,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("PartType not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update PartType with id '" + request.getPartTypeId() + "'").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update PartType with id '" + request.getPartTypeId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -97,7 +98,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the PartType with the provided ID:
-      if(!partTypeService.removePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
+      if(!partTypeService.removePartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If PartType deletion failed:
         throw new DeleteFailedException("Error occurred while deleting partType with id='" + request.getPartTypeId() + "'");
       }
@@ -108,7 +109,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("PartType not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting PartType").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting PartType, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -128,7 +129,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No PartTypes found").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all PartTypes").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all PartTypes, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 }

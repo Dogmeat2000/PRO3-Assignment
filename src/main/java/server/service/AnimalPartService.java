@@ -1,36 +1,34 @@
 package server.service;
 
-import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalPartValidation;
 import server.repository.*;
-import server.repository.JPA_CompositeKeys.AnimalPartId;
 import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AnimalPartService implements AnimalPartRegistryInterface
 {
   private final AnimalPartRepository animalPartRepository;
-  private final Map<String, AnimalPart> animalPartCache = new HashMap<>();
+  private final Map<Long, AnimalPart> animalPartCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalPartService.class);
   private final AnimalRegistryInterface animalRepository;
   private final TrayRegistryInterface trayRepository;
   private final PartTypeRegistryInterface partTypeRepository;
   private final ProductRegistryInterface productRepository;
+
+  @Autowired
+  private EntityManager entityManager;
 
   @Autowired
   public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRegistryInterface animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
@@ -45,21 +43,40 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public AnimalPart registerAnimalPart(AnimalPart data) throws PersistenceException, DataIntegrityViolationException {
-    // Override any set part_id, since the database automatically assigns this when creating:
-    data.setPart_id(1);
 
     // Validate received data, before passing to repository/database:
     AnimalPartValidation.validateAnimalPart(data);
 
+    // Override any set part_id, since the database automatically assigns this when creating:
+    data.setPart_id(0);
+
     // Attempt to add AnimalPart to DB:
     try {
+      // Retrieve latest associated object versions:
+      Animal associatedAnimal = entityManager.merge(animalRepository.readAnimal(data.getAnimal().getId()));
+      Tray associatedTray = entityManager.merge(trayRepository.readTray(data.getTray().getTrayId()));
+      PartType associatedPartType = entityManager.merge(partTypeRepository.readPartType(data.getType().getTypeId()));
+      Product associatedProduct = null;
+      if(data.getProduct() != null && data.getProduct().getProductId() > 0) {
+        associatedProduct = entityManager.merge(productRepository.readProduct(data.getProduct().getProductId()));
+      }
+
+      data.setAnimal(associatedAnimal);
+      data.setType(associatedPartType);
+      data.setTray(associatedTray);
+      data.setProduct(associatedProduct);
+      associatedAnimal.addAnimalPart(data);
+      associatedTray.addAnimalPart(data);
+      associatedPartType.addAnimalPart(data);
+      if(associatedProduct != null)
+        associatedProduct.addAnimalPart(data);
+
       AnimalPart newAnimalPart = animalPartRepository.save(data);
       logger.info("AnimalPart added to DB with ID: {}", newAnimalPart.getPart_id());
 
       // Attempt to add AnimalPart to local cache:
-      String hashMapKey = "" + newAnimalPart.getPart_id() + newAnimalPart.getAnimal_id() + newAnimalPart.getType_id() + newAnimalPart.getTray_id();
-      animalPartCache.put(hashMapKey, newAnimalPart);
-      logger.info("Animal saved to local cache with ID: {}", hashMapKey);
+      animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
+      logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
 
       return newAnimalPart;
 
@@ -74,34 +91,128 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   }
 
 
-  @Override public AnimalPart readAnimalPart(long part_id, long animalId, long typeId, long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Transactional (readOnly = true)
+  @Override public AnimalPart readAnimalPart(long part_id) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
-    AnimalPartValidation.validateId(part_id, animalId, typeId, trayId);
+    AnimalPartValidation.validateId(part_id);
 
     // Attempt to read AnimalPart from local cache first:
-    String hashMapKey = "" + part_id + animalId + typeId + trayId;
-    if(animalPartCache.containsKey(hashMapKey)) {
-      logger.info("AnimalPart read from local cache with ID: {}", hashMapKey);
-      return animalPartCache.get(hashMapKey);
+    if(animalPartCache.containsKey(part_id)) {
+      logger.info("AnimalPart read from local cache with ID: {}", part_id);
+      return animalPartCache.get(part_id);
     }
 
     // AnimalPart not found in local cache. Attempt to read from DB:
     try {
-      logger.info("AnimalPart not found in local cache with ID: {}. Looking up in database...", hashMapKey);
+      logger.info("AnimalPart not found in local cache with ID: {}. Looking up in database...", part_id);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
-      AnimalPartId animalPartCompositeKey = new AnimalPartId(part_id, animalId, typeId, trayId);
-      AnimalPart animalPart = animalPartRepository.findById(animalPartCompositeKey).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + animalPartCompositeKey));
+      AnimalPart animalPart = animalPartRepository.findById(part_id).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + part_id));
 
-      logger.info("AnimalPart read from database with ID: {}", animalPartCompositeKey);
+      logger.info("AnimalPart read from database with ID: {}", part_id);
 
       // Add found AnimalPart to local cache, to improve performance next time AnimalPart is requested.
-      hashMapKey = "" + animalPart.getPart_id() + animalPart.getAnimal_id() + animalPart.getType_id() + animalPart.getType_id();
-      animalPartCache.put(hashMapKey, animalPart);
-      logger.info("AnimalPart added to local cache with ID: {}", hashMapKey);
+      animalPartCache.put(animalPart.getPart_id(), animalPart);
+      logger.info("AnimalPart added to local cache with ID: {}", part_id);
       return animalPart;
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while registering AnimalPart with ID {}: {}", hashMapKey, e.getMessage());
+      logger.error("Persistence exception occurred while registering AnimalPart with ID {}: {}", part_id, e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Transactional(readOnly = true)
+  @Override public List<AnimalPart> readAnimalPartsByAnimalId(long animalId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    // Validate received id, before passing to repository/database:
+    AnimalPartValidation.validateId(animalId);
+
+    try {
+      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animalId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with animal_ID: " + animalId));
+
+      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
+      for (AnimalPart animalPart : animalParts) {
+        if(animalPart != null)
+          animalPartCache.put(animalPart.getPart_id(), animalPart);
+
+      }
+      logger.info("Added all AnimalParts associated with animalId '" + animalId + "' to Local Cache");
+      return animalParts;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Transactional(readOnly = true)
+  @Override public List<AnimalPart> readAnimalPartsByPartTypeId(long typeId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    // Validate received id, before passing to repository/database:
+    AnimalPartValidation.validateId(typeId);
+
+    try {
+      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByType_typeId(typeId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with type_ID: " + typeId));
+
+      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
+      for (AnimalPart animalPart : animalParts) {
+        if(animalPart != null)
+          animalPartCache.put(animalPart.getPart_id(), animalPart);
+
+      }
+      logger.info("Added all AnimalParts associated with type_ID '" + typeId + "' to Local Cache");
+      return animalParts;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Transactional(readOnly = true)
+  @Override public List<AnimalPart> readAnimalPartsByProductId(long productId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    // Validate received id, before passing to repository/database:
+    AnimalPartValidation.validateId(productId);
+
+    try {
+      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByProduct_productId(productId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with product_id: " + productId));
+
+      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
+      for (AnimalPart animalPart : animalParts) {
+        if(animalPart != null)
+          animalPartCache.put(animalPart.getPart_id(), animalPart);
+
+      }
+      logger.info("Added all AnimalParts associated with product_id '" + productId + "' to Local Cache");
+      return animalParts;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Transactional(readOnly = true)
+  @Override public List<AnimalPart> readAnimalPartsByTrayId(long trayId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    // Validate received id, before passing to repository/database:
+    AnimalPartValidation.validateId(trayId);
+
+    try {
+      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByTray_trayId(trayId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with tray_id: " + trayId));
+
+      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
+      for (AnimalPart animalPart : animalParts) {
+        if(animalPart != null)
+          animalPartCache.put(animalPart.getPart_id(), animalPart);
+
+      }
+      logger.info("Added all AnimalParts associated with tray_id '" + trayId + "' to Local Cache");
+      return animalParts;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -116,8 +227,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     // Attempt to update AnimalPart in database:
     try {
       // Fetch the existing Entity from DB:
-      AnimalPartId oldAnimalPartCompositeKey = new AnimalPartId(oldData.getPart_id(), oldData.getAnimal_id(), oldData.getType_id(), oldData.getTray_id());
-      AnimalPart oldAnimalPart = animalPartRepository.findById(oldAnimalPartCompositeKey).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + oldAnimalPartCompositeKey));
+      AnimalPart oldAnimalPart = animalPartRepository.findById(oldData.getPart_id()).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + oldData.getPart_id()));
 
       // Modify the database Entity locally:
       AnimalPart newAnimalPart = oldAnimalPart.copy();
@@ -126,20 +236,11 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       newAnimalPart.setType(newData.getType());
       newAnimalPart.setTray(newData.getTray());
       newAnimalPart.setProduct(newData.getProduct());
-      AnimalPartId newAnimalPartCompositeKey = new AnimalPartId(newAnimalPart.getPart_id(), newAnimalPart.getAnimal_id(), newAnimalPart.getType_id(), newAnimalPart.getTray_id());
 
-      // Check if the newAnimalPart compositeKey is different from the oldAnimalParts.
-      if(!oldAnimalPartCompositeKey.equals(newAnimalPartCompositeKey)) {
-        //Composite keys have changed. We need to re-register the new AnimalPart:
-        registerAnimalPart(newAnimalPart);
+      // Save modified AnimalPart to Db:
+      newAnimalPart = animalPartRepository.save(newAnimalPart);
+      logger.info("AnimalPart updated in database with ID: {}", newAnimalPart.getPart_id());
 
-        // Remove the now void AnimalPart:
-        removeAnimalPart(oldAnimalPart);
-      } else {
-        //Composite keys are identical. Update existing AnimalPart in place:
-        newAnimalPart = animalPartRepository.save(newAnimalPart);
-        logger.info("AnimalPart updated in database with ID: {}", newAnimalPartCompositeKey);
-      }
 
       // Attempt to update all associated Animal entities:
       Animal oldAnimal = oldAnimalPart.getAnimal();
@@ -188,9 +289,8 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       animalPartCache.clear();
 
       // Attempt to add new AnimalPart to local cache:
-      String hashMapKey = "" + newAnimalPart.getPart_id() + newAnimalPart.getAnimal_id() + newAnimalPart.getType_id() + newAnimalPart.getType_id();
-      animalPartCache.put(hashMapKey, newAnimalPart);
-      logger.info("AnimalPart saved to local cache with ID: {}", hashMapKey);
+      animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
+      logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
 
       return true;
 
@@ -215,20 +315,18 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       animalPartRepository.delete(data);
 
       // Confirm that the entity has been removed:
-      AnimalPartId animalPartCompositeKey = new AnimalPartId(data.getPart_id(), data.getAnimal_id(), data.getType_id(), data.getTray_id());
-      Optional<AnimalPart> deletedAnimalPart = animalPartRepository.findById(animalPartCompositeKey);
+      Optional<AnimalPart> deletedAnimalPart = animalPartRepository.findById(data.getPart_id());
 
       if(deletedAnimalPart.isPresent()) {
         // AnimalPart was not removed from database.
-        logger.info("AnimalPart was NOT deleted from database with ID: {}", animalPartCompositeKey);
-        throw new PersistenceException("AnimalPart with ID " + animalPartCompositeKey + " was not deleted!");
+        logger.info("AnimalPart was NOT deleted from database with ID: {}", data.getPart_id());
+        throw new PersistenceException("AnimalPart with ID " + data.getPart_id() + " was not deleted!");
       }
 
-      logger.info("AnimalPart deleted from database with ID: {}", animalPartCompositeKey);
+      logger.info("AnimalPart deleted from database with ID: {}", data.getPart_id());
       // AnimalPart was removed from database. Now ensure that is it also removed from the local cache:
-      String hashMapKey = "" + data.getPart_id() + data.getAnimal_id() + data.getType_id() + data.getType_id();
-      animalPartCache.remove(hashMapKey);
-      logger.info("AnimalPart deleted from local cache with ID: {}", hashMapKey);
+      animalPartCache.remove(data.getPart_id());
+      logger.info("AnimalPart deleted from local cache with ID: {}", data.getPart_id());
 
       // Attempt to update all associated Animal entities:
       Animal animal = data.getAnimal();
@@ -265,6 +363,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public List<AnimalPart> getAllAnimalParts() throws PersistenceException {
     try {
       List<AnimalPart> animalParts = animalPartRepository.findAll();
@@ -273,8 +372,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       animalPartCache.clear();
       for (AnimalPart animalPart : animalParts) {
         if(animalPart != null){
-          String hashMapKey = "" + animalPart.getPart_id() + animalPart.getAnimal_id() + animalPart.getType_id() + animalPart.getType_id();
-          animalPartCache.put(hashMapKey, animalPart);
+          animalPartCache.put(animalPart.getPart_id(), animalPart);
         }
       }
       logger.info("Added all AnimalParts from Database to Local Cache");
@@ -285,6 +383,4 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       throw new PersistenceException(e);
     }
   }
-
-
 }

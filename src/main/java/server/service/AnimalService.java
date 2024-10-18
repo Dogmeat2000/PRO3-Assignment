@@ -1,12 +1,10 @@
 package server.service;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,11 +34,12 @@ public class AnimalService implements AnimalRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public Animal registerAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
-    // Override any set animal_id, since the database is responsible for setting this value:
-    data.setId(1);
 
     // Validate received data, before passing to repository/database:
     AnimalValidation.validateAnimal(data);
+
+    // Override any set animal_id, since the database is responsible for setting this value:
+    data.setId(0);
 
     // Attempt to add Animal to DB:
     try {
@@ -83,6 +82,21 @@ public class AnimalService implements AnimalRegistryInterface
       Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new NotFoundException("No Animal found in database with matching id=" + animalId));
 
       logger.info("Animal read from database with ID: {}", animalId);
+
+      // Load all associated AnimalParts:
+      List<AnimalPart> animalParts = new ArrayList<>();
+      try {
+        animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animal.getId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + animal.getId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!animalParts.isEmpty())
+        animal.setAnimalParts(animalParts);
+
+      // Populate the id association list:
+      List<Long> animalPartIds = new ArrayList<>();
+      for (AnimalPart animalPart : animal.getPartList())
+        animalPartIds.add(animalPart.getPart_id());
+      animal.setAnimalPartIdList(animalPartIds);
 
       // Add found Animal to local cache, to improve performance next time Animal is requested.
       animalCache.put(animal.getId(), animal);
@@ -131,11 +145,7 @@ public class AnimalService implements AnimalRegistryInterface
       }
 
       // Delete any AnimalPart objects that are no longer associated with any Animal entity:
-      for (AnimalPart animalPart : listOfAnimalPartsNotInUpdatedAnimal){
-        //animalPartRepository.removeAnimalPart(animalPart);
-        animalPartRepository.delete(animalPart);
-      }
-
+      animalPartRepository.deleteAll(listOfAnimalPartsNotInUpdatedAnimal);
 
       return true;
 
@@ -174,11 +184,7 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal deleted from local cache with ID: {}", data.getId());
 
       // Attempt to delete all associated AnimalPart entities:
-      for (AnimalPart animalPart : data.getPartList()){
-        //animalPartRepository.removeAnimalPart(animalPart);
-        animalPartRepository.delete(animalPart);
-      }
-
+      animalPartRepository.deleteAll(data.getPartList());
 
       return true;
 
@@ -196,7 +202,28 @@ public class AnimalService implements AnimalRegistryInterface
   @Transactional (readOnly = true)
   @Override public List<Animal> getAllAnimals() throws PersistenceException {
     try {
+      // Load all Animals from repository:
       List<Animal> animals = animalRepository.findAll();
+
+      // Load all associated AnimalParts, for each Animal:
+      for (Animal animal : animals) {
+        List<AnimalPart> animalParts = new ArrayList<>();
+        try {
+          animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animal.getId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + animal.getId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!animalParts.isEmpty())
+          animal.setAnimalParts(animalParts);
+      }
+
+      // Populate the id association list:
+      for (Animal animal : animals) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : animal.getPartList())
+          animalPartIds.add(animalPart.getPart_id());
+        animal.setAnimalPartIdList(animalPartIds);
+      }
+
 
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
       animalCache.clear();

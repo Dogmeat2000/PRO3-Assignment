@@ -141,6 +141,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Animal Id!");
+          break;
         }
 
         //Show a list of valid PartTypes:
@@ -163,6 +164,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid PartType Id!");
+          break;
         }
 
         //Show a list of valid Trays:
@@ -171,9 +173,9 @@ public class Station2_CLI
           // Calculate available space:
           BigDecimal availableSpace = tray.getMaxWeight_kilogram().subtract(tray.getWeight_kilogram());
           // Only display Trays with space remaining:
-          if(availableSpace.subtract(weight).compareTo(availableSpace) >= 0) {
-            System.out.println("Tray_id: '" + tray.getTray_id() + "', Available space: '" + availableSpace.subtract(weight) + "'");
-            validTrayIds.add(tray.getTray_id());
+          if(availableSpace.subtract(weight).compareTo(BigDecimal.valueOf(0)) > 0) {
+            System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
+            validTrayIds.add(tray.getTrayId());
           }
         }
 
@@ -190,15 +192,29 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Tray Id!");
+          break;
         }
 
         // Save the AnimalPart to the database:
         try {
           AnimalPart animalPart = animalPartRegistrationSystem.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
+          // Update associated Tray repository:
+          parentTray.addAnimalPart(animalPart);
+          trayRegistrationSystem.updateTray(parentTray);
+
+          // Update associated PartType repository:
+          parentPartType.getPartList().add(animalPart);
+          partTypeRegistrationSystem.updatePartType(parentPartType);
+
+          // Update associated Animal repository:
+          parentAnimal.getPartList().add(animalPart);
+          animalRegistrationSystem.updateAnimal(parentAnimal);
+
           System.out.println("Added [" + animalPart + "] to Database!");
         } catch (CreateFailedException e) {
           e.printStackTrace();
-          System.out.println("AnimalRegistration failed, " + e.getMessage());
+          System.out.println("AnimalPartRegistration failed, " + e.getMessage());
+          break;
         }
         break;
 
@@ -214,20 +230,20 @@ public class Station2_CLI
           System.out.println("Part_id: '"
               + animalPart.getPart_id()
               + "', Type_id: '"
-              + animalPart.getType_id()
+              + animalPart.getType().getTypeId()
               + "' ("
               + animalPart.getType().getTypeDesc()
               + "' "
-              + "Cut from animal_id: '" + animalPart.getAnimal_id()
+              + "Cut from animal_id: '" + animalPart.getAnimal().getId()
               + "', Transported in tray_id: '"
-              + animalPart.getTray_id()
+              + animalPart.getTray().getTrayId()
               + "', with weight: '"
               + animalPart.getWeight_kilogram()
               + "'");
           validPartIds.add(animalPart.getPart_id());
-          validAnimalIds.add(animalPart.getAnimal_id());
-          validTypeIds.add(animalPart.getType_id());
-          validTrayIds.add(animalPart.getTray_id());
+          validAnimalIds.add(animalPart.getAnimal().getId());
+          validTypeIds.add(animalPart.getType().getTypeId());
+          validTrayIds.add(animalPart.getTray().getTrayId());
         }
 
         // Prompt user to enter the part_id to remove:
@@ -252,6 +268,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Animal_Id!");
+          break;
         }
 
         // Prompt user to enter the type_id associated with the AnimalPart to remove:
@@ -267,6 +284,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Type_Id!");
+          break;
         }
 
         // Prompt user to enter the tray_id associated with the AnimalPart to remove:
@@ -282,6 +300,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Tray_Id!");
+          break;
         }
 
         // Remove the AnimalPart
@@ -292,6 +311,7 @@ public class Station2_CLI
         } catch (DeleteFailedException | NotFoundException e) {
           e.printStackTrace();
           System.out.println("ERROR: Could not remove designated AnimalPart from Database");
+          break;
         }
         break;
 
@@ -307,20 +327,20 @@ public class Station2_CLI
           System.out.println("Part_id: '"
               + animalPart.getPart_id()
               + "', Type_id: '"
-              + animalPart.getType_id()
+              + animalPart.getType().getTypeId()
               + "' ("
               + animalPart.getType().getTypeDesc()
               + "' "
-              + "Cut from animal_id: '" + animalPart.getAnimal_id()
+              + "Cut from animal_id: '" + animalPart.getAnimal().getId()
               + "', Transported in tray_id: '"
-              + animalPart.getTray_id()
+              + animalPart.getTray().getTrayId()
               + "', with weight: '"
               + animalPart.getWeight_kilogram()
               + "'");
           validPartIds.add(animalPart.getPart_id());
-          validAnimalIds.add(animalPart.getAnimal_id());
-          validTypeIds.add(animalPart.getType_id());
-          validTrayIds.add(animalPart.getTray_id());
+          validAnimalIds.add(animalPart.getAnimal().getId());
+          validTypeIds.add(animalPart.getType().getTypeId());
+          validTrayIds.add(animalPart.getTray().getTrayId());
         }
 
         // Prompt user to enter the part_id to update:
@@ -345,6 +365,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Animal_Id!");
+          break;
         }
 
         // Prompt user to enter the type_id associated with the AnimalPart to update:
@@ -360,6 +381,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Type_Id!");
+          break;
         }
 
         // Prompt user to enter the tray_id associated with the AnimalPart to update:
@@ -375,6 +397,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Tray_Id!");
+          break;
         }
 
         // Read the AnimalPart to modify from the database:
@@ -386,6 +409,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("ERROR: Could not retrieve original AnimalPart from Database. It no longer exists in database.");
+          break;
         }
         AnimalPart oldAnimalPart = modifiedAnimalPart.copy();
 
@@ -412,7 +436,7 @@ public class Station2_CLI
 
         // Prompt user to enter the new id of Animal this part was cut from:
         if(oldAnimalPart != null)
-          System.out.println("Please enter new animal_id for this AnimalPart (Old is: " + oldAnimalPart.getAnimal_id() + "): ");
+          System.out.println("Please enter new animal_id for this AnimalPart (Old is: " + oldAnimalPart.getAnimal().getId() + "): ");
         else
           System.out.println("Please enter new animal_id for this AnimalPart (Old is: NULL): ");
 
@@ -427,6 +451,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Animal Id!");
+          break;
         }
 
         // Prompt user for new Parent PartType:
@@ -453,6 +478,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid PartType Id!");
+          break;
         }
 
         //Show a list of valid Trays:
@@ -462,23 +488,23 @@ public class Station2_CLI
           BigDecimal availableSpace = tray.getMaxWeight_kilogram().subtract(tray.getWeight_kilogram());
           // Only display Trays with space remaining:
           if(modifiedAnimalPart != null) {
-            if(availableSpace.subtract(modifiedAnimalPart.getWeight_kilogram()).compareTo(availableSpace) >= 0) {
-              System.out.println("Tray_id: '" + tray.getTray_id() + "', Available space: '" + availableSpace.subtract(oldAnimalPart.getWeight_kilogram()) + "'");
-              validTrayIds.add(tray.getTray_id());
+            if(availableSpace.subtract(modifiedAnimalPart.getWeight_kilogram()).compareTo(BigDecimal.valueOf(0)) > 0) {
+              System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
+              validTrayIds.add(tray.getTrayId());
             }
           } else {
-            if(availableSpace.compareTo(BigDecimal.valueOf(0)) >= 0) {
-              System.out.println("Tray_id: '" + tray.getTray_id() + "', Available space: '" + availableSpace.subtract(BigDecimal.valueOf(0)) + "'");
-              validTrayIds.add(tray.getTray_id());
+            if(availableSpace.compareTo(BigDecimal.valueOf(0)) > 0) {
+              System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
+              validTrayIds.add(tray.getTrayId());
             }
           }
         }
         if(modifiedAnimalPart != null)
-          validTrayIds.add(modifiedAnimalPart.getTray_id());
+          validTrayIds.add(modifiedAnimalPart.getTray().getTrayId());
 
         // Prompt user to enter the tray_id associated with the AnimalPart to update:
         if(modifiedAnimalPart != null)
-          System.out.println("Please enter new Tray_id for this AnimalPart (Old is: " + oldAnimalPart.getTray().getTray_id() + "): ");
+          System.out.println("Please enter new Tray_id for this AnimalPart (Old is: " + oldAnimalPart.getTray().getTrayId() + "): ");
         else
           System.out.println("Please enter new Tray_id for this AnimalPart (Old is: NULL): ");
 
@@ -493,6 +519,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Tray_Id!");
+          break;
         }
 
         // Attempt to persist the user defined modifications:
@@ -551,6 +578,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Animal_Id!");
+          break;
         }
 
         // Prompt user to enter the type_id associated with the AnimalPart to update:
@@ -566,6 +594,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Type_Id!");
+          break;
         }
 
         // Prompt user to enter the tray_id associated with the AnimalPart to view:
@@ -581,6 +610,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("Invalid Tray_Id!");
+          break;
         }
 
         // Read the AnimalPart to modify from the database:
@@ -591,6 +621,7 @@ public class Station2_CLI
         } catch (NotFoundException e) {
           e.printStackTrace();
           System.out.println("ERROR: Could not retrieve original AnimalPart from Database. It no longer exists in database.");
+          break;
         }
         break;
 
@@ -599,25 +630,31 @@ public class Station2_CLI
         //Show a list of valid AnimalParts:
         System.out.println("\nRetrieving all AnimalParts from Database: ");
         try {
-          for (AnimalPart localAnimalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
-            System.out.println("Part_id: '"
-                + localAnimalPart.getPart_id()
-                + "', Type_id: '"
-                + localAnimalPart.getType_id()
-                + "' ("
-                + localAnimalPart.getType().getTypeDesc()
-                + "' "
-                + "Cut from animal_id: '" + localAnimalPart.getAnimal_id()
-                + "', Transported in tray_id: '"
-                + localAnimalPart.getTray_id()
-                + "', with weight: '"
-                + localAnimalPart.getWeight_kilogram()
-                + "'");
-            validPartIds.add(localAnimalPart.getPart_id());
-            validAnimalIds.add(localAnimalPart.getAnimal_id());
-            validTypeIds.add(localAnimalPart.getType_id());
-            validTrayIds.add(localAnimalPart.getTray_id());
+          List<AnimalPart> animalPartsFound = animalPartRegistrationSystem.getAllAnimalParts();
+          if(!animalPartsFound.isEmpty()){
+            for (AnimalPart localAnimalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
+              System.out.println("Part_id: '"
+                  + localAnimalPart.getPart_id()
+                  + "', Type_id: '"
+                  + localAnimalPart.getType().getTypeId()
+                  + "' ("
+                  + localAnimalPart.getType().getTypeDesc()
+                  + "' "
+                  + "Cut from animal_id: '" + localAnimalPart.getAnimal().getId()
+                  + "', Transported in tray_id: '"
+                  + localAnimalPart.getTray().getTrayId()
+                  + "', with weight: '"
+                  + localAnimalPart.getWeight_kilogram()
+                  + "'");
+              validPartIds.add(localAnimalPart.getPart_id());
+              validAnimalIds.add(localAnimalPart.getAnimal().getId());
+              validTypeIds.add(localAnimalPart.getType().getTypeId());
+              validTrayIds.add(localAnimalPart.getTray().getTrayId());
+            }
+          } else {
+            throw new NotFoundException("");
           }
+
         } catch (NotFoundException e) {
           System.out.println("Could not find any AnimalParts in repository");
         }

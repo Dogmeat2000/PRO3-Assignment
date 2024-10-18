@@ -1,6 +1,8 @@
 package client;
 
+import client.interfaces.AnimalPartRegistrationSystem;
 import client.interfaces.AnimalRegistrationSystem;
+import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import shared.model.entities.Animal;
 import shared.model.exceptions.NotFoundException;
@@ -15,9 +17,9 @@ import java.util.Scanner;
 
 public class Station1_CLI
 {
-  private static final AnimalRegistrationSystem station1 = new AnimalRegistrationSystemImpl("localhost", 9090);
+  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
 
-  public static void main(String[] args) throws InterruptedException {
+  public static void main(String[] args) {
 
     System.out.println("\nSTATION 1: Animal Registration (Command Line Interface)\nThis CLI is for debugging purposes!");
 
@@ -99,10 +101,9 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            Animal animal = station1.registerNewAnimal(new BigDecimal(value));
+            Animal animal = animalRegistrationSystem.registerNewAnimal(new BigDecimal(value));
             System.out.println("Added [" + animal + "] to Database!");
           } catch (CreateFailedException e) {
-            e.printStackTrace();
             System.out.println("Invalid input!");
           }
         break;
@@ -114,10 +115,9 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            if(station1.removeAnimal(Long.parseLong(value)))
+            if(animalRegistrationSystem.removeAnimal(Long.parseLong(value)))
               System.out.println("Removed Animal with ID '" + value + "' from Database!");
           } catch (DeleteFailedException | NotFoundException e) {
-            e.printStackTrace();
             System.out.println("Invalid input!");
           }
         break;
@@ -129,11 +129,10 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else {
           try {
-            Animal animal = station1.readAnimal(Long.parseLong(value));
+            Animal animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
             System.out.println("Found [" + animal + "]");
           }
           catch (NotFoundException e) {
-            e.printStackTrace();
             System.out.println("Invalid input!");
             break;
           }
@@ -146,7 +145,7 @@ public class Station1_CLI
         else {
           try {
             Animal animal = new Animal(animalId, new BigDecimal(value));
-            station1.updateAnimal(animal);
+            animalRegistrationSystem.updateAnimal(animal);
             System.out.println("Updated [" + animal + "]");
           }
           catch (UpdateFailedException | NotFoundException e) {
@@ -164,26 +163,36 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            Animal animal = station1.readAnimal(Long.parseLong(value));
+            // Read the base object:
+            Animal animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
+
+            // Read any associations:
+            //animal.setAnimalParts(animalPartRegistrationSystem.readAnimalPartsByAnimalId(animal.getId()));
+
             System.out.println("Found [" + animal + "]");
           } catch (NotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Invalid input!");
+            System.out.println("No Animals found in Database!");
           }
         break;
 
       case "viewall":
         System.out.println("Retrieving all Animals from Database: ");
         try {
-          List<Animal> animal = station1.getAllAnimals();
+          // Read base objects:
+          List<Animal> animals = animalRegistrationSystem.getAllAnimals();
 
-          for (Animal a : animal) {
-            System.out.println(a.getId() + ": weight '" + a.getWeight_kilogram() + "kg'. Was dissected into AnimalParts '" + a.getPartList() + "'.");
-          }
+          // For each base object, read associated AnimalParts:
+          /*for (Animal animal : animals)
+            animal.setAnimalParts(animalPartRegistrationSystem.readAnimalPartsByAnimalId(animal.getId()));*/
+
+          if(animals.isEmpty())
+            throw new NotFoundException("");
+
+          for (Animal a : animals)
+            System.out.println("[" + a + "]");
 
         } catch (NotFoundException e) {
-          e.printStackTrace();
-          System.out.println("Invalid input!");
+          System.out.println("No Animals found in Database!");
         }
         break;
 

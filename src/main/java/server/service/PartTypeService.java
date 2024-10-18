@@ -5,21 +5,18 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.PartTypeValidation;
 import server.repository.AnimalPartRepository;
 import server.repository.PartTypeRepository;
+import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PartTypeService implements PartTypeRegistryInterface
@@ -39,11 +36,12 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override
   public PartType registerPartType (PartType data) throws PersistenceException, DataIntegrityViolationException {
-    // Override any set partTypeId, since the database is responsible for setting this value:
-    data.setTypeId(1);
 
     // Validate received data, before passing to repository/database:
     PartTypeValidation.validatePartType(data);
+
+    // Override any set partTypeId, since the database is responsible for setting this value:
+    data.setTypeId(0);
 
     // Attempt to add PartType to DB:
     try {
@@ -67,6 +65,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override
   public PartType readPartType (long typeId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
@@ -86,6 +85,21 @@ public class PartTypeService implements PartTypeRegistryInterface
       PartType partType = partTypeRepository.findById(typeId).orElseThrow(() -> new NotFoundException("No PartType found in database with matching id=" + typeId));
 
       logger.info("PartType read from database with ID: {}", typeId);
+
+      // Load all associated AnimalParts:
+      List<AnimalPart> animalParts = new ArrayList<>();
+      try {
+        animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching type_id=" + partType.getTypeId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!animalParts.isEmpty())
+        partType.setAnimalParts(animalParts);
+
+      // Populate the id association list:
+      List<Long> animalPartIds = new ArrayList<>();
+      for (AnimalPart animalPart : partType.getPartList())
+        animalPartIds.add(animalPart.getPart_id());
+      partType.setAnimalPartIdList(animalPartIds);
 
       // Add found PartType to local cache, to improve performance next time PartType is requested.
       partTypeCache.put(partType.getTypeId(), partType);
@@ -181,11 +195,31 @@ public class PartTypeService implements PartTypeRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override
   public List<PartType> getAllPartTypes() throws PersistenceException {
 
     try {
       List<PartType> partTypes = partTypeRepository.findAll();
+
+      // Load all associated AnimalParts, for each PartType:
+      for (PartType partType : partTypes) {
+        List<AnimalPart> animalParts = new ArrayList<>();
+        try {
+          animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + partType.getTypeId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!animalParts.isEmpty())
+          partType.setAnimalParts(animalParts);
+      }
+
+      // Populate the id association list:
+      for (PartType partType : partTypes) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : partType.getPartList())
+          animalPartIds.add(animalPart.getPart_id());
+        partType.setAnimalPartIdList(animalPartIds);
+      }
 
       // Add all the found PartTypes to local cache, to improve performance next time a PartType is requested.
       partTypeCache.clear();

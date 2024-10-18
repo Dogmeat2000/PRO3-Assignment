@@ -3,6 +3,7 @@ package server.grpc;
 import grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import jakarta.transaction.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
@@ -15,6 +16,7 @@ import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
+import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
@@ -34,17 +36,17 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Animal:
-      Animal createdAnimal = animalService.registerAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request));
+      Animal createdAnimal = animalService.registerAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
       // If animal creation fails
       if (createdAnimal == null)
         throw new CreateFailedException("Animal could not be created");
 
       // Translate the created Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(createdAnimal));
+      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(createdAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error registering animal").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error registering animal, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -61,12 +63,12 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
         throw new NotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(animal));
+      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(animal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Animal with id " + request.getAnimalId() + "not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error reading animal").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error reading animal, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -76,7 +78,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Animal with the provided ID:
-      if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {
+      if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If Animal update failed:
         throw new UpdateFailedException("Error occurred while updated animal with id='" + request.getAnimalId() + "'");
       }
@@ -87,7 +89,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Animal with id '" + request.getAnimalId() + "'").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Animal with id '" + request.getAnimalId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -97,7 +99,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Animal with the provided ID:
-      if(!animalService.removeAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {
+      if(!animalService.removeAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If Animal deletion failed:
         throw new DeleteFailedException("Error occurred while deleting animal with id='" + request.getAnimalId() + "'");
       }
@@ -108,7 +110,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Animal not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting animal").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting animal, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -128,8 +130,8 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No Animals found").withCause(e).asRuntimeException());
-    } catch (Exception e) {
+    } /*catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all animals, " + e.getMessage()).withCause(e).asRuntimeException());
-    }
+    }*/
   }
 }

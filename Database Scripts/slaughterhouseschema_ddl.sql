@@ -1,4 +1,4 @@
---DROP SCHEMA pro3_slaughterhouse CASCADE;
+-- DROP SCHEMA pro3_slaughterhouse CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS pro3_slaughterhouse;
 
@@ -27,19 +27,44 @@ CREATE TABLE Product (
 CREATE TABLE AnimalPart (
     part_id BIGSERIAL UNIQUE,
     weight_kilogram DECIMAL(10,5),
-    animal_id BIGINT,
-    type_id BIGINT,
-    tray_id BIGINT,
+    animal_id BIGINT NOT NULL,
+    type_id BIGINT NOT NULL,
+    tray_id BIGINT NOT NULL,
     product_id BIGINT,
-    PRIMARY KEY (part_id, animal_id, type_id, tray_id),
+    PRIMARY KEY (part_id),
     FOREIGN KEY (animal_id) REFERENCES Animal(animal_id),
     FOREIGN KEY (type_id) REFERENCES PartType(id),
     FOREIGN KEY (tray_id) REFERENCES Tray(tray_id),
     FOREIGN KEY (product_id) REFERENCES Product(product_id));
 
 CREATE TABLE TrayToProductTransfer (
-    tray_id BIGSERIAL UNIQUE,
-    product_id BIGINT,
-    PRIMARY KEY (tray_id, product_id),
+    transfer_id BIGSERIAL UNIQUE,
+    tray_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    PRIMARY KEY (transfer_id),
     FOREIGN KEY (tray_id) REFERENCES Tray (tray_id),
     FOREIGN KEY (product_id) REFERENCES Product (product_id));
+
+-- Load some initial dummy data:
+insert into parttype ("desc") values ('Pork Shoulder (Boston Butt)');
+insert into parttype ("desc") values ('Pork Loin');
+insert into parttype ("desc") values ('Pork Belly');
+insert into parttype ("desc") values ('Pork Tenderloin');
+insert into parttype ("desc") values ('Pork Ribs');
+insert into parttype ("desc") values ('Pork Ham');
+insert into parttype ("desc") values ('Pork Feet');
+insert into parttype ("desc") values ('Pork Tail');
+insert into parttype ("desc") values ('Pork Liver');
+insert into parttype ("desc") values ('Pork Heart');
+insert into parttype ("desc") values ('Pork Bacon');
+
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);
+insert into tray (weight_kilogram, maxweight_kilogram) values (0, 25);

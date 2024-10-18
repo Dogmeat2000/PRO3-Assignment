@@ -77,6 +77,130 @@ public final class AnimalPartServiceGrpc {
     return getReadAnimalPartMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<grpc.AnimalId,
+      grpc.AnimalPartsData> getReadAnimalPartsByAnimalIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readAnimalPartsByAnimal_id",
+      requestType = grpc.AnimalId.class,
+      responseType = grpc.AnimalPartsData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.AnimalId,
+      grpc.AnimalPartsData> getReadAnimalPartsByAnimalIdMethod() {
+    io.grpc.MethodDescriptor<grpc.AnimalId, grpc.AnimalPartsData> getReadAnimalPartsByAnimalIdMethod;
+    if ((getReadAnimalPartsByAnimalIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByAnimalIdMethod) == null) {
+      synchronized (AnimalPartServiceGrpc.class) {
+        if ((getReadAnimalPartsByAnimalIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByAnimalIdMethod) == null) {
+          AnimalPartServiceGrpc.getReadAnimalPartsByAnimalIdMethod = getReadAnimalPartsByAnimalIdMethod =
+              io.grpc.MethodDescriptor.<grpc.AnimalId, grpc.AnimalPartsData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readAnimalPartsByAnimal_id"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.AnimalId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.AnimalPartsData.getDefaultInstance()))
+              .setSchemaDescriptor(new AnimalPartServiceMethodDescriptorSupplier("readAnimalPartsByAnimal_id"))
+              .build();
+        }
+      }
+    }
+    return getReadAnimalPartsByAnimalIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.PartTypeId,
+      grpc.AnimalPartsData> getReadAnimalPartsByPartTypeIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readAnimalPartsByPartType_id",
+      requestType = grpc.PartTypeId.class,
+      responseType = grpc.AnimalPartsData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.PartTypeId,
+      grpc.AnimalPartsData> getReadAnimalPartsByPartTypeIdMethod() {
+    io.grpc.MethodDescriptor<grpc.PartTypeId, grpc.AnimalPartsData> getReadAnimalPartsByPartTypeIdMethod;
+    if ((getReadAnimalPartsByPartTypeIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByPartTypeIdMethod) == null) {
+      synchronized (AnimalPartServiceGrpc.class) {
+        if ((getReadAnimalPartsByPartTypeIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByPartTypeIdMethod) == null) {
+          AnimalPartServiceGrpc.getReadAnimalPartsByPartTypeIdMethod = getReadAnimalPartsByPartTypeIdMethod =
+              io.grpc.MethodDescriptor.<grpc.PartTypeId, grpc.AnimalPartsData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readAnimalPartsByPartType_id"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.PartTypeId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.AnimalPartsData.getDefaultInstance()))
+              .setSchemaDescriptor(new AnimalPartServiceMethodDescriptorSupplier("readAnimalPartsByPartType_id"))
+              .build();
+        }
+      }
+    }
+    return getReadAnimalPartsByPartTypeIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.ProductId,
+      grpc.AnimalPartsData> getReadAnimalPartsByProductIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readAnimalPartsByProduct_id",
+      requestType = grpc.ProductId.class,
+      responseType = grpc.AnimalPartsData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.ProductId,
+      grpc.AnimalPartsData> getReadAnimalPartsByProductIdMethod() {
+    io.grpc.MethodDescriptor<grpc.ProductId, grpc.AnimalPartsData> getReadAnimalPartsByProductIdMethod;
+    if ((getReadAnimalPartsByProductIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByProductIdMethod) == null) {
+      synchronized (AnimalPartServiceGrpc.class) {
+        if ((getReadAnimalPartsByProductIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByProductIdMethod) == null) {
+          AnimalPartServiceGrpc.getReadAnimalPartsByProductIdMethod = getReadAnimalPartsByProductIdMethod =
+              io.grpc.MethodDescriptor.<grpc.ProductId, grpc.AnimalPartsData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readAnimalPartsByProduct_id"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.ProductId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.AnimalPartsData.getDefaultInstance()))
+              .setSchemaDescriptor(new AnimalPartServiceMethodDescriptorSupplier("readAnimalPartsByProduct_id"))
+              .build();
+        }
+      }
+    }
+    return getReadAnimalPartsByProductIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<grpc.TrayId,
+      grpc.AnimalPartsData> getReadAnimalPartsByTrayIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "readAnimalPartsByTray_id",
+      requestType = grpc.TrayId.class,
+      responseType = grpc.AnimalPartsData.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<grpc.TrayId,
+      grpc.AnimalPartsData> getReadAnimalPartsByTrayIdMethod() {
+    io.grpc.MethodDescriptor<grpc.TrayId, grpc.AnimalPartsData> getReadAnimalPartsByTrayIdMethod;
+    if ((getReadAnimalPartsByTrayIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByTrayIdMethod) == null) {
+      synchronized (AnimalPartServiceGrpc.class) {
+        if ((getReadAnimalPartsByTrayIdMethod = AnimalPartServiceGrpc.getReadAnimalPartsByTrayIdMethod) == null) {
+          AnimalPartServiceGrpc.getReadAnimalPartsByTrayIdMethod = getReadAnimalPartsByTrayIdMethod =
+              io.grpc.MethodDescriptor.<grpc.TrayId, grpc.AnimalPartsData>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "readAnimalPartsByTray_id"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.TrayId.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  grpc.AnimalPartsData.getDefaultInstance()))
+              .setSchemaDescriptor(new AnimalPartServiceMethodDescriptorSupplier("readAnimalPartsByTray_id"))
+              .build();
+        }
+      }
+    }
+    return getReadAnimalPartsByTrayIdMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<grpc.UpdatedAnimalPartData,
       grpc.EmptyMessage> getUpdateAnimalPartMethod;
 
@@ -239,6 +363,34 @@ public final class AnimalPartServiceGrpc {
     }
 
     /**
+     */
+    default void readAnimalPartsByAnimalId(grpc.AnimalId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadAnimalPartsByAnimalIdMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void readAnimalPartsByPartTypeId(grpc.PartTypeId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadAnimalPartsByPartTypeIdMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void readAnimalPartsByProductId(grpc.ProductId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadAnimalPartsByProductIdMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void readAnimalPartsByTrayId(grpc.TrayId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getReadAnimalPartsByTrayIdMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * Update:
      * </pre>
@@ -319,6 +471,38 @@ public final class AnimalPartServiceGrpc {
     }
 
     /**
+     */
+    public void readAnimalPartsByAnimalId(grpc.AnimalId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByAnimalIdMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void readAnimalPartsByPartTypeId(grpc.PartTypeId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByPartTypeIdMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void readAnimalPartsByProductId(grpc.ProductId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByProductIdMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void readAnimalPartsByTrayId(grpc.TrayId request,
+        io.grpc.stub.StreamObserver<grpc.AnimalPartsData> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByTrayIdMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * Update:
      * </pre>
@@ -386,6 +570,34 @@ public final class AnimalPartServiceGrpc {
     public grpc.AnimalPartData readAnimalPart(grpc.AnimalPartId request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getReadAnimalPartMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.AnimalPartsData readAnimalPartsByAnimalId(grpc.AnimalId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadAnimalPartsByAnimalIdMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.AnimalPartsData readAnimalPartsByPartTypeId(grpc.PartTypeId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadAnimalPartsByPartTypeIdMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.AnimalPartsData readAnimalPartsByProductId(grpc.ProductId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadAnimalPartsByProductIdMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public grpc.AnimalPartsData readAnimalPartsByTrayId(grpc.TrayId request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getReadAnimalPartsByTrayIdMethod(), getCallOptions(), request);
     }
 
     /**
@@ -458,6 +670,38 @@ public final class AnimalPartServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartsData> readAnimalPartsByAnimalId(
+        grpc.AnimalId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByAnimalIdMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartsData> readAnimalPartsByPartTypeId(
+        grpc.PartTypeId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByPartTypeIdMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartsData> readAnimalPartsByProductId(
+        grpc.ProductId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByProductIdMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<grpc.AnimalPartsData> readAnimalPartsByTrayId(
+        grpc.TrayId request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getReadAnimalPartsByTrayIdMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * Update:
      * </pre>
@@ -493,9 +737,13 @@ public final class AnimalPartServiceGrpc {
 
   private static final int METHODID_REGISTER_ANIMAL_PART = 0;
   private static final int METHODID_READ_ANIMAL_PART = 1;
-  private static final int METHODID_UPDATE_ANIMAL_PART = 2;
-  private static final int METHODID_REMOVE_ANIMAL_PART = 3;
-  private static final int METHODID_GET_ANIMAL_PARTS = 4;
+  private static final int METHODID_READ_ANIMAL_PARTS_BY_ANIMAL_ID = 2;
+  private static final int METHODID_READ_ANIMAL_PARTS_BY_PART_TYPE_ID = 3;
+  private static final int METHODID_READ_ANIMAL_PARTS_BY_PRODUCT_ID = 4;
+  private static final int METHODID_READ_ANIMAL_PARTS_BY_TRAY_ID = 5;
+  private static final int METHODID_UPDATE_ANIMAL_PART = 6;
+  private static final int METHODID_REMOVE_ANIMAL_PART = 7;
+  private static final int METHODID_GET_ANIMAL_PARTS = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -521,6 +769,22 @@ public final class AnimalPartServiceGrpc {
         case METHODID_READ_ANIMAL_PART:
           serviceImpl.readAnimalPart((grpc.AnimalPartId) request,
               (io.grpc.stub.StreamObserver<grpc.AnimalPartData>) responseObserver);
+          break;
+        case METHODID_READ_ANIMAL_PARTS_BY_ANIMAL_ID:
+          serviceImpl.readAnimalPartsByAnimalId((grpc.AnimalId) request,
+              (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
+          break;
+        case METHODID_READ_ANIMAL_PARTS_BY_PART_TYPE_ID:
+          serviceImpl.readAnimalPartsByPartTypeId((grpc.PartTypeId) request,
+              (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
+          break;
+        case METHODID_READ_ANIMAL_PARTS_BY_PRODUCT_ID:
+          serviceImpl.readAnimalPartsByProductId((grpc.ProductId) request,
+              (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
+          break;
+        case METHODID_READ_ANIMAL_PARTS_BY_TRAY_ID:
+          serviceImpl.readAnimalPartsByTrayId((grpc.TrayId) request,
+              (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
           break;
         case METHODID_UPDATE_ANIMAL_PART:
           serviceImpl.updateAnimalPart((grpc.UpdatedAnimalPartData) request,
@@ -566,6 +830,34 @@ public final class AnimalPartServiceGrpc {
               grpc.AnimalPartId,
               grpc.AnimalPartData>(
                 service, METHODID_READ_ANIMAL_PART)))
+        .addMethod(
+          getReadAnimalPartsByAnimalIdMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.AnimalId,
+              grpc.AnimalPartsData>(
+                service, METHODID_READ_ANIMAL_PARTS_BY_ANIMAL_ID)))
+        .addMethod(
+          getReadAnimalPartsByPartTypeIdMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.PartTypeId,
+              grpc.AnimalPartsData>(
+                service, METHODID_READ_ANIMAL_PARTS_BY_PART_TYPE_ID)))
+        .addMethod(
+          getReadAnimalPartsByProductIdMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.ProductId,
+              grpc.AnimalPartsData>(
+                service, METHODID_READ_ANIMAL_PARTS_BY_PRODUCT_ID)))
+        .addMethod(
+          getReadAnimalPartsByTrayIdMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              grpc.TrayId,
+              grpc.AnimalPartsData>(
+                service, METHODID_READ_ANIMAL_PARTS_BY_TRAY_ID)))
         .addMethod(
           getUpdateAnimalPartMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -637,6 +929,10 @@ public final class AnimalPartServiceGrpc {
               .setSchemaDescriptor(new AnimalPartServiceFileDescriptorSupplier())
               .addMethod(getRegisterAnimalPartMethod())
               .addMethod(getReadAnimalPartMethod())
+              .addMethod(getReadAnimalPartsByAnimalIdMethod())
+              .addMethod(getReadAnimalPartsByPartTypeIdMethod())
+              .addMethod(getReadAnimalPartsByProductIdMethod())
+              .addMethod(getReadAnimalPartsByTrayIdMethod())
               .addMethod(getUpdateAnimalPartMethod())
               .addMethod(getRemoveAnimalPartMethod())
               .addMethod(getGetAnimalPartsMethod())

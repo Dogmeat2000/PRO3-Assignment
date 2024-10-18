@@ -17,7 +17,7 @@ public class TrayValidation
       throw new DataIntegrityViolationException("Tray is null");
 
     // Validate trayId:
-    validateId(tray.getTray_id());
+    validateId(tray.getTrayId());
 
     // Tray maxWeight must be 0 or larger:
     validateWeight(tray.getMaxWeight_kilogram());

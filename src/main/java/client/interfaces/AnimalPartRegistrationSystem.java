@@ -1,5 +1,7 @@
 package client.interfaces;
 
+import grpc.AnimalId;
+import grpc.TrayId;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
@@ -38,6 +40,19 @@ public interface AnimalPartRegistrationSystem
    * @throws NotFoundException Thrown if AnimalPart is not be found.
    */
   AnimalPart readAnimalPart (long animalPartId, Animal animal, PartType type, Tray tray) throws NotFoundException;
+
+
+  //TODO: Missing javaDocs
+  List<AnimalPart> readAnimalPartsByAnimalId(long animalId) throws NotFoundException;
+
+
+  List<AnimalPart> readAnimalPartsByPartTypeId(long partTypeId) throws NotFoundException;
+
+
+  List<AnimalPart> readAnimalPartsByProductId(long productId) throws NotFoundException;
+
+
+  List<AnimalPart> readAnimalPartsByTrayId(long trayId) throws NotFoundException;
 
 
   /** <p>Updates the given AnimalPart in the repository. Unique id is extracted from the AnimalPart entity

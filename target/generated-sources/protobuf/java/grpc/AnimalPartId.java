@@ -42,7 +42,6 @@ private static final long serialVersionUID = 0L;
             grpc.AnimalPartId.class, grpc.AnimalPartId.Builder.class);
   }
 
-  private int bitField0_;
   public static final int ANIMALPARTID_FIELD_NUMBER = 1;
   private long animalPartId_ = 0L;
   /**
@@ -52,84 +51,6 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public long getAnimalPartId() {
     return animalPartId_;
-  }
-
-  public static final int ANIMALID_FIELD_NUMBER = 2;
-  private grpc.AnimalId animalId_;
-  /**
-   * <code>.grpc.AnimalId animalId = 2;</code>
-   * @return Whether the animalId field is set.
-   */
-  @java.lang.Override
-  public boolean hasAnimalId() {
-    return ((bitField0_ & 0x00000001) != 0);
-  }
-  /**
-   * <code>.grpc.AnimalId animalId = 2;</code>
-   * @return The animalId.
-   */
-  @java.lang.Override
-  public grpc.AnimalId getAnimalId() {
-    return animalId_ == null ? grpc.AnimalId.getDefaultInstance() : animalId_;
-  }
-  /**
-   * <code>.grpc.AnimalId animalId = 2;</code>
-   */
-  @java.lang.Override
-  public grpc.AnimalIdOrBuilder getAnimalIdOrBuilder() {
-    return animalId_ == null ? grpc.AnimalId.getDefaultInstance() : animalId_;
-  }
-
-  public static final int TYPEID_FIELD_NUMBER = 3;
-  private grpc.PartTypeId typeId_;
-  /**
-   * <code>.grpc.PartTypeId typeId = 3;</code>
-   * @return Whether the typeId field is set.
-   */
-  @java.lang.Override
-  public boolean hasTypeId() {
-    return ((bitField0_ & 0x00000002) != 0);
-  }
-  /**
-   * <code>.grpc.PartTypeId typeId = 3;</code>
-   * @return The typeId.
-   */
-  @java.lang.Override
-  public grpc.PartTypeId getTypeId() {
-    return typeId_ == null ? grpc.PartTypeId.getDefaultInstance() : typeId_;
-  }
-  /**
-   * <code>.grpc.PartTypeId typeId = 3;</code>
-   */
-  @java.lang.Override
-  public grpc.PartTypeIdOrBuilder getTypeIdOrBuilder() {
-    return typeId_ == null ? grpc.PartTypeId.getDefaultInstance() : typeId_;
-  }
-
-  public static final int TRAYID_FIELD_NUMBER = 4;
-  private grpc.TrayId trayId_;
-  /**
-   * <code>.grpc.TrayId trayId = 4;</code>
-   * @return Whether the trayId field is set.
-   */
-  @java.lang.Override
-  public boolean hasTrayId() {
-    return ((bitField0_ & 0x00000004) != 0);
-  }
-  /**
-   * <code>.grpc.TrayId trayId = 4;</code>
-   * @return The trayId.
-   */
-  @java.lang.Override
-  public grpc.TrayId getTrayId() {
-    return trayId_ == null ? grpc.TrayId.getDefaultInstance() : trayId_;
-  }
-  /**
-   * <code>.grpc.TrayId trayId = 4;</code>
-   */
-  @java.lang.Override
-  public grpc.TrayIdOrBuilder getTrayIdOrBuilder() {
-    return trayId_ == null ? grpc.TrayId.getDefaultInstance() : trayId_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -149,15 +70,6 @@ private static final long serialVersionUID = 0L;
     if (animalPartId_ != 0L) {
       output.writeInt64(1, animalPartId_);
     }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeMessage(2, getAnimalId());
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      output.writeMessage(3, getTypeId());
-    }
-    if (((bitField0_ & 0x00000004) != 0)) {
-      output.writeMessage(4, getTrayId());
-    }
     getUnknownFields().writeTo(output);
   }
 
@@ -170,18 +82,6 @@ private static final long serialVersionUID = 0L;
     if (animalPartId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream
         .computeInt64Size(1, animalPartId_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getAnimalId());
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getTypeId());
-    }
-    if (((bitField0_ & 0x00000004) != 0)) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getTrayId());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -200,21 +100,6 @@ private static final long serialVersionUID = 0L;
 
     if (getAnimalPartId()
         != other.getAnimalPartId()) return false;
-    if (hasAnimalId() != other.hasAnimalId()) return false;
-    if (hasAnimalId()) {
-      if (!getAnimalId()
-          .equals(other.getAnimalId())) return false;
-    }
-    if (hasTypeId() != other.hasTypeId()) return false;
-    if (hasTypeId()) {
-      if (!getTypeId()
-          .equals(other.getTypeId())) return false;
-    }
-    if (hasTrayId() != other.hasTrayId()) return false;
-    if (hasTrayId()) {
-      if (!getTrayId()
-          .equals(other.getTrayId())) return false;
-    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -229,18 +114,6 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + ANIMALPARTID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         getAnimalPartId());
-    if (hasAnimalId()) {
-      hash = (37 * hash) + ANIMALID_FIELD_NUMBER;
-      hash = (53 * hash) + getAnimalId().hashCode();
-    }
-    if (hasTypeId()) {
-      hash = (37 * hash) + TYPEID_FIELD_NUMBER;
-      hash = (53 * hash) + getTypeId().hashCode();
-    }
-    if (hasTrayId()) {
-      hash = (37 * hash) + TRAYID_FIELD_NUMBER;
-      hash = (53 * hash) + getTrayId().hashCode();
-    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -360,42 +233,19 @@ private static final long serialVersionUID = 0L;
 
     // Construct using grpc.AnimalPartId.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessage
-              .alwaysUseFieldBuilders) {
-        getAnimalIdFieldBuilder();
-        getTypeIdFieldBuilder();
-        getTrayIdFieldBuilder();
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
       animalPartId_ = 0L;
-      animalId_ = null;
-      if (animalIdBuilder_ != null) {
-        animalIdBuilder_.dispose();
-        animalIdBuilder_ = null;
-      }
-      typeId_ = null;
-      if (typeIdBuilder_ != null) {
-        typeIdBuilder_.dispose();
-        typeIdBuilder_ = null;
-      }
-      trayId_ = null;
-      if (trayIdBuilder_ != null) {
-        trayIdBuilder_.dispose();
-        trayIdBuilder_ = null;
-      }
       return this;
     }
 
@@ -432,26 +282,6 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.animalPartId_ = animalPartId_;
       }
-      int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.animalId_ = animalIdBuilder_ == null
-            ? animalId_
-            : animalIdBuilder_.build();
-        to_bitField0_ |= 0x00000001;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.typeId_ = typeIdBuilder_ == null
-            ? typeId_
-            : typeIdBuilder_.build();
-        to_bitField0_ |= 0x00000002;
-      }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.trayId_ = trayIdBuilder_ == null
-            ? trayId_
-            : trayIdBuilder_.build();
-        to_bitField0_ |= 0x00000004;
-      }
-      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -468,15 +298,6 @@ private static final long serialVersionUID = 0L;
       if (other == grpc.AnimalPartId.getDefaultInstance()) return this;
       if (other.getAnimalPartId() != 0L) {
         setAnimalPartId(other.getAnimalPartId());
-      }
-      if (other.hasAnimalId()) {
-        mergeAnimalId(other.getAnimalId());
-      }
-      if (other.hasTypeId()) {
-        mergeTypeId(other.getTypeId());
-      }
-      if (other.hasTrayId()) {
-        mergeTrayId(other.getTrayId());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -509,27 +330,6 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 8
-            case 18: {
-              input.readMessage(
-                  getAnimalIdFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000002;
-              break;
-            } // case 18
-            case 26: {
-              input.readMessage(
-                  getTypeIdFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 26
-            case 34: {
-              input.readMessage(
-                  getTrayIdFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -577,369 +377,6 @@ private static final long serialVersionUID = 0L;
       animalPartId_ = 0L;
       onChanged();
       return this;
-    }
-
-    private grpc.AnimalId animalId_;
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.AnimalId, grpc.AnimalId.Builder, grpc.AnimalIdOrBuilder> animalIdBuilder_;
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     * @return Whether the animalId field is set.
-     */
-    public boolean hasAnimalId() {
-      return ((bitField0_ & 0x00000002) != 0);
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     * @return The animalId.
-     */
-    public grpc.AnimalId getAnimalId() {
-      if (animalIdBuilder_ == null) {
-        return animalId_ == null ? grpc.AnimalId.getDefaultInstance() : animalId_;
-      } else {
-        return animalIdBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public Builder setAnimalId(grpc.AnimalId value) {
-      if (animalIdBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        animalId_ = value;
-      } else {
-        animalIdBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public Builder setAnimalId(
-        grpc.AnimalId.Builder builderForValue) {
-      if (animalIdBuilder_ == null) {
-        animalId_ = builderForValue.build();
-      } else {
-        animalIdBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public Builder mergeAnimalId(grpc.AnimalId value) {
-      if (animalIdBuilder_ == null) {
-        if (((bitField0_ & 0x00000002) != 0) &&
-          animalId_ != null &&
-          animalId_ != grpc.AnimalId.getDefaultInstance()) {
-          getAnimalIdBuilder().mergeFrom(value);
-        } else {
-          animalId_ = value;
-        }
-      } else {
-        animalIdBuilder_.mergeFrom(value);
-      }
-      if (animalId_ != null) {
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
-      return this;
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public Builder clearAnimalId() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      animalId_ = null;
-      if (animalIdBuilder_ != null) {
-        animalIdBuilder_.dispose();
-        animalIdBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public grpc.AnimalId.Builder getAnimalIdBuilder() {
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return getAnimalIdFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    public grpc.AnimalIdOrBuilder getAnimalIdOrBuilder() {
-      if (animalIdBuilder_ != null) {
-        return animalIdBuilder_.getMessageOrBuilder();
-      } else {
-        return animalId_ == null ?
-            grpc.AnimalId.getDefaultInstance() : animalId_;
-      }
-    }
-    /**
-     * <code>.grpc.AnimalId animalId = 2;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.AnimalId, grpc.AnimalId.Builder, grpc.AnimalIdOrBuilder> 
-        getAnimalIdFieldBuilder() {
-      if (animalIdBuilder_ == null) {
-        animalIdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            grpc.AnimalId, grpc.AnimalId.Builder, grpc.AnimalIdOrBuilder>(
-                getAnimalId(),
-                getParentForChildren(),
-                isClean());
-        animalId_ = null;
-      }
-      return animalIdBuilder_;
-    }
-
-    private grpc.PartTypeId typeId_;
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.PartTypeId, grpc.PartTypeId.Builder, grpc.PartTypeIdOrBuilder> typeIdBuilder_;
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     * @return Whether the typeId field is set.
-     */
-    public boolean hasTypeId() {
-      return ((bitField0_ & 0x00000004) != 0);
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     * @return The typeId.
-     */
-    public grpc.PartTypeId getTypeId() {
-      if (typeIdBuilder_ == null) {
-        return typeId_ == null ? grpc.PartTypeId.getDefaultInstance() : typeId_;
-      } else {
-        return typeIdBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public Builder setTypeId(grpc.PartTypeId value) {
-      if (typeIdBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        typeId_ = value;
-      } else {
-        typeIdBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public Builder setTypeId(
-        grpc.PartTypeId.Builder builderForValue) {
-      if (typeIdBuilder_ == null) {
-        typeId_ = builderForValue.build();
-      } else {
-        typeIdBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public Builder mergeTypeId(grpc.PartTypeId value) {
-      if (typeIdBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) != 0) &&
-          typeId_ != null &&
-          typeId_ != grpc.PartTypeId.getDefaultInstance()) {
-          getTypeIdBuilder().mergeFrom(value);
-        } else {
-          typeId_ = value;
-        }
-      } else {
-        typeIdBuilder_.mergeFrom(value);
-      }
-      if (typeId_ != null) {
-        bitField0_ |= 0x00000004;
-        onChanged();
-      }
-      return this;
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public Builder clearTypeId() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      typeId_ = null;
-      if (typeIdBuilder_ != null) {
-        typeIdBuilder_.dispose();
-        typeIdBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public grpc.PartTypeId.Builder getTypeIdBuilder() {
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return getTypeIdFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    public grpc.PartTypeIdOrBuilder getTypeIdOrBuilder() {
-      if (typeIdBuilder_ != null) {
-        return typeIdBuilder_.getMessageOrBuilder();
-      } else {
-        return typeId_ == null ?
-            grpc.PartTypeId.getDefaultInstance() : typeId_;
-      }
-    }
-    /**
-     * <code>.grpc.PartTypeId typeId = 3;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.PartTypeId, grpc.PartTypeId.Builder, grpc.PartTypeIdOrBuilder> 
-        getTypeIdFieldBuilder() {
-      if (typeIdBuilder_ == null) {
-        typeIdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            grpc.PartTypeId, grpc.PartTypeId.Builder, grpc.PartTypeIdOrBuilder>(
-                getTypeId(),
-                getParentForChildren(),
-                isClean());
-        typeId_ = null;
-      }
-      return typeIdBuilder_;
-    }
-
-    private grpc.TrayId trayId_;
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.TrayId, grpc.TrayId.Builder, grpc.TrayIdOrBuilder> trayIdBuilder_;
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     * @return Whether the trayId field is set.
-     */
-    public boolean hasTrayId() {
-      return ((bitField0_ & 0x00000008) != 0);
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     * @return The trayId.
-     */
-    public grpc.TrayId getTrayId() {
-      if (trayIdBuilder_ == null) {
-        return trayId_ == null ? grpc.TrayId.getDefaultInstance() : trayId_;
-      } else {
-        return trayIdBuilder_.getMessage();
-      }
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public Builder setTrayId(grpc.TrayId value) {
-      if (trayIdBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        trayId_ = value;
-      } else {
-        trayIdBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public Builder setTrayId(
-        grpc.TrayId.Builder builderForValue) {
-      if (trayIdBuilder_ == null) {
-        trayId_ = builderForValue.build();
-      } else {
-        trayIdBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public Builder mergeTrayId(grpc.TrayId value) {
-      if (trayIdBuilder_ == null) {
-        if (((bitField0_ & 0x00000008) != 0) &&
-          trayId_ != null &&
-          trayId_ != grpc.TrayId.getDefaultInstance()) {
-          getTrayIdBuilder().mergeFrom(value);
-        } else {
-          trayId_ = value;
-        }
-      } else {
-        trayIdBuilder_.mergeFrom(value);
-      }
-      if (trayId_ != null) {
-        bitField0_ |= 0x00000008;
-        onChanged();
-      }
-      return this;
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public Builder clearTrayId() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      trayId_ = null;
-      if (trayIdBuilder_ != null) {
-        trayIdBuilder_.dispose();
-        trayIdBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public grpc.TrayId.Builder getTrayIdBuilder() {
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return getTrayIdFieldBuilder().getBuilder();
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    public grpc.TrayIdOrBuilder getTrayIdOrBuilder() {
-      if (trayIdBuilder_ != null) {
-        return trayIdBuilder_.getMessageOrBuilder();
-      } else {
-        return trayId_ == null ?
-            grpc.TrayId.getDefaultInstance() : trayId_;
-      }
-    }
-    /**
-     * <code>.grpc.TrayId trayId = 4;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilder<
-        grpc.TrayId, grpc.TrayId.Builder, grpc.TrayIdOrBuilder> 
-        getTrayIdFieldBuilder() {
-      if (trayIdBuilder_ == null) {
-        trayIdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-            grpc.TrayId, grpc.TrayId.Builder, grpc.TrayIdOrBuilder>(
-                getTrayId(),
-                getParentForChildren(),
-                isClean());
-        trayId_ = null;
-      }
-      return trayIdBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:grpc.AnimalPartId)

@@ -14,7 +14,18 @@ public interface AnimalPartRegistryInterface
   AnimalPart registerAnimalPart (AnimalPart data) throws PersistenceException, DataIntegrityViolationException;
 
   // Read:
-  AnimalPart readAnimalPart (long part_id, long animalId, long typeId, long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
+  AnimalPart readAnimalPart (long part_id) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
+
+  List<AnimalPart> readAnimalPartsByAnimalId(long animalId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
+
+
+  List<AnimalPart> readAnimalPartsByPartTypeId(long partTypeId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
+
+
+  List<AnimalPart> readAnimalPartsByProductId(long productId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
+
+
+  List<AnimalPart> readAnimalPartsByTrayId(long trayId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
 
   // Update:
   boolean updateAnimalPart (AnimalPart oldData, AnimalPart newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException;

@@ -18,7 +18,7 @@ public class ProductValidation
       throw new DataIntegrityViolationException("Product is null");
 
     // Validate productId:
-    validateId(product.getProduct_id());
+    validateId(product.getProductId());
 
     // Product must contain at least 1 AnimalPart
     validateContents(product.getContentList());

@@ -1,7 +1,6 @@
 package shared.model.entities;
 
 import jakarta.persistence.*;
-import server.repository.JPA_CompositeKeys.AnimalPartId;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,7 +11,7 @@ import java.util.Objects;
 // Good guide on JPA here: https://www.infoworld.com/article/2259742/java-persistence-with-jpa-and-hibernate-part-1-entities-and-relationships.html
 // Find a good manual on how to use Spring Boot with JPA Database management here: https://medium.com/@bubu.tripathy/best-practices-entity-class-design-with-jpa-and-spring-boot-6f703339ab3d
 @Entity // Assigns this class as an Entity for Spring Boot, to use as a base for its Data Persistance interface.
-@IdClass(AnimalPartId.class) // Tells Spring Boot JPA that this class uses a Composite Primary Key, and that the details for the key should follow 'AnimalPartId' class in the JPA_CompositeKeys packaged.
+//@IdClass(AnimalPartId.class) // Tells Spring Boot JPA that this class uses a Composite Primary Key, and that the details for the key should follow 'AnimalPartId' class in the JPA_CompositeKeys packaged.
 @Table(name="animalpart") // Tells spring boot JPA, what the name of this database table is.
 public class AnimalPart implements Serializable
 {
@@ -22,19 +21,19 @@ public class AnimalPart implements Serializable
   private long part_id;
 
 
-  @Id // Tells Spring Boot, that this value is part of the primary key.
-  @Column(name = "animal_id", nullable = false)
-  private long animal_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
+  //@Id // Tells Spring Boot, that this value is part of the primary key.
+  //@Column(name = "animal_id", nullable = false)
+  //private long animal_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
 
 
-  @Id // Tells Spring Boot, that this value is part of the primary key.
-  @Column(name = "type_id", nullable = false)
-  private long type_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
+  //@Id // Tells Spring Boot, that this value is part of the primary key.
+  //@Column(name = "type_id", nullable = false)
+  //private long type_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
 
 
-  @Id // Tells Spring Boot, that this value is part of the primary key.
-  @Column(name = "tray_id", nullable = false)
-  private long tray_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
+  //@Id // Tells Spring Boot, that this value is part of the primary key.
+  //@Column(name = "tray_id", nullable = false)
+  //private long tray_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
 
 
   @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
@@ -44,43 +43,38 @@ public class AnimalPart implements Serializable
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Animal entity,
   // and that the Animal entity should NOT 'own' the mapping. In other words, the animal_id assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the Animal are stored as Foreign Keys, and not in the Animal entity!
-  @ManyToOne
-  @JoinColumn(name="animal_id", nullable=false, insertable = false, updatable = false) // Tells Spring Boot which DB column to use in the Animal entity when joining tables.
+  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinColumn(name="animal_id", nullable=false) // Tells Spring Boot which DB column to use in the Animal entity when joining tables.
   private Animal animal;
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the PartType entity,
   // and that the PartType entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the PartType are stored as Foreign Keys, and not in the PartType entity!
-  @ManyToOne
-  @JoinColumn(name="type_id", nullable = false, insertable = false, updatable = false)  // Tells Spring Boot which DB column to use in the PartType entity when joining tables.
+  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinColumn(name="type_id", nullable = false)  // Tells Spring Boot which DB column to use in the PartType entity when joining tables.
   private PartType type;
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Tray entity,
   // and that the Tray entity should NOT 'own' the mapping. In other words, the tray assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the Tray are stored as Foreign Keys, and not in the Tray entity!
-  @ManyToOne
-  @JoinColumn(name="tray_id", nullable=false, insertable = false, updatable = false) // Tells Spring Boot which DB column to use in the Tray entity when joining tables.
+  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinColumn(name="tray_id", nullable=false) // Tells Spring Boot which DB column to use in the Tray entity when joining tables.
   private Tray tray;
 
 
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Tray entity,
   // and that the Product entity should NOT 'own' the mapping. In other words, the product assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the Product are stored as Foreign Keys, and not in the Product entity!
-  @ManyToOne
-  @JoinColumn(name="product_id", nullable=false) // Tells Spring Boot which DB column to use in the Product entity when joining tables.
+  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JoinColumn(name="product_id") // Tells Spring Boot which DB column to use in the Product entity when joining tables.
   private Product product;
 
 
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected AnimalPart() {
-    //Note: Do not set the part_id here, since JPA auto-sets this by using the database.
-    setWeight_kilogram(BigDecimal.valueOf(0));
-    setAnimal(animal);
-    setTray(tray);
-    setType(type);
-    setProduct(product);
+    //JPA requires this to be blank!
   }
 
 
@@ -94,30 +88,6 @@ public class AnimalPart implements Serializable
     setProduct(product);
   }
 
-
-  public long getAnimal_id() {
-    return animal_id;
-  }
-
-  public void setAnimal_id(long animal_id) {
-    this.animal_id = animal_id;
-  }
-
-  public long getType_id() {
-    return type_id;
-  }
-
-  public void setType_id(long type_id) {
-    this.type_id = type_id;
-  }
-
-  public long getTray_id() {
-    return tray_id;
-  }
-
-  public void setTray_id(long tray_id) {
-    this.tray_id = tray_id;
-  }
 
   public BigDecimal getWeight_kilogram() {
     return weight_kilogram;
@@ -146,7 +116,7 @@ public class AnimalPart implements Serializable
 
   public void setAnimal(Animal animal) {
     this.animal = animal;
-    setAnimal_id(animal.getId());
+    //setAnimal_id(animal.getId());
   }
 
 
@@ -157,7 +127,7 @@ public class AnimalPart implements Serializable
 
   public void setTray(Tray tray) {
     this.tray = tray;
-    setTray_id(tray.getTray_id());
+    //setTray_id(tray.getTray_id());
   }
 
 
@@ -176,7 +146,7 @@ public class AnimalPart implements Serializable
 
   public void setType(PartType partType) {
     this.type = partType;
-    setType_id(partType.getTypeId());
+    //setType_id(partType.getTypeId());
   }
 
 
@@ -202,7 +172,19 @@ public class AnimalPart implements Serializable
 
 
   @Override public String toString() {
-    return "AnimalPart{" + "weight=" + weight_kilogram + ", part_Id='" + part_id + '\'' + ", animal=" + animal + '}';
+    return "animalPart_id: '"
+        + getPart_id()
+        + "', weighing: '"
+        + getWeight_kilogram()
+        + "kg', cut from animal_id: '"
+        + getAnimal().getId()
+        + "', with partType_id: '"
+        + getType().getTypeId()
+        + "', stored in tray_id: '"
+        + getTray().getTrayId()
+        + "', packed into product_id: '"
+        + getProduct().getProductId()
+        +  "'";
   }
 
 

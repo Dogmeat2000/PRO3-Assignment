@@ -17,6 +17,7 @@ import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -45,17 +46,17 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       // Add associations between this Product and all the specified Trays delivering parts:
       for (Tray tray : receivedPartsFromTrayList) {
-        createdProduct.getTrayToProductTransfersListList().add(GrpcFactory.buildGrpcTrayToProductTransferData(GrpcProductData_To_Product.convertToProduct(createdProduct), tray));
+        createdProduct.getTrayToProductTransfersListList().add(GrpcFactory.buildGrpcTrayToProductTransferData(GrpcProductData_To_Product.convertToProduct(createdProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()), tray));
       }
 
       // Update the repository with the updated connections:
-      updateProduct(GrpcProductData_To_Product.convertToProduct(createdProduct));
+      updateProduct(GrpcProductData_To_Product.convertToProduct(createdProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
       // Convert, and return, the ProductData that was added to the DB into an application compatible format:
-      return GrpcProductData_To_Product.convertToProduct(createdProduct);
+      return GrpcProductData_To_Product.convertToProduct(createdProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new CreateFailedException("Failed to register Product");
+      throw new CreateFailedException("Failed to register Product (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -78,10 +79,10 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductData foundProduct = stub.readProduct(id);
 
       // Convert, and return, the PartTypeData that was read from the DB into an application compatible format:
-      return GrpcProductData_To_Product.convertToProduct(foundProduct);
+      return GrpcProductData_To_Product.convertToProduct(foundProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No Product found with id '" + productId + "'");
+      throw new NotFoundException("No Product found with id '" + productId + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -98,20 +99,20 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductServiceGrpc.ProductServiceBlockingStub stub = ProductServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Product (Convert Product to ProductData)
-      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data);
+      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to update the Product:
       EmptyMessage updated = stub.updateProduct(product);
 
       if(updated == null && data != null)
-        throw new UpdateFailedException("Failed to update Product with id '" + data.getProduct_id() + "'");
+        throw new UpdateFailedException("Failed to update Product with id '" + data.getProductId() + "'");
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
-        throw new NotFoundException("No Product found with id '" + data.getProduct_id() + "'");
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
+        throw new NotFoundException("No Product found with id '" + data.getProductId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
-        throw new UpdateFailedException("Critical Error encountered. Failed to Update Product with id '" + data.getProduct_id() + "'");
+        throw new UpdateFailedException("Critical Error encountered. Failed to Update Product with id '" + data.getProductId() + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -131,7 +132,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       Product product = readProduct(productId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product);
+      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = stub.removeProduct(productData);
@@ -141,10 +142,10 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       return true;
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No Product found with id '" + productId + "'");
       else
-        throw new DeleteFailedException("Critical Error encountered. Failed to delete Product with id '" + productId + "'");
+        throw new DeleteFailedException("Critical Error encountered. Failed to delete Product with id '" + productId + "' (" + e.getMessage() + ")");
     }
     finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
@@ -168,10 +169,10 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       return GrpcProductData_To_Product.convertToProductList(products);
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No Products found in database");
       else
-        throw new RuntimeException("Critical Error encountered. Failed to Query all Products from the Database");
+        throw new RuntimeException("Critical Error encountered. Failed to Query all Products from the Database (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();

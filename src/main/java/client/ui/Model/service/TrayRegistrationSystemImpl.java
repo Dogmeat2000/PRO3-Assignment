@@ -16,6 +16,7 @@ import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -43,10 +44,10 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData createdTray = stub.registerTray(data);
 
       // Convert, and return, the Tray that was added to the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(createdTray);
+      return GrpcTrayData_To_Tray.convertToTray(createdTray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new CreateFailedException("Failed to register Tray with maxWeight '" + maxWeight_kilogram + "kg' and currentWeight '" + currentWeight_kilogram + "kg'.");
+      throw new CreateFailedException("Failed to register Tray with maxWeight '" + maxWeight_kilogram + "kg' and currentWeight '" + currentWeight_kilogram + "kg'. (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -69,10 +70,10 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData foundTray = stub.readTray(id);
 
       // Convert, and return, the TrayData that was read from the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(foundTray);
+      return GrpcTrayData_To_Tray.convertToTray(foundTray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No Tray found with id '" + trayId + "'");
+      throw new NotFoundException("No Tray found with id '" + trayId + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -89,20 +90,20 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayServiceGrpc.TrayServiceBlockingStub stub = TrayServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data);
+      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = stub.updateTray(tray);
 
       if(updated == null && data != null)
-        throw new UpdateFailedException("Failed to update Tray with id '" + data.getTray_id() + "'");
+        throw new UpdateFailedException("Failed to update Tray with id '" + data.getTrayId() + "'");
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
-        throw new NotFoundException("No Tray found with id '" + data.getTray_id() + "'");
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
+        throw new NotFoundException("No Tray found with id '" + data.getTrayId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
-        throw new UpdateFailedException("Critical Error encountered. Failed to Update Tray with id '" + data.getTray_id() + "'");
+        throw new UpdateFailedException("Critical Error encountered. Failed to Update Tray with id '" + data.getTrayId() + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -122,7 +123,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       Tray tray = readTray(trayId);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray);
+      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to delete the Tray:
       EmptyMessage deleted = stub.removeTray(trayData);
@@ -132,10 +133,10 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
       return true;
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No Tray found with id '" + trayId + "'");
       else
-        throw new DeleteFailedException("Critical Error encountered. Failed to delete Tray with id '" + trayId + "'");
+        throw new DeleteFailedException("Critical Error encountered. Failed to delete Tray with id '" + trayId + "' (" + e.getMessage() + ")");
     }
     finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
@@ -159,10 +160,10 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       return GrpcTrayData_To_Tray.convertToTrayList(trays);
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No Trays found in database");
       else
-        throw new RuntimeException("Critical Error encountered. Failed to Query all Trays from the Database");
+        throw new RuntimeException("Critical Error encountered. Failed to Query all Trays from the Database (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();

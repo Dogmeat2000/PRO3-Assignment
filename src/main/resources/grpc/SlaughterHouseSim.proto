@@ -45,9 +45,6 @@ message UpdatedAnimalPartData {
 
 message AnimalPartId {
   int64 animalPartId = 1;
-  AnimalId animalId = 2;
-  PartTypeId typeId = 3;
-  TrayId trayId = 4;
 }
 
 
@@ -154,6 +151,10 @@ service AnimalPartService {
 
   // Read:
   rpc readAnimalPart(AnimalPartId) returns (AnimalPartData);
+  rpc readAnimalPartsByAnimal_id(AnimalId) returns (AnimalPartsData);
+  rpc readAnimalPartsByPartType_id(PartTypeId) returns (AnimalPartsData);
+  rpc readAnimalPartsByProduct_id(ProductId) returns (AnimalPartsData);
+  rpc readAnimalPartsByTray_id(TrayId) returns (AnimalPartsData);
 
   // Update:
   rpc updateAnimalPart(UpdatedAnimalPartData) returns (EmptyMessage);

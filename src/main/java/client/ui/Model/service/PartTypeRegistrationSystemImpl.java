@@ -15,6 +15,7 @@ import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -42,10 +43,10 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData createdPartType = stub.registerPartType(data);
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
-      return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
+      return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new CreateFailedException("Failed to register PartType with desc '" + desc + "'");
+      throw new CreateFailedException("Failed to register PartType with desc '" + desc + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -68,10 +69,10 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData foundPartType = stub.readPartType(id);
 
       // Convert, and return, the PartTypeData that was read from the DB into an application compatible format:
-      return GrpcPartTypeData_To_PartType.convertToPartType(foundPartType);
+      return GrpcPartTypeData_To_PartType.convertToPartType(foundPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No PartType found with id '" + typeId + "'");
+      throw new NotFoundException("No PartType found with id '" + typeId + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -88,7 +89,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeServiceGrpc.PartTypeServiceBlockingStub stub = PartTypeServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partType = PartType_ToGrpc_PartTypeData.convertToPartTypeData(data);
+      PartTypeData partType = PartType_ToGrpc_PartTypeData.convertToPartTypeData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = stub.updatePartType(partType);
@@ -97,11 +98,11 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
         throw new UpdateFailedException("Failed to update PartType with id '" + data.getTypeId() + "'");
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No PartType found with id '" + data.getTypeId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
-        throw new UpdateFailedException("Critical Error encountered. Failed to Update PartType with id '" + data.getTypeId() + "'");
+        throw new UpdateFailedException("Critical Error encountered. Failed to Update PartType with id '" + data.getTypeId() + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -121,7 +122,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartType partType = readPartType(typeId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partTypeData = PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType);
+      PartTypeData partTypeData = PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = stub.removePartType(partTypeData);
@@ -131,10 +132,10 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       return true;
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No PartType found with id '" + typeId + "'");
       else
-        throw new DeleteFailedException("Critical Error encountered. Failed to delete PartType with id '" + typeId + "'");
+        throw new DeleteFailedException("Critical Error encountered. Failed to delete PartType with id '" + typeId + "' (" + e.getMessage() + ")");
     }
     finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
@@ -158,10 +159,10 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       return GrpcPartTypeData_To_PartType.convertToPartTypeList(partTypes);
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No PartTypes found in database");
       else
-        throw new RuntimeException("Critical Error encountered. Failed to Query all PartTypes from the Database");
+        throw new RuntimeException("Critical Error encountered. Failed to Query all PartTypes from the Database (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();

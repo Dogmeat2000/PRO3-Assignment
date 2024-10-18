@@ -16,6 +16,7 @@ import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.grpc.Status.INTERNAL;
@@ -43,10 +44,10 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalData createdAnimal = stub.registerAnimal(data);
 
       // Convert, and return, the AnimalData that was added to the DB into an application compatible format:
-      return GrpcAnimalData_To_Animal.convertToAnimal(createdAnimal);
+      return GrpcAnimalData_To_Animal.convertToAnimal(createdAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new CreateFailedException("Failed to register animal with weight '" + weightInKilogram + "'");
+      throw new CreateFailedException("Failed to register animal with weight '" + weightInKilogram + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -69,10 +70,10 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalData foundAnimal = stub.readAnimal(id);
 
       // Convert, and return, the AnimalData that was read from the DB into an application compatible format:
-      return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
+      return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
     } catch (StatusRuntimeException e) {
-      throw new NotFoundException("No animal found with id '" + animalId + "'");
+      throw new NotFoundException("No animal found with id '" + animalId + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -89,7 +90,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalServiceGrpc.AnimalServiceBlockingStub stub = AnimalServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (Convert Animal to AnimalData)
-      AnimalData animal = Animal_ToGrpc_AnimalData.convertToAnimalData(data);
+      AnimalData animal = Animal_ToGrpc_AnimalData.convertToAnimalData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to update the Animal:
       EmptyMessage updated = stub.updateAnimal(animal);
@@ -98,11 +99,11 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
         throw new UpdateFailedException("Failed to update Animal with id '" + data.getId() + "'");
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No animal found with id '" + data.getId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
-        throw new UpdateFailedException("Critical Error encountered. Failed to Update Animal with id '" + data.getId() + "'");
+        throw new UpdateFailedException("Critical Error encountered. Failed to Update Animal with id '" + data.getId() + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -122,7 +123,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       Animal animal = readAnimal(animal_id);
 
       // Create a gRPC compatible version of animal (Convert Animal to AnimalData)
-      AnimalData animalData = Animal_ToGrpc_AnimalData.convertToAnimalData(animal);
+      AnimalData animalData = Animal_ToGrpc_AnimalData.convertToAnimalData(animal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
 
       // Prompt gRPC to delete the Animal:
       EmptyMessage deleted = stub.removeAnimal(animalData);
@@ -132,10 +133,10 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
       return true;
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No animal found with id '" + animal_id + "'");
       else
-        throw new DeleteFailedException("Critical Error encountered. Failed to deleted Animal with id '" + animal_id + "'");
+        throw new DeleteFailedException("Critical Error encountered. Failed to deleted Animal with id '" + animal_id + "' (" + e.getMessage() + ")");
     }
     finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
@@ -159,10 +160,10 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       return GrpcAnimalData_To_Animal.convertToAnimalList(animals);
 
     } catch (StatusRuntimeException e) {
-      if(e.getStatus().equals(NOT_FOUND))
+      if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
         throw new NotFoundException("No animals found in database");
       else
-        throw new RuntimeException("Critical Error encountered. Failed to Query for all Animals from the Database (" + e.getMessage() +")");
+        throw new RuntimeException("Critical Error encountered. Failed to Query for all Animals from the Database (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();

@@ -5,22 +5,17 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.ProductValidation;
 import server.repository.AnimalPartRepository;
-import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.ProductRepository;
 import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductRegistryService implements ProductRegistryInterface
@@ -41,20 +36,21 @@ public class ProductRegistryService implements ProductRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public Product registerProduct(Product data) {
-    // Reset productId, since the database handles this assignment:
-    data.setProduct_id(1);
 
     // Validate received data, before passing to repository/database:
     ProductValidation.validateProduct(data);
 
+    // Reset productId, since the database handles this assignment:
+    data.setProductId(0);
+
     // Attempt to add Product to DB:
     try {
       Product newProduct = productRepository.save(data);
-      logger.info("Product added to DB with ID: {}", newProduct.getProduct_id());
+      logger.info("Product added to DB with ID: {}", newProduct.getProductId());
 
       // Attempt to add Product to local cache:
-      productCache.put(newProduct.getProduct_id(), newProduct);
-      logger.info("Product saved to local cache with ID: {}", newProduct.getProduct_id());
+      productCache.put(newProduct.getProductId(), newProduct);
+      logger.info("Product saved to local cache with ID: {}", newProduct.getProductId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
@@ -80,6 +76,7 @@ public class ProductRegistryService implements ProductRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public Product readProduct(long productId) {
     // Validate received id, before passing to repository/database:
     ProductValidation.validateId(productId);
@@ -99,9 +96,39 @@ public class ProductRegistryService implements ProductRegistryInterface
 
       logger.info("Product read from database with ID: {}", productId);
 
+      // Load all associated AnimalParts:
+      List<AnimalPart> animalParts = new ArrayList<>();
+      try {
+        animalParts = animalPartRepository.findAnimalPartsByType_typeId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching product_id=" + product.getProductId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!animalParts.isEmpty())
+        product.setAnimalParts(animalParts);
+
+      // Populate the id association list:
+      List<Long> animalPartIds = new ArrayList<>();
+      for (AnimalPart animalPart : product.getContentList())
+        animalPartIds.add(animalPart.getPart_id());
+      product.setAnimalPartIdList(animalPartIds);
+
+      // Load all associated Transfers:
+      List<TrayToProductTransfer> transfers = new ArrayList<>();
+      try {
+        transfers = trayToProductTransferRepository.findTrayToProductTransferByProduct_ProductId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching product_id=" + product.getProductId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!transfers.isEmpty())
+        product.setTraySupplyJoinList(transfers);
+
+      // Populate the id association list:
+      List<Long> transferIds = new ArrayList<>();
+      for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
+        transferIds.add(transfer.getTransferId());
+      product.setTransferIdList(transferIds);
+
       // Add found Product to local cache, to improve performance next time Product is requested.
-      productCache.put(product.getProduct_id(), product);
-      logger.info("Product added to local cache with ID: {}", product.getProduct_id());
+      productCache.put(product.getProductId(), product);
+      logger.info("Product added to local cache with ID: {}", product.getProductId());
       return product;
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering Product with ID {}: {}", productId, e.getMessage());
@@ -118,7 +145,7 @@ public class ProductRegistryService implements ProductRegistryInterface
     // Attempt to update Product in database:
     try {
       // Fetch the existing Entity from DB:
-      Product product = productRepository.findById(data.getProduct_id()).orElseThrow(() -> new NotFoundException("No Product found in database with matching id=" + data.getProduct_id()));
+      Product product = productRepository.findById(data.getProductId()).orElseThrow(() -> new NotFoundException("No Product found in database with matching id=" + data.getProductId()));
 
       // Modify the database Entity locally:
       product.getContentList().clear();
@@ -140,20 +167,20 @@ public class ProductRegistryService implements ProductRegistryInterface
 
       // Save the modified entity back to database:
       productRepository.save(product);
-      logger.info("Product updated in database with ID: {}", product.getProduct_id());
+      logger.info("Product updated in database with ID: {}", product.getProductId());
 
       // Attempt to add PartType to local cache:
-      productCache.put(product.getProduct_id(), product);
-      logger.info("Product saved to local cache with ID: {}", product.getProduct_id());
+      productCache.put(product.getProductId(), product);
+      logger.info("Product saved to local cache with ID: {}", product.getProductId());
 
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to update Product in DB with id: {}, Reason: {}", data.getProduct_id(), e.getMessage());
+      logger.error("Unable to update Product in DB with id: {}, Reason: {}", data.getProductId(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while updating Product with ID {}: {}", data.getProduct_id(), e.getMessage());
+      logger.error("Persistence exception occurred while updating Product with ID {}: {}", data.getProductId(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -169,12 +196,12 @@ public class ProductRegistryService implements ProductRegistryInterface
       productRepository.delete(data);
 
       // Confirm that the entity has been removed:
-      Optional<Product> deletedProduct = productRepository.findById(data.getProduct_id());
+      Optional<Product> deletedProduct = productRepository.findById(data.getProductId());
 
       if(deletedProduct.isPresent()) {
         // Product was not removed from database.
-        logger.info("Product was NOT deleted from database with ID: {}", data.getProduct_id());
-        throw new PersistenceException("Product with ID '" + data.getProduct_id() + "' was not deleted!");
+        logger.info("Product was NOT deleted from database with ID: {}", data.getProductId());
+        throw new PersistenceException("Product with ID '" + data.getProductId() + "' was not deleted!");
       }
 
       // Ensure that all TrayToProductTransfer transfers are deleted:
@@ -188,14 +215,14 @@ public class ProductRegistryService implements ProductRegistryInterface
         animalPartRepository.save(animalPart);
       }
 
-      logger.info("Product deleted from database with ID: {}", data.getProduct_id());
+      logger.info("Product deleted from database with ID: {}", data.getProductId());
       // Product was removed from database. Now ensure that is it also removed from the local cache:
-      productCache.remove(data.getProduct_id());
-      logger.info("Product deleted from local cache with ID: {}", data.getProduct_id());
+      productCache.remove(data.getProductId());
+      logger.info("Product deleted from local cache with ID: {}", data.getProductId());
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to delete Product in DB with id: {}, Reason: {}", data.getProduct_id(), e.getMessage());
+      logger.error("Unable to delete Product in DB with id: {}, Reason: {}", data.getProductId(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
@@ -205,15 +232,53 @@ public class ProductRegistryService implements ProductRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public List<Product> getAllProducts() {
     try {
       List<Product> products = productRepository.findAll();
+
+      // Load all associated AnimalParts, for each Product:
+      for (Product product : products) {
+        List<AnimalPart> animalParts = new ArrayList<>();
+        try {
+          animalParts = animalPartRepository.findAnimalPartsByType_typeId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching product_id=" + product.getProductId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!animalParts.isEmpty()){
+          product.setAnimalParts(animalParts);
+
+          // Populate the id association list:
+          List<Long> animalPartIds = new ArrayList<>();
+          for (AnimalPart animalPart : product.getContentList())
+            animalPartIds.add(animalPart.getPart_id());
+          product.setAnimalPartIdList(animalPartIds);
+        }
+
+      }
+
+      // Load all associated TrayToProductTransfer, for each Product:
+      for (Product product : products) {
+        List<TrayToProductTransfer> transfers = new ArrayList<>();
+        try {
+          transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching product_id=" + product.getProductId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!transfers.isEmpty()) {
+          product.setTraySupplyJoinList(transfers);
+
+          // Populate the id association list:
+          List<Long> transferIds = new ArrayList<>();
+          for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
+            transferIds.add(transfer.getTransferId());
+          product.setTransferIdList(transferIds);
+        }
+      }
 
       // Add all the found Products to local cache, to improve performance next time a Tray is requested.
       productCache.clear();
       for (Product product : products) {
         if(product != null)
-          productCache.put(product.getProduct_id(), product);
+          productCache.put(product.getProductId(), product);
       }
       logger.info("Added all Products from Database to Local Cache");
       return products;

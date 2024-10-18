@@ -15,6 +15,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
+import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
@@ -34,17 +35,17 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Tray:
-      Product createdProduct = productService.registerProduct(GrpcProductData_To_Product.convertToProduct(request));
+      Product createdProduct = productService.registerProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
       // If animal creation fails
       if (createdProduct == null)
         throw new CreateFailedException("Product could not be created");
 
       // Translate the created Product into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -61,12 +62,12 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new NotFoundException("Product not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product with id " + request.getProductId() + "not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error reading Product").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error reading Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -76,7 +77,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Product with the provided ID:
-      if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request))) {
+      if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If Product update failed:
         throw new UpdateFailedException("Error occurred while updated Product with id='" + request.getProductId() + "'");
       }
@@ -87,7 +88,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Product with id '" + request.getProductId() + "'").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Product with id '" + request.getProductId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -97,7 +98,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Product with the provided ID:
-      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request))) {
+      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting Product with id='" + request.getProductId() + "'");
       }
@@ -108,7 +109,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting Product").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -129,7 +130,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
       } catch (NotFoundException e) {
         responseObserver.onError(Status.NOT_FOUND.withDescription("No Products found").withCause(e).asRuntimeException());
       } catch (Exception e) {
-        responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all Products").withCause(e).asRuntimeException());
+        responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all Products, " + e.getMessage()).withCause(e).asRuntimeException());
       }
   }
 }

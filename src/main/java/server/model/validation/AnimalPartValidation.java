@@ -16,7 +16,7 @@ public class AnimalPartValidation
       throw new DataIntegrityViolationException("AnimalPart is null");
 
     // Validate animalPart_id:
-    validateId(animalPart.getPart_id(), animalPart.getAnimal_id(), animalPart.getType_id(), animalPart.getTray_id());
+    validateId(animalPart.getPart_id());
 
     // AnimalPart weight must be larger than 0:
     validateWeight(animalPart.getWeight_kilogram());
@@ -35,10 +35,10 @@ public class AnimalPartValidation
   }
 
 
-  public static void validateId(long animalPartId, long animal_id, long typeId, long trayId) throws DataIntegrityViolationException {
+  public static void validateId(long id) throws DataIntegrityViolationException {
     // All ids must be larger than 0:
-    if(animalPartId <= 0 || animal_id <= 0 || typeId <= 0 || trayId <= 0)
-      throw new DataIntegrityViolationException("Invalid ids provided. All ids must have values above 0");
+    if(id <= 0)
+      throw new DataIntegrityViolationException("Invalid id provided. Id must have value above 0");
 
     // Validation passed:
   }

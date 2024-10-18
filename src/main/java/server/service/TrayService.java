@@ -5,16 +5,15 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.TrayValidation;
 import server.repository.AnimalPartRepository;
-import server.repository.JPA_CompositeKeys.TrayToProductTransferId;
 import server.repository.TrayRepository;
 import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.AnimalPart;
+import shared.model.entities.PartType;
 import shared.model.entities.Tray;
 import shared.model.entities.TrayToProductTransfer;
 import shared.model.exceptions.NotFoundException;
@@ -40,17 +39,17 @@ public class TrayService implements TrayRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public Tray registerTray(Tray data) throws PersistenceException, DataIntegrityViolationException {
-    //Overwrite any set id for the Tray, since the database handles this automatically:
-    if(data != null)
-      data.setTray_id(1);
 
     // Validate received data, before passing to repository/database:
     TrayValidation.validateTray(data);
 
+    //Overwrite any set id for the Tray, since the database handles this automatically:
+    data.setTrayId(0);
+
     // Attempt to add Tray to DB:
     try {
       Tray newTray = trayRepository.save(data);
-      logger.info("Tray added to DB with ID: {}", newTray.getTray_id());
+      logger.info("Tray added to DB with ID: {}", newTray.getTrayId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
@@ -58,8 +57,8 @@ public class TrayService implements TrayRegistryInterface
       trayToProductTransferRepository.saveAll(data.getDeliveredToProducts());
 
       // Attempt to add Tray to local cache:
-      trayCache.put(newTray.getTray_id(), newTray);
-      logger.info("Tray saved to local cache with ID: {}", newTray.getTray_id());
+      trayCache.put(newTray.getTrayId(), newTray);
+      logger.info("Tray saved to local cache with ID: {}", newTray.getTrayId());
 
       // Update any associated AnimalPart with this new Tray info:
       for (AnimalPart animalPart : data.getContents()) {
@@ -76,12 +75,13 @@ public class TrayService implements TrayRegistryInterface
       throw new DataIntegrityViolationException("Invalid Tray provided. Incompatible with database!");
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while registering Tray with ID {}: {}", data.getTray_id(), e.getMessage());
+      logger.error("Persistence exception occurred while registering Tray with ID {}: {}", data.getTrayId(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
 
 
+  @Transactional (readOnly = true)
   @Override public Tray readTray(long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
     TrayValidation.validateId(trayId);
@@ -101,9 +101,41 @@ public class TrayService implements TrayRegistryInterface
 
       logger.info("Tray read from database with ID: {}", trayId);
 
+      // Load all associated AnimalParts:
+      List<AnimalPart> animalParts = new ArrayList<>();
+      try {
+        animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!animalParts.isEmpty())
+        tray.addAllAnimalParts(animalParts);
+
+      // Populate the id association list:
+      List<Long> animalPartIds = new ArrayList<>();
+      for (AnimalPart animalPart : tray.getContents())
+        animalPartIds.add(animalPart.getPart_id());
+      tray.setAnimalPartIdList(animalPartIds);
+
+
+      // Load all associated Transfers:
+      List<TrayToProductTransfer> transfers = new ArrayList<>();
+      try {
+        transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching tray_id=" + tray.getTrayId()));
+      } catch (NotFoundException ignored) {}
+
+      if(!transfers.isEmpty())
+        tray.setDeliveredToProducts(transfers);
+
+      // Populate the id association list:
+      List<Long> transferIds = new ArrayList<>();
+      for (TrayToProductTransfer transfer : tray.getDeliveredToProducts())
+        transferIds.add(transfer.getTransferId());
+      tray.setTransferIdList(transferIds);
+
+
       // Add found Tray to local cache, to improve performance next time Tray is requested.
-      trayCache.put(tray.getTray_id(), tray);
-      logger.info("Tray added to local cache with ID: {}", tray.getTray_id());
+      trayCache.put(tray.getTrayId(), tray);
+      logger.info("Tray added to local cache with ID: {}", tray.getTrayId());
       return tray;
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering Tray with ID {}: {}", trayId, e.getMessage());
@@ -120,7 +152,7 @@ public class TrayService implements TrayRegistryInterface
     // Attempt to update Tray in database:
     try {
       // Fetch the existing Entity from DB:
-      Tray tray = trayRepository.findById(data.getTray_id()).orElseThrow(() -> new NotFoundException("No Tray found in database with matching id=" + data.getTray_id()));
+      Tray tray = trayRepository.findById(data.getTrayId()).orElseThrow(() -> new NotFoundException("No Tray found in database with matching id=" + data.getTrayId()));
 
       // Modify the database Entity locally:
       tray.setMaxWeight_kilogram(data.getMaxWeight_kilogram());
@@ -132,7 +164,7 @@ public class TrayService implements TrayRegistryInterface
 
       // Save the modified entity back to database:
       trayRepository.save(tray);
-      logger.info("Tray updated in database with ID: {}", tray.getTray_id());
+      logger.info("Tray updated in database with ID: {}", tray.getTrayId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
@@ -159,8 +191,8 @@ public class TrayService implements TrayRegistryInterface
 
 
       // Attempt to add Tray to local cache:
-      trayCache.put(tray.getTray_id(), tray);
-      logger.info("Tray saved to local cache with ID: {}", tray.getTray_id());
+      trayCache.put(tray.getTrayId(), tray);
+      logger.info("Tray saved to local cache with ID: {}", tray.getTrayId());
 
       return true;
 
@@ -169,7 +201,7 @@ public class TrayService implements TrayRegistryInterface
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while updating Tray with ID {}: {}", data.getTray_id(), e.getMessage());
+      logger.error("Persistence exception occurred while updating Tray with ID {}: {}", data.getTrayId(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -185,18 +217,18 @@ public class TrayService implements TrayRegistryInterface
       trayRepository.delete(data);
 
       // Confirm that the entity has been removed:
-      Optional<Tray> deletedTray = trayRepository.findById(data.getTray_id());
+      Optional<Tray> deletedTray = trayRepository.findById(data.getTrayId());
 
       if(deletedTray.isPresent()) {
         // Tray was not removed from database.
-        logger.info("Tray was NOT deleted from database with ID: {}", data.getTray_id());
-        throw new PersistenceException("Tray with ID " + data.getTray_id() + " was not deleted!");
+        logger.info("Tray was NOT deleted from database with ID: {}", data.getTrayId());
+        throw new PersistenceException("Tray with ID " + data.getTrayId() + " was not deleted!");
       }
 
-      logger.info("Tray deleted from database with ID: {}", data.getTray_id());
+      logger.info("Tray deleted from database with ID: {}", data.getTrayId());
       // Tray was removed from database. Now ensure that is it also removed from the local cache:
-      trayCache.remove(data.getTray_id());
-      logger.info("Tray deleted from local cache with ID: {}", data.getTray_id());
+      trayCache.remove(data.getTrayId());
+      logger.info("Tray deleted from local cache with ID: {}", data.getTrayId());
 
       // Ensure that all associated TrayToProductTransfer transfers are removed:
       //TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
@@ -206,7 +238,7 @@ public class TrayService implements TrayRegistryInterface
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to delete Tray in DB with id: {}, Reason: {}", data.getTray_id(), e.getMessage());
+      logger.error("Unable to delete Tray in DB with id: {}, Reason: {}", data.getTrayId(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
@@ -216,15 +248,54 @@ public class TrayService implements TrayRegistryInterface
   }
 
 
+  @Transactional (readOnly = true)
   @Override public List<Tray> getAllTrays() throws PersistenceException {
     try {
       List<Tray> trays = trayRepository.findAll();
+
+      // Load all associated AnimalParts, for each Tray:
+      for (Tray tray : trays) {
+        List<AnimalPart> animalParts = new ArrayList<>();
+        try {
+          animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!animalParts.isEmpty())
+          tray.addAllAnimalParts(animalParts);
+      }
+
+      // Populate the id association list:
+      for (Tray tray : trays) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : tray.getContents())
+          animalPartIds.add(animalPart.getPart_id());
+        tray.setAnimalPartIdList(animalPartIds);
+      }
+
+      // Load all associated TrayToProductTransfer, for each Tray:
+      for (Tray tray : trays) {
+        List<TrayToProductTransfer> transfers = new ArrayList<>();
+        try {
+          transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching tray_id=" + tray.getTrayId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!transfers.isEmpty())
+          tray.setDeliveredToProducts(transfers);
+      }
+
+      // Populate the id association list:
+      for (Tray tray : trays) {
+        List<Long> transferIds = new ArrayList<>();
+        for (TrayToProductTransfer transfer : tray.getDeliveredToProducts())
+          transferIds.add(transfer.getTransferId());
+        tray.setTransferIdList(transferIds);
+      }
 
       // Add all the found Trays to local cache, to improve performance next time a Tray is requested.
       trayCache.clear();
       for (Tray tray : trays) {
         if(tray != null)
-          trayCache.put(tray.getTray_id(), tray);
+          trayCache.put(tray.getTrayId(), tray);
       }
       logger.info("Added all Trays from Database to Local Cache");
       return trays;

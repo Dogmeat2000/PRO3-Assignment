@@ -5,16 +5,26 @@ import server.controller.grpc.java_to_gRPC.*;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /** Provides a host of static methods for building gRPC compatible application entities from given method/entity arguments/parameters */
 public class GrpcFactory
 {
   public static AnimalData buildGrpcAnimal (BigDecimal weight, List<AnimalPart> animalPartContentList) {
+
+    if(animalPartContentList == null)
+      animalPartContentList = new ArrayList<>();
+
+    List<AnimalPartData> animalPartDataList = new ArrayList<>();
+    for (AnimalPart animalPart : animalPartContentList)
+      animalPartDataList.add(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
     return AnimalData.newBuilder()
         .setAnimalWeight(weight.toString())
         .setAnimalId(1)
-        .addAllAnimalPartList(animalPartContentList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
+        .addAllAnimalPartList(animalPartDataList)
         .build();
   }
 
@@ -24,39 +34,82 @@ public class GrpcFactory
   }
 
 
-  public static AnimalPartData buildGrpcAnimalPartData (long animalPartId, Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) {
+  public static AnimalPartData buildGrpcAnimalPartData (long animalPartId,
+      Animal animal,
+      PartType type,
+      Tray tray,
+      BigDecimal weightInKilogram) {
+
     return AnimalPartData.newBuilder()
-        .setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId, animal.getId(), type.getTypeId(), tray.getTray_id()))
-        .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal))
-        .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(type))
-        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
+        .setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId))
+        .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))
+        .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(type, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))
         .setPartWeight(weightInKilogram.toString())
         .build();
   }
 
 
   public static PartTypeData buildGrpcPartTypeData (String desc, List<AnimalPart> animalPartOfThisTypeList) {
+
+    if(animalPartOfThisTypeList == null)
+      animalPartOfThisTypeList = new ArrayList<>();
+
+    List<AnimalPartData> animalPartDataList = new ArrayList<>();
+    for (AnimalPart animalPart : animalPartOfThisTypeList)
+      animalPartDataList.add(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
     return PartTypeData.newBuilder()
         .setPartDesc(desc)
-        .addAllAnimalPartsOfThisTypeList(animalPartOfThisTypeList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
+        .addAllAnimalPartsOfThisTypeList(animalPartDataList)
         .build();
   }
 
 
   public static TrayData buildGrpcTrayData (BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram, List<AnimalPart> animalPartContentList, List<TrayToProductTransfer> deliveredPartsToProductList) {
+
+    if(animalPartContentList == null)
+      animalPartContentList = new ArrayList<>();
+
+    List<AnimalPartData> animalPartDataList = new ArrayList<>();
+    for (AnimalPart animalPart : animalPartContentList)
+      animalPartDataList.add(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
+    if(deliveredPartsToProductList == null)
+      deliveredPartsToProductList = new ArrayList<>();
+
+    List<TrayToProductTransferData> transferDataList = new ArrayList<>();
+    for (TrayToProductTransfer transferData : deliveredPartsToProductList)
+      transferDataList.add(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transferData, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
     return TrayData.newBuilder()
         .setMaxWeightKilogram(maxWeight_kilogram.toString())
         .setWeightKilogram(weight_kilogram.toString())
-        .addAllAnimalParts(animalPartContentList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
-        .addAllTrayToProducts(deliveredPartsToProductList.stream().map(server.controller.grpc.java_to_gRPC.TrayToProductTransfer_ToGrpc_TrayToProductTransferData::convertToTrayToProductTransferData).toList())
+        .addAllAnimalParts(animalPartDataList)
+        .addAllTrayToProducts(transferDataList)
         .build();
   }
 
 
   public static ProductData buildGrpcProductData (long id, List<AnimalPart> animalPartContentList, List<TrayToProductTransfer> receivedPartsFromTrayList){
+
+    if(animalPartContentList == null)
+      animalPartContentList = new ArrayList<>();
+
+    List<AnimalPartData> animalPartDataList = new ArrayList<>();
+    for (AnimalPart animalPart : animalPartContentList)
+      animalPartDataList.add(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
+    if(receivedPartsFromTrayList == null)
+      receivedPartsFromTrayList = new ArrayList<>();
+
+    List<TrayToProductTransferData> transferDataList = new ArrayList<>();
+    for (TrayToProductTransfer transferData : receivedPartsFromTrayList)
+      transferDataList.add(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transferData, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+
     return ProductData.newBuilder()
-        .addAllAnimalPartList(animalPartContentList.stream().map(server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData::convertToAnimalPartData).toList())
-        .addAllTrayToProductTransfersList(receivedPartsFromTrayList.stream().map(server.controller.grpc.java_to_gRPC.TrayToProductTransfer_ToGrpc_TrayToProductTransferData::convertToTrayToProductTransferData).toList())
+        .addAllAnimalPartList(animalPartDataList)
+        .addAllTrayToProductTransfersList(transferDataList)
         .setProductId(id)
         .build();
   }
@@ -64,8 +117,8 @@ public class GrpcFactory
 
   public static TrayToProductTransferData buildGrpcTrayToProductTransferData (Product product, Tray tray){
     return TrayToProductTransferData.newBuilder()
-        .setProduct(Product_ToGrpc_ProductData.convertToProductData(product))
-        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(product, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))
         .build();
   }
 }

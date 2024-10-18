@@ -15,6 +15,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
+import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
@@ -34,17 +35,17 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the AnimalPart:
-      AnimalPart createdAnimalPart = animalPartService.registerAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request));
+      AnimalPart createdAnimalPart = animalPartService.registerAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
 
       // If animalPart creation fails
       if (createdAnimalPart == null)
         throw new CreateFailedException("AnimalPart could not be created");
 
       // Translate the created AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart));
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -52,26 +53,104 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   @Override
   public void readAnimalPart(AnimalPartId request, StreamObserver<AnimalPartData> responseObserver) {
     try {
-      // Translate received gRPC information from the client, into Java compatible types:
-      long animalPartId = request.getAnimalPartId();
-      long animalId = GrpcId_To_LongId.ConvertToLongId(request.getAnimalId());
-      long typeId = GrpcId_To_LongId.ConvertToLongId(request.getAnimalId());
-      long trayId = GrpcId_To_LongId.ConvertToLongId(request.getAnimalId());
-
       // Attempt to read the AnimalPart with the provided ID:
-      AnimalPart animalPart = animalPartService.readAnimalPart(animalPartId, animalId, typeId, trayId);
+      AnimalPart animalPart = animalPartService.readAnimalPart(GrpcId_To_LongId.ConvertToLongId(request));
 
       // If AnimalPart read failed:
       if (animalPart == null)
         throw new NotFoundException("AnimalPart not found");
 
       // Translate the found AnimalPart into a gRPC compatible type, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart));
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart with id " + request.getAnimalPartId() + "not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error reading AnimalPart").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error reading AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
+    }
+  }
+
+
+  @Override
+  public void readAnimalPartsByAnimalId(AnimalId request, StreamObserver<AnimalPartsData> responseObserver) {
+    try {
+      // Attempt to retrieve all AnimalParts:
+      List<AnimalPart> animalParts = animalPartService.readAnimalPartsByAnimalId(GrpcId_To_LongId.ConvertToLongId(request));
+
+      // If no AnimalParts were found:
+      if (animalParts == null || animalParts.isEmpty())
+        throw new NotFoundException("No AnimalParts associated with animal_id '" + request.getAnimalId() + "' found.");
+
+      // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onCompleted();
+    } catch (NotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with animal_id '" + request.getAnimalId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+    }
+  }
+
+
+  @Override
+  public void readAnimalPartsByPartTypeId(PartTypeId request, StreamObserver<AnimalPartsData> responseObserver) {
+    try {
+      // Attempt to retrieve all AnimalParts:
+      List<AnimalPart> animalParts = animalPartService.readAnimalPartsByPartTypeId(GrpcId_To_LongId.ConvertToLongId(request));
+
+      // If no AnimalParts were found:
+      if (animalParts == null || animalParts.isEmpty())
+        throw new NotFoundException("No AnimalParts associated with partType_id '" + request.getPartTypeId() + "' found.");
+
+      // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onCompleted();
+    } catch (NotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with partType_id '" + request.getPartTypeId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+    }
+  }
+
+
+  @Override
+  public void readAnimalPartsByProductId(ProductId request, StreamObserver<AnimalPartsData> responseObserver) {
+    try {
+      // Attempt to retrieve all AnimalParts:
+      List<AnimalPart> animalParts = animalPartService.readAnimalPartsByProductId(GrpcId_To_LongId.ConvertToLongId(request));
+
+      // If no AnimalParts were found:
+      if (animalParts == null || animalParts.isEmpty())
+        throw new NotFoundException("No AnimalParts associated with product_id '" + request.getProductId() + "' found.");
+
+      // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onCompleted();
+    } catch (NotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with product_id '" + request.getProductId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+    }
+  }
+
+
+  @Override
+  public void readAnimalPartsByTrayId(TrayId request, StreamObserver<AnimalPartsData> responseObserver) {
+    try {
+      // Attempt to retrieve all AnimalParts:
+      List<AnimalPart> animalParts = animalPartService.readAnimalPartsByTrayId(GrpcId_To_LongId.ConvertToLongId(request));
+
+      // If no AnimalParts were found:
+      if (animalParts == null || animalParts.isEmpty())
+        throw new NotFoundException("No AnimalParts associated with tray_id '" + request.getTrayId() + "' found.");
+
+      // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onCompleted();
+    } catch (NotFoundException e) {
+      responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with tray_id '" + request.getTrayId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -80,8 +159,8 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types:
-      AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData());
-      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData());
+      AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
       // and attempt to update the AnimalPart with the provided ID:
       if (!animalPartService.updateAnimalPart(oldAnimalPart, newAnimalPart)) {
         // If AnimalPart update failed:
@@ -94,7 +173,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getOldData().getAnimalPartId() + "'").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getOldData().getAnimalPartId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -104,7 +183,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the AnimalPart with the provided ID:
-      if(!animalPartService.removeAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request))) {
+      if(!animalPartService.removeAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
         // If AnimalPart deletion failed:
         throw new DeleteFailedException("Error occurred while deleting AnimalPart with id='" + request.getAnimalPartId() + "'");
       }
@@ -115,7 +194,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting AnimalPart").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error deleting AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -136,7 +215,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No AnimalParts found").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts").withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 }
