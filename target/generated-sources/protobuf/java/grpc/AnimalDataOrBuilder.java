@@ -28,26 +28,31 @@ public interface AnimalDataOrBuilder extends
       getAnimalWeightBytes();
 
   /**
-   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   * <pre>
+   * repeated AnimalPartData animalPartList = 3;
+   * </pre>
+   *
+   * <code>repeated int64 animalPartIds = 3;</code>
+   * @return A list containing the animalPartIds.
    */
-  java.util.List<grpc.AnimalPartData> 
-      getAnimalPartListList();
+  java.util.List<java.lang.Long> getAnimalPartIdsList();
   /**
-   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   * <pre>
+   * repeated AnimalPartData animalPartList = 3;
+   * </pre>
+   *
+   * <code>repeated int64 animalPartIds = 3;</code>
+   * @return The count of animalPartIds.
    */
-  grpc.AnimalPartData getAnimalPartList(int index);
+  int getAnimalPartIdsCount();
   /**
-   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
+   * <pre>
+   * repeated AnimalPartData animalPartList = 3;
+   * </pre>
+   *
+   * <code>repeated int64 animalPartIds = 3;</code>
+   * @param index The index of the element to return.
+   * @return The animalPartIds at the given index.
    */
-  int getAnimalPartListCount();
-  /**
-   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
-   */
-  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
-      getAnimalPartListOrBuilderList();
-  /**
-   * <code>repeated .grpc.AnimalPartData animalPartList = 3;</code>
-   */
-  grpc.AnimalPartDataOrBuilder getAnimalPartListOrBuilder(
-      int index);
+  long getAnimalPartIds(int index);
 }

@@ -12,7 +12,8 @@ message EmptyMessage {
 message AnimalData {
   int64 animalId = 1;
   string animalWeight = 2;
-  repeated AnimalPartData animalPartList = 3;
+  repeated int64 animalPartIds = 3;
+  //repeated AnimalPartData animalPartList = 3;
 }
 
 
@@ -58,8 +59,10 @@ message TrayData {
   int64 trayId = 1;
   string maxWeight_kilogram = 2;
   string weight_kilogram = 3;
-  repeated AnimalPartData animalParts = 4;
-  repeated TrayToProductTransferData trayToProducts = 5;
+  repeated int64 animalPartIds = 4;
+  repeated int64 transferIds = 5;
+  //repeated AnimalPartData animalParts = 4;
+  //repeated TrayToProductTransferData trayToProducts = 5;
 }
 
 
@@ -77,7 +80,8 @@ message TraysData {
 message PartTypeData {
   int64 partTypeId = 1;
   string partDesc = 2;
-  repeated AnimalPartData animalPartsOfThisTypeList = 3;
+  repeated int64 animalPartIds = 3;
+  //repeated AnimalPartData animalPartsOfThisTypeList = 3;
 }
 
 
@@ -94,8 +98,10 @@ message PartTypesData {
 // Product entity:
 message ProductData {
   int64 productId = 1;
-  repeated TrayToProductTransferData trayToProductTransfersList = 2;
-  repeated AnimalPartData animalPartList = 3;
+  repeated int64 animalPartIds = 2;
+  repeated int64 transferIds = 3;
+  //repeated TrayToProductTransferData trayToProductTransfersList = 2;
+  //repeated AnimalPartData animalPartList = 3;
 }
 
 
@@ -111,15 +117,16 @@ message ProductsData {
 
 // TrayToProductTransfer entity:
 message TrayToProductTransferData {
-  TrayData tray = 1;
-  ProductData product = 2;
+  int64 transferId = 1;
+  TrayData tray = 2;
+  ProductData product = 3;
 }
 
 
-message TrayToProductTransferId {
+/*message TrayToProductTransferId {
   ProductId productId = 1;
   TrayId trayId = 2;
-}
+}*/
 
 
 message TrayToProductTransfersData {

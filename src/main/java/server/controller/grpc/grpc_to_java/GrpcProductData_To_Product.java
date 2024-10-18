@@ -12,48 +12,18 @@ import java.util.Map;
 public class GrpcProductData_To_Product
 {
     /** Converts database/gRPC compatible ProductData information into an application compatible Product entity */
-    public static Product convertToProduct(ProductData productData,
-        Map<String, AnimalPart> animalPartCache,
-        Map<String, Animal> animalCache,
-        Map<String, PartType> partTypeCache,
-        Map<String, Product> productCache,
-        Map<String, Tray> trayCache) {
+    public static Product convertToProduct(ProductData productData) {
 
       if (productData == null)
         return null;
 
-      // Utilize an embedded cache, to avoid both stale data and infinite recursion. In cases where other conversion algorithms
-      // call this conversion, the value inside the cache will simply be used once converted,
-      // instead of an infinite recursive attempt:
-      String hashKey = "" + productData.getProductId();
-      if(productCache.containsKey(hashKey))
-        return productCache.get(hashKey);
-
-      // If not already cached, create an initial placeholder cached version, to avoid infinite recursion:
+      // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
       long id = productData.getProductId();
-      Product productPlaceHolder = new Product(id, null, null);
-
-      // Cache the placeholder:
-      productCache.put(hashKey, productPlaceHolder);
-
-      // Convert the remaining gRPC data fields:
-      List<AnimalPart> animalPartList = new ArrayList<>();
-      for (AnimalPartData animalDataPart : productData.getAnimalPartListList())
-        animalPartList.add(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(animalDataPart, animalPartCache, animalCache, partTypeCache, productCache, trayCache));
-
-      List<TrayToProductTransfer> transferList = new ArrayList<>();
-      for (TrayToProductTransferData transfer : productData.getTrayToProductTransfersListList())
-        transferList.add(GrpcTrayToProductTransferData_To_TrayToProductTransfer.convertToTrayToProductTransfer(transfer, animalPartCache, animalCache, partTypeCache, productCache, trayCache));
+      List<Long> animalPartIdList = new ArrayList<>(productData.getAnimalPartIdsList());
+      List<Long> transferIdList = new ArrayList<>(productData.getTransferIdsList());
 
       // Construct and return a new Product entity with the above read attributes set:
-      Product product = productPlaceHolder.copy();
-      product.getContentList().addAll(animalPartList);
-      product.getTraySupplyJoinList().addAll(transferList);
-
-      // Put the final entity into the cache:
-      productCache.put(hashKey, product);
-
-      return product;
+      return new Product(id, animalPartIdList, transferIdList);
     }
 
 
@@ -62,7 +32,7 @@ public class GrpcProductData_To_Product
 
       // Convert List of ProductsData to a java compatible list by iteration through each entry and running the method previously declared:
       for (ProductData productData : data.getProductsList())
-        productList.add(convertToProduct(productData, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+        productList.add(convertToProduct(productData));
 
       // return a new List of Product entities:
       return productList;

@@ -50,16 +50,16 @@ public class Product implements Serializable
   }
 
 
-  public Product(long id, List<AnimalPart> contentList, List<TrayToProductTransfer> traySupplyJoinList) {
+  public Product(long id, List<Long> contentIdList, List<Long> transferIdList) {
     setProductId(id);
 
-    this.contentList = new ArrayList<>();
-    if(contentList != null)
-      getContentList().addAll(contentList);
+    this.animalPartIdList = new ArrayList<>();
+    if(contentIdList != null)
+      getAnimalPartIdList().addAll(contentIdList);
 
-    this.traySupplyJoinList = new ArrayList<>();
-    if(traySupplyJoinList != null)
-      getTraySupplyJoinList().addAll(traySupplyJoinList);
+    this.transferIdList = new ArrayList<>();
+    if(transferIdList != null)
+      getTransferIdList().addAll(transferIdList);
   }
 
 
@@ -168,6 +168,6 @@ public class Product implements Serializable
   }
 
   public Product copy() {
-    return new Product(getProductId(), getContentList(), getTraySupplyJoinList());
+    return new Product(getProductId(), getAnimalPartIdList(), getTransferIdList());
   }
 }

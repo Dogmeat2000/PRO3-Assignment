@@ -44,7 +44,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalData createdAnimal = stub.registerAnimal(data);
 
       // Convert, and return, the AnimalData that was added to the DB into an application compatible format:
-      return GrpcAnimalData_To_Animal.convertToAnimal(createdAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcAnimalData_To_Animal.convertToAnimal(createdAnimal);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register animal with weight '" + weightInKilogram + "' (" + e.getMessage() + ")");
@@ -70,7 +70,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalData foundAnimal = stub.readAnimal(id);
 
       // Convert, and return, the AnimalData that was read from the DB into an application compatible format:
-      return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No animal found with id '" + animalId + "' (" + e.getMessage() + ")");

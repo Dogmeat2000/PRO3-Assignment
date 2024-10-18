@@ -10,32 +10,38 @@ public interface TrayToProductTransferDataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>int64 transferId = 1;</code>
+   * @return The transferId.
+   */
+  long getTransferId();
+
+  /**
+   * <code>.grpc.TrayData tray = 2;</code>
    * @return Whether the tray field is set.
    */
   boolean hasTray();
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>.grpc.TrayData tray = 2;</code>
    * @return The tray.
    */
   grpc.TrayData getTray();
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>.grpc.TrayData tray = 2;</code>
    */
   grpc.TrayDataOrBuilder getTrayOrBuilder();
 
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    * @return Whether the product field is set.
    */
   boolean hasProduct();
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    * @return The product.
    */
   grpc.ProductData getProduct();
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    */
   grpc.ProductDataOrBuilder getProductOrBuilder();
 }

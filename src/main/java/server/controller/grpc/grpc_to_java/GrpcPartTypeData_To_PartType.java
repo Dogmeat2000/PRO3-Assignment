@@ -14,43 +14,19 @@ import java.util.Map;
 public class GrpcPartTypeData_To_PartType
 {
     /** Converts database/gRPC compatible PartTypeData information into an application compatible PartType entity */
-    public static PartType convertToPartType(PartTypeData partTypeData,
-        Map<String, AnimalPart> animalPartCache,
-        Map<String, Animal> animalCache,
-        Map<String, PartType> partTypeCache,
-        Map<String, Product> productCache,
-        Map<String, Tray> trayCache) {
+    public static PartType convertToPartType(PartTypeData partTypeData) {
 
       if (partTypeData == null)
         return null;
 
-      // Utilize an embedded cache, to avoid both stale data and infinite recursion. In cases where other conversion algorithms
-      // call this conversion, the value inside the cache will simply be used once converted,
-      // instead of an infinite recursive attempt:
-      String hashKey = "" + partTypeData.getPartTypeId();
-      if(partTypeCache.containsKey(hashKey))
-        return partTypeCache.get(hashKey);
-
-      // If not already cached, create an initial placeholder cached version, to avoid infinite recursion:
+      // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
       long id = partTypeData.getPartTypeId();
       String desc = partTypeData.getPartDesc();
-      PartType partPlaceHolder = new PartType(id, desc);
-
-      // Cache the placeholder:
-      partTypeCache.put(hashKey, partPlaceHolder);
-
-      // Convert the remaining gRPC data fields:
-      List<AnimalPart> animalPartList = new ArrayList<>();
-      for (AnimalPartData animalPartData : partTypeData.getAnimalPartsOfThisTypeListList())
-        animalPartList.add(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(animalPartData, animalPartCache, animalCache, partTypeCache, productCache, trayCache));
-
+      List<Long> animalPartIdList = new ArrayList<>(partTypeData.getAnimalPartIdsList());
 
       // Construct a new PartType entity with the above read attributes set:
-      PartType partType = partPlaceHolder.copy();
-      partType.getPartList().addAll(animalPartList);
-
-      // Put the final entity into the cache:
-      partTypeCache.put(hashKey, partType);
+      PartType partType = new PartType(id, desc);
+      partType.setAnimalPartIdList(animalPartIdList);
 
       return partType;
     }
@@ -61,7 +37,7 @@ public class GrpcPartTypeData_To_PartType
 
       // Convert List of PartTypesData to a java compatible list by iteration through each entry and running the method previously declared:
       for (PartTypeData partTypeData : data.getPartTypesList())
-        partTypeList.add(convertToPartType(partTypeData, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+        partTypeList.add(convertToPartType(partTypeData));
 
       // return a new List of PartType entities:
       return partTypeList;

@@ -46,7 +46,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
       AnimalPartData createdAnimalPart = stub.registerAnimalPart(data);
 
       // Convert, and return, the AnimalData that was added to the DB into an application compatible format:
-      return GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(createdAnimalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(createdAnimalPart);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register AnimalPart with weight '" + weightInKilogram + "' (" + e.getMessage() + ")");
@@ -72,7 +72,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
       AnimalPartData foundAnimalPart = stub.readAnimalPart(id);
 
       // Convert, and return, the AnimalPartData that was read from the DB into an application compatible format:
-      return GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(foundAnimalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(foundAnimalPart);
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No animalPart found with id '" + animalPartId + "' (" + e.getMessage() + ")");

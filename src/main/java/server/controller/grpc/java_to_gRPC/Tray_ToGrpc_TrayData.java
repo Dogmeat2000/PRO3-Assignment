@@ -17,60 +17,19 @@ public class Tray_ToGrpc_TrayData
      * @param tray The Tray entity to convert
      * @return a gRPC compatible TrayData data type.
      * */
-    public static TrayData convertToTrayData(Tray tray,
-        Map<String, AnimalPartData> animalPartDataCache,
-        Map<String, AnimalData> animalDataCache,
-        Map<String, PartTypeData> partTypeDataCache,
-        Map<String, ProductData> productDataCache,
-        Map<String, TrayData> trayDataCache) {
+    public static TrayData convertToTrayData(Tray tray) {
 
       if (tray == null)
         return null;
 
-      // Utilize an embedded cache, to avoid both stale data and infinite recursion. In cases where other conversion algorithms
-      // call this conversion, the value inside the cache will simply be used once converted,
-      // instead of an infinite recursive attempt:
-      String hashKey = "" + tray.getTrayId();
-      if(trayDataCache.containsKey(hashKey))
-        return trayDataCache.get(hashKey);
-
-      // If not already cached, create an initial placeholder cached version, to avoid infinite recursion:
-      TrayData.Builder trayDataPlaceHolderBuilder = TrayData.newBuilder()
+      // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
+      return TrayData.newBuilder()
           .setTrayId(tray.getTrayId())
           .setMaxWeightKilogram(tray.getMaxWeight_kilogram().toString())
-          .setWeightKilogram(tray.getWeight_kilogram().toString());
-
-      // Cache the placeholder:
-      trayDataCache.put(hashKey, trayDataPlaceHolderBuilder.build());
-
-      // Convert the remaining data fields:
-      List<AnimalPart> partList = tray.getContents();
-      List<TrayToProductTransfer> transferList = tray.getDeliveredToProducts();
-
-      if(partList == null)
-        partList = new ArrayList<>();
-
-      List<AnimalPartData> animalPartDataList = new ArrayList<>();
-      for (AnimalPart animalPart : partList)
-        animalPartDataList.add(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, animalPartDataCache, animalDataCache, partTypeDataCache, productDataCache, trayDataCache));
-
-
-      if(transferList == null)
-        transferList = new ArrayList<>();
-
-      List<TrayToProductTransferData> transferDataList = new ArrayList<>();
-      for (TrayToProductTransfer transfer : transferList)
-        transferDataList.add(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, animalPartDataCache, animalDataCache, partTypeDataCache, productDataCache, trayDataCache));
-
-      TrayData trayData = trayDataPlaceHolderBuilder
-          .addAllAnimalParts(animalPartDataList)
-          .addAllTrayToProducts(transferDataList)
+          .setWeightKilogram(tray.getWeight_kilogram().toString())
+          .addAllAnimalPartIds(tray.getAnimalPartIdList())
+          .addAllTransferIds(tray.getTransferIdList())
           .build();
-
-      // Replace the cached placeholder with the final version of this entity:
-      trayDataCache.put(hashKey, trayData);
-
-      return trayData;
     }
 
 
@@ -82,7 +41,7 @@ public class Tray_ToGrpc_TrayData
 
       // Convert List of Trays to a gRPC compatible list by iteration through each entry and running the method previously declared:
       for (Tray tray : trays)
-        trayDataList.add(convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+        trayDataList.add(convertToTrayData(tray));
 
       // Construct and return a new List of TrayData entities:
       return TraysData.newBuilder().addAllTrays(trayDataList).build();

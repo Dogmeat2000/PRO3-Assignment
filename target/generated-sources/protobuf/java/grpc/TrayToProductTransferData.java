@@ -47,10 +47,21 @@ private static final long serialVersionUID = 0L;
   }
 
   private int bitField0_;
-  public static final int TRAY_FIELD_NUMBER = 1;
+  public static final int TRANSFERID_FIELD_NUMBER = 1;
+  private long transferId_ = 0L;
+  /**
+   * <code>int64 transferId = 1;</code>
+   * @return The transferId.
+   */
+  @java.lang.Override
+  public long getTransferId() {
+    return transferId_;
+  }
+
+  public static final int TRAY_FIELD_NUMBER = 2;
   private grpc.TrayData tray_;
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>.grpc.TrayData tray = 2;</code>
    * @return Whether the tray field is set.
    */
   @java.lang.Override
@@ -58,7 +69,7 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>.grpc.TrayData tray = 2;</code>
    * @return The tray.
    */
   @java.lang.Override
@@ -66,17 +77,17 @@ private static final long serialVersionUID = 0L;
     return tray_ == null ? grpc.TrayData.getDefaultInstance() : tray_;
   }
   /**
-   * <code>.grpc.TrayData tray = 1;</code>
+   * <code>.grpc.TrayData tray = 2;</code>
    */
   @java.lang.Override
   public grpc.TrayDataOrBuilder getTrayOrBuilder() {
     return tray_ == null ? grpc.TrayData.getDefaultInstance() : tray_;
   }
 
-  public static final int PRODUCT_FIELD_NUMBER = 2;
+  public static final int PRODUCT_FIELD_NUMBER = 3;
   private grpc.ProductData product_;
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    * @return Whether the product field is set.
    */
   @java.lang.Override
@@ -84,7 +95,7 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000002) != 0);
   }
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    * @return The product.
    */
   @java.lang.Override
@@ -92,7 +103,7 @@ private static final long serialVersionUID = 0L;
     return product_ == null ? grpc.ProductData.getDefaultInstance() : product_;
   }
   /**
-   * <code>.grpc.ProductData product = 2;</code>
+   * <code>.grpc.ProductData product = 3;</code>
    */
   @java.lang.Override
   public grpc.ProductDataOrBuilder getProductOrBuilder() {
@@ -113,11 +124,14 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (transferId_ != 0L) {
+      output.writeInt64(1, transferId_);
+    }
     if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeMessage(1, getTray());
+      output.writeMessage(2, getTray());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
-      output.writeMessage(2, getProduct());
+      output.writeMessage(3, getProduct());
     }
     getUnknownFields().writeTo(output);
   }
@@ -128,13 +142,17 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (transferId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(1, transferId_);
+    }
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, getTray());
+        .computeMessageSize(2, getTray());
     }
     if (((bitField0_ & 0x00000002) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getProduct());
+        .computeMessageSize(3, getProduct());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -151,6 +169,8 @@ private static final long serialVersionUID = 0L;
     }
     grpc.TrayToProductTransferData other = (grpc.TrayToProductTransferData) obj;
 
+    if (getTransferId()
+        != other.getTransferId()) return false;
     if (hasTray() != other.hasTray()) return false;
     if (hasTray()) {
       if (!getTray()
@@ -172,6 +192,9 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + TRANSFERID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getTransferId());
     if (hasTray()) {
       hash = (37 * hash) + TRAY_FIELD_NUMBER;
       hash = (53 * hash) + getTray().hashCode();
@@ -322,6 +345,7 @@ private static final long serialVersionUID = 0L;
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
+      transferId_ = 0L;
       tray_ = null;
       if (trayBuilder_ != null) {
         trayBuilder_.dispose();
@@ -365,14 +389,17 @@ private static final long serialVersionUID = 0L;
 
     private void buildPartial0(grpc.TrayToProductTransferData result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.transferId_ = transferId_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.tray_ = trayBuilder_ == null
             ? tray_
             : trayBuilder_.build();
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.product_ = productBuilder_ == null
             ? product_
             : productBuilder_.build();
@@ -393,6 +420,9 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(grpc.TrayToProductTransferData other) {
       if (other == grpc.TrayToProductTransferData.getDefaultInstance()) return this;
+      if (other.getTransferId() != 0L) {
+        setTransferId(other.getTransferId());
+      }
       if (other.hasTray()) {
         mergeTray(other.getTray());
       }
@@ -425,20 +455,25 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
-            case 10: {
-              input.readMessage(
-                  getTrayFieldBuilder().getBuilder(),
-                  extensionRegistry);
+            case 8: {
+              transferId_ = input.readInt64();
               bitField0_ |= 0x00000001;
               break;
-            } // case 10
+            } // case 8
             case 18: {
               input.readMessage(
-                  getProductFieldBuilder().getBuilder(),
+                  getTrayFieldBuilder().getBuilder(),
                   extensionRegistry);
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 26: {
+              input.readMessage(
+                  getProductFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -456,18 +491,50 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
+    private long transferId_ ;
+    /**
+     * <code>int64 transferId = 1;</code>
+     * @return The transferId.
+     */
+    @java.lang.Override
+    public long getTransferId() {
+      return transferId_;
+    }
+    /**
+     * <code>int64 transferId = 1;</code>
+     * @param value The transferId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTransferId(long value) {
+
+      transferId_ = value;
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 transferId = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTransferId() {
+      bitField0_ = (bitField0_ & ~0x00000001);
+      transferId_ = 0L;
+      onChanged();
+      return this;
+    }
+
     private grpc.TrayData tray_;
     private com.google.protobuf.SingleFieldBuilder<
         grpc.TrayData, grpc.TrayData.Builder, grpc.TrayDataOrBuilder> trayBuilder_;
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      * @return Whether the tray field is set.
      */
     public boolean hasTray() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      * @return The tray.
      */
     public grpc.TrayData getTray() {
@@ -478,7 +545,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public Builder setTray(grpc.TrayData value) {
       if (trayBuilder_ == null) {
@@ -489,12 +556,12 @@ private static final long serialVersionUID = 0L;
       } else {
         trayBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public Builder setTray(
         grpc.TrayData.Builder builderForValue) {
@@ -503,16 +570,16 @@ private static final long serialVersionUID = 0L;
       } else {
         trayBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public Builder mergeTray(grpc.TrayData value) {
       if (trayBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0) &&
+        if (((bitField0_ & 0x00000002) != 0) &&
           tray_ != null &&
           tray_ != grpc.TrayData.getDefaultInstance()) {
           getTrayBuilder().mergeFrom(value);
@@ -523,16 +590,16 @@ private static final long serialVersionUID = 0L;
         trayBuilder_.mergeFrom(value);
       }
       if (tray_ != null) {
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       return this;
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public Builder clearTray() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000002);
       tray_ = null;
       if (trayBuilder_ != null) {
         trayBuilder_.dispose();
@@ -542,15 +609,15 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public grpc.TrayData.Builder getTrayBuilder() {
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000002;
       onChanged();
       return getTrayFieldBuilder().getBuilder();
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     public grpc.TrayDataOrBuilder getTrayOrBuilder() {
       if (trayBuilder_ != null) {
@@ -561,7 +628,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.grpc.TrayData tray = 1;</code>
+     * <code>.grpc.TrayData tray = 2;</code>
      */
     private com.google.protobuf.SingleFieldBuilder<
         grpc.TrayData, grpc.TrayData.Builder, grpc.TrayDataOrBuilder> 
@@ -581,14 +648,14 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilder<
         grpc.ProductData, grpc.ProductData.Builder, grpc.ProductDataOrBuilder> productBuilder_;
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      * @return Whether the product field is set.
      */
     public boolean hasProduct() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      * @return The product.
      */
     public grpc.ProductData getProduct() {
@@ -599,7 +666,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public Builder setProduct(grpc.ProductData value) {
       if (productBuilder_ == null) {
@@ -610,12 +677,12 @@ private static final long serialVersionUID = 0L;
       } else {
         productBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public Builder setProduct(
         grpc.ProductData.Builder builderForValue) {
@@ -624,16 +691,16 @@ private static final long serialVersionUID = 0L;
       } else {
         productBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public Builder mergeProduct(grpc.ProductData value) {
       if (productBuilder_ == null) {
-        if (((bitField0_ & 0x00000002) != 0) &&
+        if (((bitField0_ & 0x00000004) != 0) &&
           product_ != null &&
           product_ != grpc.ProductData.getDefaultInstance()) {
           getProductBuilder().mergeFrom(value);
@@ -644,16 +711,16 @@ private static final long serialVersionUID = 0L;
         productBuilder_.mergeFrom(value);
       }
       if (product_ != null) {
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       return this;
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public Builder clearProduct() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       product_ = null;
       if (productBuilder_ != null) {
         productBuilder_.dispose();
@@ -663,15 +730,15 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public grpc.ProductData.Builder getProductBuilder() {
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       onChanged();
       return getProductFieldBuilder().getBuilder();
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     public grpc.ProductDataOrBuilder getProductOrBuilder() {
       if (productBuilder_ != null) {
@@ -682,7 +749,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.grpc.ProductData product = 2;</code>
+     * <code>.grpc.ProductData product = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilder<
         grpc.ProductData, grpc.ProductData.Builder, grpc.ProductDataOrBuilder> 

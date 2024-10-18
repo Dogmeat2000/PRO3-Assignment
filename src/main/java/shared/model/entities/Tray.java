@@ -61,17 +61,20 @@ public class Tray implements Serializable
   }
 
 
-  public Tray(Long trayId, BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram, List<AnimalPart> contents, List<TrayToProductTransfer> deliveredToProducts) {
+  public Tray(Long trayId, BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram, List<Long> contentIdList, List<Long> transferIdList) {
     setTrayId(trayId);
     setMaxWeight_kilogram(maxWeight_kilogram);
     setWeight_kilogram(weight_kilogram);
-    this.deliveredToProducts = new ArrayList<>();
-    if(deliveredToProducts != null && !deliveredToProducts.isEmpty())
-      this.deliveredToProducts.addAll(deliveredToProducts);
-
+    setDeliveredToProducts(new ArrayList<>());
     this.contents = new ArrayList<>();
-    if(contents != null && !contents.isEmpty())
-      this.contents.addAll(contents);
+
+    this.animalPartIdList = new ArrayList<>();
+    if(contentIdList != null && !contentIdList.isEmpty())
+      this.animalPartIdList.addAll(contentIdList);
+
+    this.transferIdList = new ArrayList<>();
+    if(transferIdList != null && !transferIdList.isEmpty())
+      this.transferIdList.addAll(transferIdList);
   }
 
 

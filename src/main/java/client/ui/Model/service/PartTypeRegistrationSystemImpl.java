@@ -43,7 +43,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData createdPartType = stub.registerPartType(data);
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
-      return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register PartType with desc '" + desc + "' (" + e.getMessage() + ")");
@@ -69,7 +69,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData foundPartType = stub.readPartType(id);
 
       // Convert, and return, the PartTypeData that was read from the DB into an application compatible format:
-      return GrpcPartTypeData_To_PartType.convertToPartType(foundPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcPartTypeData_To_PartType.convertToPartType(foundPartType);
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No PartType found with id '" + typeId + "' (" + e.getMessage() + ")");

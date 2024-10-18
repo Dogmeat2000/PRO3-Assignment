@@ -40,50 +40,51 @@ public interface TrayDataOrBuilder extends
       getWeightKilogramBytes();
 
   /**
-   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
+   * <code>repeated int64 animalPartIds = 4;</code>
+   * @return A list containing the animalPartIds.
    */
-  java.util.List<grpc.AnimalPartData> 
-      getAnimalPartsList();
+  java.util.List<java.lang.Long> getAnimalPartIdsList();
   /**
-   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
+   * <code>repeated int64 animalPartIds = 4;</code>
+   * @return The count of animalPartIds.
    */
-  grpc.AnimalPartData getAnimalParts(int index);
+  int getAnimalPartIdsCount();
   /**
-   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
+   * <code>repeated int64 animalPartIds = 4;</code>
+   * @param index The index of the element to return.
+   * @return The animalPartIds at the given index.
    */
-  int getAnimalPartsCount();
-  /**
-   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
-   */
-  java.util.List<? extends grpc.AnimalPartDataOrBuilder> 
-      getAnimalPartsOrBuilderList();
-  /**
-   * <code>repeated .grpc.AnimalPartData animalParts = 4;</code>
-   */
-  grpc.AnimalPartDataOrBuilder getAnimalPartsOrBuilder(
-      int index);
+  long getAnimalPartIds(int index);
 
   /**
-   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   * <pre>
+   * repeated AnimalPartData animalParts = 4;
+   * repeated TrayToProductTransferData trayToProducts = 5;
+   * </pre>
+   *
+   * <code>repeated int64 transferIds = 5;</code>
+   * @return A list containing the transferIds.
    */
-  java.util.List<grpc.TrayToProductTransferData> 
-      getTrayToProductsList();
+  java.util.List<java.lang.Long> getTransferIdsList();
   /**
-   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   * <pre>
+   * repeated AnimalPartData animalParts = 4;
+   * repeated TrayToProductTransferData trayToProducts = 5;
+   * </pre>
+   *
+   * <code>repeated int64 transferIds = 5;</code>
+   * @return The count of transferIds.
    */
-  grpc.TrayToProductTransferData getTrayToProducts(int index);
+  int getTransferIdsCount();
   /**
-   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
+   * <pre>
+   * repeated AnimalPartData animalParts = 4;
+   * repeated TrayToProductTransferData trayToProducts = 5;
+   * </pre>
+   *
+   * <code>repeated int64 transferIds = 5;</code>
+   * @param index The index of the element to return.
+   * @return The transferIds at the given index.
    */
-  int getTrayToProductsCount();
-  /**
-   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
-   */
-  java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
-      getTrayToProductsOrBuilderList();
-  /**
-   * <code>repeated .grpc.TrayToProductTransferData trayToProducts = 5;</code>
-   */
-  grpc.TrayToProductTransferDataOrBuilder getTrayToProductsOrBuilder(
-      int index);
+  long getTransferIds(int index);
 }

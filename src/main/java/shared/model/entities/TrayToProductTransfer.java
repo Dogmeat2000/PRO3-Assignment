@@ -49,9 +49,10 @@ public class TrayToProductTransfer
   }
 
 
-  public TrayToProductTransfer(Tray tray, Product product) {
-    this.tray = tray;
-    this.product = product;
+  public TrayToProductTransfer(long transferId, Tray tray, Product product) {
+    setTransferId(transferId);
+    setTray(tray);
+    setProduct(product);
   }
 
 
@@ -70,8 +71,6 @@ public class TrayToProductTransfer
 
   public void setTray(Tray tray) {
     this.tray = tray;
-    //getId().setTray_id(tray.getTrayId());
-    //setTray_id(tray.getTray_id());
   }
 
 
@@ -82,8 +81,6 @@ public class TrayToProductTransfer
 
   public void setProduct(Product product) {
     this.product = product;
-    //getId().setProduct_id(product.getProductId());
-    //setProduct_id(product.getProduct_id());
   }
 
 

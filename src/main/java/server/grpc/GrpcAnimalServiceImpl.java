@@ -36,7 +36,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Animal:
-      Animal createdAnimal = animalService.registerAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      Animal createdAnimal = animalService.registerAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request));
 
       // If animal creation fails
       if (createdAnimal == null)
@@ -78,7 +78,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Animal with the provided ID:
-      if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {
         // If Animal update failed:
         throw new UpdateFailedException("Error occurred while updated animal with id='" + request.getAnimalId() + "'");
       }
@@ -99,7 +99,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Animal with the provided ID:
-      if(!animalService.removeAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if(!animalService.removeAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {
         // If Animal deletion failed:
         throw new DeleteFailedException("Error occurred while deleting animal with id='" + request.getAnimalId() + "'");
       }

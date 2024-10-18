@@ -44,7 +44,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData createdTray = stub.registerTray(data);
 
       // Convert, and return, the Tray that was added to the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(createdTray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcTrayData_To_Tray.convertToTray(createdTray);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register Tray with maxWeight '" + maxWeight_kilogram + "kg' and currentWeight '" + currentWeight_kilogram + "kg'. (" + e.getMessage() + ")");
@@ -70,7 +70,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData foundTray = stub.readTray(id);
 
       // Convert, and return, the TrayData that was read from the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(foundTray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      return GrpcTrayData_To_Tray.convertToTray(foundTray);
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No Tray found with id '" + trayId + "' (" + e.getMessage() + ")");

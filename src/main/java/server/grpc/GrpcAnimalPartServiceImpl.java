@@ -35,7 +35,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the AnimalPart:
-      AnimalPart createdAnimalPart = animalPartService.registerAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      AnimalPart createdAnimalPart = animalPartService.registerAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request));
 
       // If animalPart creation fails
       if (createdAnimalPart == null)
@@ -159,8 +159,8 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types:
-      AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
-      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData());
+      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData());
       // and attempt to update the AnimalPart with the provided ID:
       if (!animalPartService.updateAnimalPart(oldAnimalPart, newAnimalPart)) {
         // If AnimalPart update failed:
@@ -183,7 +183,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the AnimalPart with the provided ID:
-      if(!animalPartService.removeAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if(!animalPartService.removeAnimalPart(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request))) {
         // If AnimalPart deletion failed:
         throw new DeleteFailedException("Error occurred while deleting AnimalPart with id='" + request.getAnimalPartId() + "'");
       }

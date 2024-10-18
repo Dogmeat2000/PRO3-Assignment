@@ -38,7 +38,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the PartType:
-      PartType createdPartType = partTypeService.registerPartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      PartType createdPartType = partTypeService.registerPartType(GrpcPartTypeData_To_PartType.convertToPartType(request));
 
       // If partType creation fails
       if (createdPartType == null)
@@ -78,7 +78,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the PartType with the provided ID:
-      if (!partTypeService.updatePartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if (!partTypeService.updatePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
         // If PartType update failed:
         throw new UpdateFailedException("Error occurred while updated partType with id='" + request.getPartTypeId() + "'");
       }
@@ -98,7 +98,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the PartType with the provided ID:
-      if(!partTypeService.removePartType(GrpcPartTypeData_To_PartType.convertToPartType(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if(!partTypeService.removePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
         // If PartType deletion failed:
         throw new DeleteFailedException("Error occurred while deleting partType with id='" + request.getPartTypeId() + "'");
       }

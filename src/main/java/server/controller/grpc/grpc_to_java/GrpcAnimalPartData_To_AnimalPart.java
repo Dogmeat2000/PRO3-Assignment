@@ -14,40 +14,22 @@ import java.util.Map;
 public class GrpcAnimalPartData_To_AnimalPart
 {
   /** Converts database/gRPC compatible AnimalPartData information into a application compatible AnimalPart entity */
-  public static AnimalPart convertToAnimalPart(AnimalPartData animalPartData,
-      Map<String, AnimalPart> animalPartCache,
-      Map<String, Animal> animalCache,
-      Map<String, PartType> partTypeCache,
-      Map<String, Product> productCache,
-      Map<String, Tray> trayCache) {
+  public static AnimalPart convertToAnimalPart(AnimalPartData animalPartData) {
 
     if (animalPartData == null)
       return null;
 
-    // Utilize an embedded cache, to avoid both stale data and infinite recursion. In cases where other conversion algorithms
-    // call this conversion, the value inside the cache will simply be used once converted,
-    // instead of an infinite recursive attempt:
-    String hashKey = "" + animalPartData.getAnimalPartId().getAnimalPartId();
-    if(animalPartCache.containsKey(hashKey))
-      return animalPartCache.get(hashKey);
-
-    // If not already cached, create an initial placeholder cached version, to avoid infinite recursion:
+    // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
     long partId = GrpcId_To_LongId.ConvertToLongId(animalPartData.getAnimalPartId());
     BigDecimal weight = animalPartData.getPartWeight().isEmpty() ? BigDecimal.ZERO : new BigDecimal(animalPartData.getPartWeight());
-    AnimalPart animalPartPlaceHolder = new AnimalPart(partId, weight, null, null, null, null);
-
-    // Cache the placeholder:
-    animalPartCache.put(hashKey, animalPartPlaceHolder);
-
-    // Convert the remaining gRPC data fields:
-    Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(animalPartData.getAnimal(), animalPartCache, animalCache, partTypeCache, productCache, trayCache);
-    Tray tray = GrpcTrayData_To_Tray.convertToTray(animalPartData.getTray(), animalPartCache, animalCache, partTypeCache, productCache, trayCache);
-    PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(animalPartData.getPartType(), animalPartCache, animalCache, partTypeCache, productCache, trayCache);
-    Product product = GrpcProductData_To_Product.convertToProduct(animalPartData.getProduct(), animalPartCache, animalCache, partTypeCache, productCache, trayCache);
+    Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(animalPartData.getAnimal());
+    Tray tray = GrpcTrayData_To_Tray.convertToTray(animalPartData.getTray());
+    PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(animalPartData.getPartType());
+    Product product = GrpcProductData_To_Product.convertToProduct(animalPartData.getProduct());
 
     // Construct and return a new AnimalPart entity with the above read attributes set:
-    //AnimalPart animalPart = animalPartPlaceHolder.copy();
-    AnimalPart animalPart = new AnimalPart(
+
+    return new AnimalPart(
         partId,
         weight,
         partType,
@@ -55,15 +37,6 @@ public class GrpcAnimalPartData_To_AnimalPart
         tray,
         product
     );
-    /*animalPart.setAnimal(animal);
-    animalPart.setType(partType);
-    animalPart.setTray(tray);
-    animalPart.setProduct(product);*/
-
-    // Put the final entity into the cache:
-    animalPartCache.put(hashKey, animalPart);
-
-    return animalPart;
   }
 
 
@@ -72,7 +45,7 @@ public class GrpcAnimalPartData_To_AnimalPart
 
     // Convert List of AnimalPartsData to a java compatible list by iteration through each entry and running the method previously declared:
     for (AnimalPartData animalPartData : data.getAnimalPartsList())
-      animalPartList.add(convertToAnimalPart(animalPartData, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      animalPartList.add(convertToAnimalPart(animalPartData));
 
     // return a new List of AnimalPart entities:
     return animalPartList;

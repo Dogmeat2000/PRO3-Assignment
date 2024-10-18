@@ -34,7 +34,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Tray:
-      Tray createdTray = trayService.registerTray(GrpcTrayData_To_Tray.convertToTray(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      Tray createdTray = trayService.registerTray(GrpcTrayData_To_Tray.convertToTray(request));
 
       // If animal creation fails
       if (createdTray == null)
@@ -76,7 +76,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Tray with the provided ID:
-      if (!trayService.updateTray(GrpcTrayData_To_Tray.convertToTray(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if (!trayService.updateTray(GrpcTrayData_To_Tray.convertToTray(request))) {
         // If Tray update failed:
         throw new UpdateFailedException("Error occurred while updated tray with id='" + request.getTrayId() + "'");
       }
@@ -97,7 +97,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Tray with the provided ID:
-      if(!trayService.removeTray(GrpcTrayData_To_Tray.convertToTray(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if(!trayService.removeTray(GrpcTrayData_To_Tray.convertToTray(request))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting tray with id='" + request.getTrayId() + "'");
       }

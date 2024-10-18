@@ -35,7 +35,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Tray:
-      Product createdProduct = productService.registerProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      Product createdProduct = productService.registerProduct(GrpcProductData_To_Product.convertToProduct(request));
 
       // If animal creation fails
       if (createdProduct == null)
@@ -77,7 +77,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Product with the provided ID:
-      if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request))) {
         // If Product update failed:
         throw new UpdateFailedException("Error occurred while updated Product with id='" + request.getProductId() + "'");
       }
@@ -98,7 +98,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Product with the provided ID:
-      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()))) {
+      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting Product with id='" + request.getProductId() + "'");
       }
