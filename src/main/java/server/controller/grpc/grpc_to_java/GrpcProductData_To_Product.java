@@ -4,9 +4,7 @@ import grpc.*;
 import shared.model.entities.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
 public class GrpcProductData_To_Product
@@ -22,8 +20,14 @@ public class GrpcProductData_To_Product
       List<Long> animalPartIdList = new ArrayList<>(productData.getAnimalPartIdsList());
       List<Long> transferIdList = new ArrayList<>(productData.getTransferIdsList());
 
-      // Construct and return a new Product entity with the above read attributes set:
-      return new Product(id, animalPartIdList, transferIdList);
+      // Construct new Product entity:
+      Product product = new Product(id, animalPartIdList, transferIdList);
+
+      // Add remaining values:
+      for (TrayToProductTransferData transferData : productData.getTransfersDataList())
+        product.getTraySupplyJoinList().add(GrpcTrayToProductTransferData_To_TrayToProductTransfer.convertToTrayToProductTransfer(transferData));
+
+      return product;
     }
 
 

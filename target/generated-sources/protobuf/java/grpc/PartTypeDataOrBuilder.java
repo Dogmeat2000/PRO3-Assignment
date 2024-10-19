@@ -28,28 +28,16 @@ public interface PartTypeDataOrBuilder extends
       getPartDescBytes();
 
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartsOfThisTypeList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @return A list containing the animalPartIds.
    */
   java.util.List<java.lang.Long> getAnimalPartIdsList();
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartsOfThisTypeList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @return The count of animalPartIds.
    */
   int getAnimalPartIdsCount();
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartsOfThisTypeList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @param index The index of the element to return.
    * @return The animalPartIds at the given index.

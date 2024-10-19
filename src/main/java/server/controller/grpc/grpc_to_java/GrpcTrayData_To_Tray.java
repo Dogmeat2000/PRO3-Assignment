@@ -5,9 +5,7 @@ import shared.model.entities.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
 public class GrpcTrayData_To_Tray
@@ -25,8 +23,14 @@ public class GrpcTrayData_To_Tray
       List<Long> animalPartIdList = new ArrayList<>(trayData.getAnimalPartIdsList());
       List<Long> transferIdList = new ArrayList<>(trayData.getTransferIdsList());
 
-      // Construct a new Tray entity with the above read attributes set:
-      return new Tray(id, maxWeight_kilogram, weight_kilogram, animalPartIdList, transferIdList);
+      // Construct new Tray entity:
+      Tray tray = new Tray(id, maxWeight_kilogram, weight_kilogram, animalPartIdList, transferIdList);
+
+      // Add remaining values:
+      for (TrayToProductTransferData transferData : trayData.getTransfersDataList())
+        tray.getTransferList().add(GrpcTrayToProductTransferData_To_TrayToProductTransfer.convertToTrayToProductTransfer(transferData));
+
+      return tray;
     }
 
 

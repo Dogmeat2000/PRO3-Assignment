@@ -103,10 +103,6 @@ private static final long serialVersionUID = 0L;
   private com.google.protobuf.Internal.LongList animalPartIds_ =
       emptyLongList();
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @return A list containing the animalPartIds.
    */
@@ -116,10 +112,6 @@ private static final long serialVersionUID = 0L;
     return animalPartIds_;
   }
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @return The count of animalPartIds.
    */
@@ -127,10 +119,6 @@ private static final long serialVersionUID = 0L;
     return animalPartIds_.size();
   }
   /**
-   * <pre>
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 animalPartIds = 3;</code>
    * @param index The index of the element to return.
    * @return The animalPartIds at the given index.
@@ -634,10 +622,6 @@ private static final long serialVersionUID = 0L;
       bitField0_ |= 0x00000004;
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @return A list containing the animalPartIds.
      */
@@ -647,10 +631,6 @@ private static final long serialVersionUID = 0L;
       return animalPartIds_;
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @return The count of animalPartIds.
      */
@@ -658,10 +638,6 @@ private static final long serialVersionUID = 0L;
       return animalPartIds_.size();
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @param index The index of the element to return.
      * @return The animalPartIds at the given index.
@@ -670,10 +646,6 @@ private static final long serialVersionUID = 0L;
       return animalPartIds_.getLong(index);
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @param index The index to set the value at.
      * @param value The animalPartIds to set.
@@ -689,10 +661,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @param value The animalPartIds to add.
      * @return This builder for chaining.
@@ -706,10 +674,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @param values The animalPartIds to add.
      * @return This builder for chaining.
@@ -724,10 +688,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 animalPartIds = 3;</code>
      * @return This builder for chaining.
      */

@@ -9,7 +9,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.ProductValidation;
-import server.repository.AnimalPartRepository;
 import server.repository.ProductRepository;
 import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.*;
@@ -24,13 +23,11 @@ public class ProductRegistryService implements ProductRegistryInterface
   private final Map<Long, Product> productCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(ProductRegistryService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
-  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository, AnimalPartRepository animalPartRepository) {
+  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
     this.productRepository = productRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
-    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -53,15 +50,7 @@ public class ProductRegistryService implements ProductRegistryInterface
       logger.info("Product saved to local cache with ID: {}", newProduct.getProductId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-      //trayToProductTransferRepository.save(transferId);
       trayToProductTransferRepository.saveAll(data.getTraySupplyJoinList());
-
-      // Ensure that all associated AnimalPart entities are updated:
-      for (AnimalPart animalPart : data.getContentList()){
-        animalPart.setProduct(newProduct);
-        animalPartRepository.save(animalPart);
-      }
 
       return newProduct;
 
@@ -96,31 +85,31 @@ public class ProductRegistryService implements ProductRegistryInterface
 
       logger.info("Product read from database with ID: {}", productId);
 
-      // Load all associated AnimalParts:
-      List<AnimalPart> animalParts = new ArrayList<>();
+      // Load all associated AnimalParts: //TODO: Should be loaded automatically by JPA!
+      /*List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByType_typeId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching product_id=" + product.getProductId()));
       } catch (NotFoundException ignored) {}
 
       if(!animalParts.isEmpty())
-        product.setAnimalParts(animalParts);
+        product.setAnimalParts(animalParts);*/
 
-      // Populate the id association list:
+      // Populate the transient animalId association list:
       List<Long> animalPartIds = new ArrayList<>();
       for (AnimalPart animalPart : product.getContentList())
         animalPartIds.add(animalPart.getPart_id());
       product.setAnimalPartIdList(animalPartIds);
 
-      // Load all associated Transfers:
-      List<TrayToProductTransfer> transfers = new ArrayList<>();
+      // Load all associated Transfers: //TODO: Should be loaded automatically by JPA!
+      /*List<TrayToProductTransfer> transfers = new ArrayList<>();
       try {
         transfers = trayToProductTransferRepository.findTrayToProductTransferByProduct_ProductId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching product_id=" + product.getProductId()));
       } catch (NotFoundException ignored) {}
 
       if(!transfers.isEmpty())
-        product.setTraySupplyJoinList(transfers);
+        product.setTraySupplyJoinList(transfers);*/
 
-      // Populate the id association list:
+      // Populate the transient transferId association list:
       List<Long> transferIds = new ArrayList<>();
       for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
         transferIds.add(transfer.getTransferId());
@@ -140,9 +129,10 @@ public class ProductRegistryService implements ProductRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateProduct(Product data) {
     // TODO: Not finished implemented yet.
+    return false;
 
     // Validate received data, before passing to repository/database:
-    ProductValidation.validateProduct(data);
+    /*ProductValidation.validateProduct(data);
 
     // Attempt to update Product in database:
     try {
@@ -184,7 +174,7 @@ public class ProductRegistryService implements ProductRegistryInterface
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while updating Product with ID {}: {}", data.getProductId(), e.getMessage());
       throw new PersistenceException(e);
-    }
+    }*/
   }
 
 
@@ -207,15 +197,7 @@ public class ProductRegistryService implements ProductRegistryInterface
       }
 
       // Ensure that all TrayToProductTransfer transfers are deleted:
-      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-      //trayToProductTransferRepository.delete(transferId);
       trayToProductTransferRepository.deleteAll(data.getTraySupplyJoinList());
-
-      // Ensure that all associated AnimalPart entities are updated:
-      for (AnimalPart animalPart : data.getContentList()){
-        animalPart.setProduct(null);
-        animalPartRepository.save(animalPart);
-      }
 
       logger.info("Product deleted from database with ID: {}", data.getProductId());
       // Product was removed from database. Now ensure that is it also removed from the local cache:
@@ -239,42 +221,42 @@ public class ProductRegistryService implements ProductRegistryInterface
     try {
       List<Product> products = productRepository.findAll();
 
-      // Load all associated AnimalParts, for each Product:
+      // Load all associated AnimalParts, for each Product:  //TODO: Shouldn't be needed? JPA should be doing this already!
       for (Product product : products) {
-        List<AnimalPart> animalParts = new ArrayList<>();
+        /*List<AnimalPart> animalParts = new ArrayList<>();
         try {
           animalParts = animalPartRepository.findAnimalPartsByType_typeId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching product_id=" + product.getProductId()));
         } catch (NotFoundException ignored) {}
 
         if(!animalParts.isEmpty()){
-          product.setAnimalParts(animalParts);
+          product.setAnimalParts(animalParts);*/
 
-          // Populate the id association list:
+          // Populate the transient id association list:
           List<Long> animalPartIds = new ArrayList<>();
           for (AnimalPart animalPart : product.getContentList())
             animalPartIds.add(animalPart.getPart_id());
           product.setAnimalPartIdList(animalPartIds);
         }
 
-      }
+      //}
 
-      // Load all associated TrayToProductTransfer, for each Product:
+      // Load all associated TrayToProductTransfer, for each Product:  //TODO: Shouldn't be needed? JPA should be doing this already!
       for (Product product : products) {
         List<TrayToProductTransfer> transfers = new ArrayList<>();
-        try {
+        /*try {
           transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(product.getProductId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching product_id=" + product.getProductId()));
         } catch (NotFoundException ignored) {}
 
         if(!transfers.isEmpty()) {
-          product.setTraySupplyJoinList(transfers);
+          product.setTraySupplyJoinList(transfers);*/
 
-          // Populate the id association list:
+          // Populate the transient id association list:
           List<Long> transferIds = new ArrayList<>();
           for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
             transferIds.add(transfer.getTransferId());
           product.setTransferIdList(transferIds);
         }
-      }
+      //}
 
       // Add all the found Products to local cache, to improve performance next time a Tray is requested.
       productCache.clear();

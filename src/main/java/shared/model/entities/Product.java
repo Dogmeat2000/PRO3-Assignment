@@ -43,6 +43,9 @@ public class Product implements Serializable
   @Transient
   private List<Long> transferIdList = new ArrayList<>();
 
+  @Transient
+  private List<Tray> traySuppliersList = new ArrayList<>();
+
 
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Product() {
@@ -127,6 +130,16 @@ public class Product implements Serializable
 
   public void setTransferIdList(List<Long> transferIds) {
     this.transferIdList = transferIds;
+  }
+
+
+  public List<Tray> getTraySuppliersList() {
+    return traySuppliersList;
+  }
+
+
+  public void setTraySuppliersList(List<Tray> traySuppliersList) {
+    this.traySuppliersList = traySuppliersList;
   }
 
 

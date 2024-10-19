@@ -2,6 +2,7 @@ package server.service;
 
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
+import shared.model.entities.AnimalPart;
 import shared.model.entities.Tray;
 import shared.model.exceptions.NotFoundException;
 
@@ -31,6 +32,10 @@ public interface TrayRegistryInterface
     Tray readTray (long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
+    // TODO: add javaDocs
+    List<Tray> readTraysByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
+
+
     /** <p>Updates the given Tray in the repository. Unique id is extracted from the Tray entity
      * and is used to uniquely identify which Tray entity in the repository to apply the updated information to.</p>
      * @param data A Tray Entity, with proper id, weight, etc. applied to.
@@ -39,7 +44,7 @@ public interface TrayRegistryInterface
      * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
      * @throws DataIntegrityViolationException Thrown if Tray contains invalid attributes (i.e. 0 or negative id specified).
      */
-    boolean updateTray (Tray data) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
+    boolean updateTray (Tray oldData, Tray newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
     /** <p>Deletes the given Tray from the repository. Unique id is extracted from the Tray entity

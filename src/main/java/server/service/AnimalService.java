@@ -85,7 +85,7 @@ public class AnimalService implements AnimalRegistryInterface
 
       logger.info("Animal read from database with ID: {}", animalId);
 
-      // Load all associated AnimalParts:
+      // Load all associated AnimalParts: //TODO: Shouldn't be needed? JPA should be doing this already!
       List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animal.getId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + animal.getId()));
@@ -211,7 +211,7 @@ public class AnimalService implements AnimalRegistryInterface
       // Load all Animals from repository:
       List<Animal> animals = animalRepository.findAll();
 
-      // Load all associated AnimalParts, for each Animal:
+      // Load all associated AnimalParts, for each Animal: //TODO: Shouldn't be needed? JPA should be doing this already!
       for (Animal animal : animals) {
         List<AnimalPart> animalParts = new ArrayList<>();
         try {

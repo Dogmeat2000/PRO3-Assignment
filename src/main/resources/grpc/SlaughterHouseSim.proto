@@ -60,6 +60,7 @@ message TrayData {
   string weight_kilogram = 3;
   repeated int64 animalPartIds = 4;
   repeated int64 transferIds = 5;
+  repeated TrayToProductTransferData transfersData = 6;
 }
 
 
@@ -96,6 +97,7 @@ message ProductData {
   int64 productId = 1;
   repeated int64 animalPartIds = 2;
   repeated int64 transferIds = 3;
+  repeated TrayToProductTransferData transfersData = 4;
 }
 
 

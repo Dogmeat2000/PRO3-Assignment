@@ -8,40 +8,78 @@ import org.springframework.beans.factory.annotation.Autowired;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
+import server.service.AnimalPartRegistryInterface;
 import server.service.ProductRegistryInterface;
+import server.service.TrayRegistryInterface;
+import shared.model.entities.AnimalPart;
 import shared.model.entities.Product;
+import shared.model.entities.Tray;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 @GrpcService
 public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase
 {
   private final ProductRegistryInterface productService;
+  private final TrayRegistryInterface trayService;
+  private final AnimalPartRegistryInterface animalPartService;
 
   @Autowired
-  public GrpcProductServiceImpl(ProductRegistryInterface productService) {
+  public GrpcProductServiceImpl(ProductRegistryInterface productService, TrayRegistryInterface trayService, AnimalPartRegistryInterface animalPartService) {
     super();
     this.productService = productService;
+    this.trayService = trayService;
+    this.animalPartService = animalPartService;
   }
 
 
   @Override
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
-      // Translate received gRPC information from the client, into Java compatible types, and
-      // attempt to register the Tray:
-      Product createdProduct = productService.registerProduct(GrpcProductData_To_Product.convertToProduct(request));
+      // Translate received gRPC information from the client, into Java compatible types
+      Product productReceived = GrpcProductData_To_Product.convertToProduct(request);
+
+      // Add/Query for the data lost during gRPC transmission:
+      // Read associated Tray Data:
+      List<Tray> associatedTrays = new ArrayList<>();
+      for (Long transferId : productReceived.getTransferIdList())
+        associatedTrays.addAll(trayService.readTraysByTransferId(transferId));
+      productReceived.getTraySuppliersList().addAll(associatedTrays);
+
+      // Read associated AnimalPart Data:
+      List<AnimalPart> associatedAnimalParts = new ArrayList<>();
+      for (Long animalPartId : productReceived.getAnimalPartIdList())
+        associatedAnimalParts.add(animalPartService.readAnimalPart(animalPartId));
+      productReceived.getContentList().addAll(associatedAnimalParts);
+
+      // Register the Product:
+      Product createdProduct = productService.registerProduct(productReceived);
 
       // If animal creation fails
       if (createdProduct == null)
         throw new CreateFailedException("Product could not be created");
 
-      // Translate the created Product into gRPC compatible types, before transmitting back to client:
+      // Update associated Entities:
+      for (AnimalPart animalPart : associatedAnimalParts) {
+        AnimalPart oldAnimalPart = animalPart.copy();
+        animalPart.setProduct(createdProduct);
+        animalPartService.updateAnimalPart(animalPart, oldAnimalPart);
+      }
+
+      for (Tray tray : associatedTrays) {
+        Tray oldTray = tray.copy();
+        if(!tray.getProductList().contains(createdProduct)) {
+          tray.getProductList().add(createdProduct);
+          trayService.updateTray(tray, oldTray);
+        }
+      }
+
+      // Translate the created Product into gRPC a compatible type, before transmitting back to client:
       responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct));
       responseObserver.onCompleted();
     } catch (Exception e) {

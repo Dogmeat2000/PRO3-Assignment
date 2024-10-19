@@ -36,7 +36,7 @@ public class TrayService implements TrayRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override public Tray registerTray(Tray data) throws PersistenceException, DataIntegrityViolationException {
 
     // Validate received data, before passing to repository/database:
@@ -51,21 +51,11 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray added to DB with ID: {}", newTray.getTrayId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-      //trayToProductTransferRepository.save(transferId);
       trayToProductTransferRepository.saveAll(data.getTransferList());
 
       // Attempt to add Tray to local cache:
       trayCache.put(newTray.getTrayId(), newTray);
       logger.info("Tray saved to local cache with ID: {}", newTray.getTrayId());
-
-      // Update any associated AnimalPart with this new Tray info:
-      for (AnimalPart animalPart : data.getContents()) {
-        AnimalPart oldAnimalPart = animalPart.copy();
-        animalPart.setTray(newTray);
-        //animalPartRepository.updateAnimalPart(oldAnimalPart, animalPart);
-        animalPartRepository.save(animalPart);
-      }
 
       return newTray;
 
@@ -116,7 +106,7 @@ public class TrayService implements TrayRegistryInterface
       tray.setAnimalPartIdList(animalPartIds);
 
 
-      // Load all associated Transfers:
+      // Load all associated Transfers: //TODO: Shouldn't be needed? JPA should be doing this already!
       List<TrayToProductTransfer> transfers = new ArrayList<>();
       try {
         transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching tray_id=" + tray.getTrayId()));
@@ -143,12 +133,71 @@ public class TrayService implements TrayRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean updateTray(Tray data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Transactional
+  @Override public List<Tray> readTraysByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    try {
+      List<Tray> trays = trayRepository.findByTransferList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Trays found in database associated with transferId=" + transferId));
+
+      // Load all associated AnimalParts, for each Tray: //TODO: Shouldn't be needed? JPA should be doing this already!
+      for (Tray tray : trays) {
+        List<AnimalPart> animalParts = new ArrayList<>();
+        try {
+          animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!animalParts.isEmpty())
+          tray.addAllAnimalParts(animalParts);
+      }
+
+      // Populate the id association list:
+      for (Tray tray : trays) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : tray.getContents())
+          animalPartIds.add(animalPart.getPart_id());
+        tray.setAnimalPartIdList(animalPartIds);
+      }
+
+      // Load all associated TrayToProductTransfer, for each Tray: //TODO: Shouldn't be needed? JPA should be doing this already!
+      for (Tray tray : trays) {
+        List<TrayToProductTransfer> transfers = new ArrayList<>();
+        try {
+          transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching tray_id=" + tray.getTrayId()));
+        } catch (NotFoundException ignored) {}
+
+        if(!transfers.isEmpty())
+          tray.setTransferList(transfers);
+      }
+
+      // Populate the id association list:
+      for (Tray tray : trays) {
+        List<Long> transferIds = new ArrayList<>();
+        for (TrayToProductTransfer transfer : tray.getTransferList())
+          transferIds.add(transfer.getTransferId());
+        tray.setTransferIdList(transferIds);
+      }
+
+      // Add all the found Trays to local cache, to improve performance next time a Tray is requested.
+      for (Tray tray : trays) {
+        if(tray != null)
+          trayCache.put(tray.getTrayId(), tray);
+      }
+      logger.info("Added all Trays associated with transferId '{}' from Database to Local Cache", transferId);
+      return trays;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+
+  @Transactional
+  @Override public boolean updateTray(Tray oldData, Tray newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // TODO: Not finished implemented yet.
+    return false;
 
     // Validate received data, before passing to repository/database:
-    TrayValidation.validateTray(data);
+    /*TrayValidation.validateTray(data);
 
     // Attempt to update Tray in database:
     try {
@@ -204,7 +253,7 @@ public class TrayService implements TrayRegistryInterface
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while updating Tray with ID {}: {}", data.getTrayId(), e.getMessage());
       throw new PersistenceException(e);
-    }
+    }*/
   }
 
 
@@ -232,8 +281,6 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray deleted from local cache with ID: {}", data.getTrayId());
 
       // Ensure that all associated TrayToProductTransfer transfers are removed:
-      //TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-      //trayToProductTransferRepository.delete(id);
       trayToProductTransferRepository.deleteAll(data.getTransferList());
 
       return true;

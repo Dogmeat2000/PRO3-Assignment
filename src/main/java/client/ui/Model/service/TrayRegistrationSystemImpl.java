@@ -6,7 +6,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
 import server.controller.grpc.GrpcFactory;
-import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.grpc_to_java.GrpcTrayData_To_Tray;
@@ -79,7 +78,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       // Prompt gRPC to read the Tray:
       TrayData foundTrayData = trayStub.readTray(id);
 
-      // Convert the AnimalData that was read from the DB into an application compatible format:
+      // Convert the TrayData that was read from the DB into an application compatible format:
       Tray tray = GrpcTrayData_To_Tray.convertToTray(foundTrayData);
 
       // Populate Tray with the proper relationships, to have a proper Object Relational Model.
@@ -127,7 +126,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
   @Transactional
   @Override
-  public void updateTray(Tray data) throws UpdateFailedException, NotFoundException {
+  public void updateTray(Tray newTray, Tray oldTray) throws UpdateFailedException, NotFoundException {
     // TODO: Not implemented yet.
     throw new UpdateFailedException("Method not implemented!");
 

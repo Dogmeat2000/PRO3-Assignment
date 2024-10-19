@@ -33,6 +33,7 @@ private static final long serialVersionUID = 0L;
   private ProductData() {
     animalPartIds_ = emptyLongList();
     transferIds_ = emptyLongList();
+    transfersData_ = java.util.Collections.emptyList();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -94,11 +95,6 @@ private static final long serialVersionUID = 0L;
   private com.google.protobuf.Internal.LongList transferIds_ =
       emptyLongList();
   /**
-   * <pre>
-   * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 transferIds = 3;</code>
    * @return A list containing the transferIds.
    */
@@ -108,11 +104,6 @@ private static final long serialVersionUID = 0L;
     return transferIds_;
   }
   /**
-   * <pre>
-   * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 transferIds = 3;</code>
    * @return The count of transferIds.
    */
@@ -120,11 +111,6 @@ private static final long serialVersionUID = 0L;
     return transferIds_.size();
   }
   /**
-   * <pre>
-   * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-   * repeated AnimalPartData animalPartList = 3;
-   * </pre>
-   *
    * <code>repeated int64 transferIds = 3;</code>
    * @param index The index of the element to return.
    * @return The transferIds at the given index.
@@ -133,6 +119,47 @@ private static final long serialVersionUID = 0L;
     return transferIds_.getLong(index);
   }
   private int transferIdsMemoizedSerializedSize = -1;
+
+  public static final int TRANSFERSDATA_FIELD_NUMBER = 4;
+  @SuppressWarnings("serial")
+  private java.util.List<grpc.TrayToProductTransferData> transfersData_;
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+   */
+  @java.lang.Override
+  public java.util.List<grpc.TrayToProductTransferData> getTransfersDataList() {
+    return transfersData_;
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+      getTransfersDataOrBuilderList() {
+    return transfersData_;
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+   */
+  @java.lang.Override
+  public int getTransfersDataCount() {
+    return transfersData_.size();
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+   */
+  @java.lang.Override
+  public grpc.TrayToProductTransferData getTransfersData(int index) {
+    return transfersData_.get(index);
+  }
+  /**
+   * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+   */
+  @java.lang.Override
+  public grpc.TrayToProductTransferDataOrBuilder getTransfersDataOrBuilder(
+      int index) {
+    return transfersData_.get(index);
+  }
 
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
@@ -165,6 +192,9 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < transferIds_.size(); i++) {
       output.writeInt64NoTag(transferIds_.getLong(i));
+    }
+    for (int i = 0; i < transfersData_.size(); i++) {
+      output.writeMessage(4, transfersData_.get(i));
     }
     getUnknownFields().writeTo(output);
   }
@@ -207,6 +237,10 @@ private static final long serialVersionUID = 0L;
       }
       transferIdsMemoizedSerializedSize = dataSize;
     }
+    for (int i = 0; i < transfersData_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, transfersData_.get(i));
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -228,6 +262,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getAnimalPartIdsList())) return false;
     if (!getTransferIdsList()
         .equals(other.getTransferIdsList())) return false;
+    if (!getTransfersDataList()
+        .equals(other.getTransfersDataList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -249,6 +285,10 @@ private static final long serialVersionUID = 0L;
     if (getTransferIdsCount() > 0) {
       hash = (37 * hash) + TRANSFERIDS_FIELD_NUMBER;
       hash = (53 * hash) + getTransferIdsList().hashCode();
+    }
+    if (getTransfersDataCount() > 0) {
+      hash = (37 * hash) + TRANSFERSDATA_FIELD_NUMBER;
+      hash = (53 * hash) + getTransfersDataList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -388,6 +428,13 @@ private static final long serialVersionUID = 0L;
       productId_ = 0L;
       animalPartIds_ = emptyLongList();
       transferIds_ = emptyLongList();
+      if (transfersDataBuilder_ == null) {
+        transfersData_ = java.util.Collections.emptyList();
+      } else {
+        transfersData_ = null;
+        transfersDataBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -414,9 +461,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public grpc.ProductData buildPartial() {
       grpc.ProductData result = new grpc.ProductData(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(grpc.ProductData result) {
+      if (transfersDataBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0)) {
+          transfersData_ = java.util.Collections.unmodifiableList(transfersData_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.transfersData_ = transfersData_;
+      } else {
+        result.transfersData_ = transfersDataBuilder_.build();
+      }
     }
 
     private void buildPartial0(grpc.ProductData result) {
@@ -470,6 +530,32 @@ private static final long serialVersionUID = 0L;
           transferIds_.addAll(other.transferIds_);
         }
         onChanged();
+      }
+      if (transfersDataBuilder_ == null) {
+        if (!other.transfersData_.isEmpty()) {
+          if (transfersData_.isEmpty()) {
+            transfersData_ = other.transfersData_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureTransfersDataIsMutable();
+            transfersData_.addAll(other.transfersData_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.transfersData_.isEmpty()) {
+          if (transfersDataBuilder_.isEmpty()) {
+            transfersDataBuilder_.dispose();
+            transfersDataBuilder_ = null;
+            transfersData_ = other.transfersData_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+            transfersDataBuilder_ = 
+              com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getTransfersDataFieldBuilder() : null;
+          } else {
+            transfersDataBuilder_.addAllMessages(other.transfersData_);
+          }
+        }
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -534,6 +620,19 @@ private static final long serialVersionUID = 0L;
               input.popLimit(limit);
               break;
             } // case 26
+            case 34: {
+              grpc.TrayToProductTransferData m =
+                  input.readMessage(
+                      grpc.TrayToProductTransferData.parser(),
+                      extensionRegistry);
+              if (transfersDataBuilder_ == null) {
+                ensureTransfersDataIsMutable();
+                transfersData_.add(m);
+              } else {
+                transfersDataBuilder_.addMessage(m);
+              }
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -675,11 +774,6 @@ private static final long serialVersionUID = 0L;
       bitField0_ |= 0x00000004;
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @return A list containing the transferIds.
      */
@@ -689,11 +783,6 @@ private static final long serialVersionUID = 0L;
       return transferIds_;
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @return The count of transferIds.
      */
@@ -701,11 +790,6 @@ private static final long serialVersionUID = 0L;
       return transferIds_.size();
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @param index The index of the element to return.
      * @return The transferIds at the given index.
@@ -714,11 +798,6 @@ private static final long serialVersionUID = 0L;
       return transferIds_.getLong(index);
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @param index The index to set the value at.
      * @param value The transferIds to set.
@@ -734,11 +813,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @param value The transferIds to add.
      * @return This builder for chaining.
@@ -752,11 +826,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @param values The transferIds to add.
      * @return This builder for chaining.
@@ -771,11 +840,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * repeated TrayToProductTransferData trayToProductTransfersList = 2;
-     * repeated AnimalPartData animalPartList = 3;
-     * </pre>
-     *
      * <code>repeated int64 transferIds = 3;</code>
      * @return This builder for chaining.
      */
@@ -784,6 +848,246 @@ private static final long serialVersionUID = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
+    }
+
+    private java.util.List<grpc.TrayToProductTransferData> transfersData_ =
+      java.util.Collections.emptyList();
+    private void ensureTransfersDataIsMutable() {
+      if (!((bitField0_ & 0x00000008) != 0)) {
+        transfersData_ = new java.util.ArrayList<grpc.TrayToProductTransferData>(transfersData_);
+        bitField0_ |= 0x00000008;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder> transfersDataBuilder_;
+
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public java.util.List<grpc.TrayToProductTransferData> getTransfersDataList() {
+      if (transfersDataBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(transfersData_);
+      } else {
+        return transfersDataBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public int getTransfersDataCount() {
+      if (transfersDataBuilder_ == null) {
+        return transfersData_.size();
+      } else {
+        return transfersDataBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public grpc.TrayToProductTransferData getTransfersData(int index) {
+      if (transfersDataBuilder_ == null) {
+        return transfersData_.get(index);
+      } else {
+        return transfersDataBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder setTransfersData(
+        int index, grpc.TrayToProductTransferData value) {
+      if (transfersDataBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTransfersDataIsMutable();
+        transfersData_.set(index, value);
+        onChanged();
+      } else {
+        transfersDataBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder setTransfersData(
+        int index, grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (transfersDataBuilder_ == null) {
+        ensureTransfersDataIsMutable();
+        transfersData_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        transfersDataBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder addTransfersData(grpc.TrayToProductTransferData value) {
+      if (transfersDataBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTransfersDataIsMutable();
+        transfersData_.add(value);
+        onChanged();
+      } else {
+        transfersDataBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder addTransfersData(
+        int index, grpc.TrayToProductTransferData value) {
+      if (transfersDataBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTransfersDataIsMutable();
+        transfersData_.add(index, value);
+        onChanged();
+      } else {
+        transfersDataBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder addTransfersData(
+        grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (transfersDataBuilder_ == null) {
+        ensureTransfersDataIsMutable();
+        transfersData_.add(builderForValue.build());
+        onChanged();
+      } else {
+        transfersDataBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder addTransfersData(
+        int index, grpc.TrayToProductTransferData.Builder builderForValue) {
+      if (transfersDataBuilder_ == null) {
+        ensureTransfersDataIsMutable();
+        transfersData_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        transfersDataBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder addAllTransfersData(
+        java.lang.Iterable<? extends grpc.TrayToProductTransferData> values) {
+      if (transfersDataBuilder_ == null) {
+        ensureTransfersDataIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, transfersData_);
+        onChanged();
+      } else {
+        transfersDataBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder clearTransfersData() {
+      if (transfersDataBuilder_ == null) {
+        transfersData_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+      } else {
+        transfersDataBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public Builder removeTransfersData(int index) {
+      if (transfersDataBuilder_ == null) {
+        ensureTransfersDataIsMutable();
+        transfersData_.remove(index);
+        onChanged();
+      } else {
+        transfersDataBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder getTransfersDataBuilder(
+        int index) {
+      return getTransfersDataFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public grpc.TrayToProductTransferDataOrBuilder getTransfersDataOrBuilder(
+        int index) {
+      if (transfersDataBuilder_ == null) {
+        return transfersData_.get(index);  } else {
+        return transfersDataBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public java.util.List<? extends grpc.TrayToProductTransferDataOrBuilder> 
+         getTransfersDataOrBuilderList() {
+      if (transfersDataBuilder_ != null) {
+        return transfersDataBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(transfersData_);
+      }
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder addTransfersDataBuilder() {
+      return getTransfersDataFieldBuilder().addBuilder(
+          grpc.TrayToProductTransferData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public grpc.TrayToProductTransferData.Builder addTransfersDataBuilder(
+        int index) {
+      return getTransfersDataFieldBuilder().addBuilder(
+          index, grpc.TrayToProductTransferData.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .grpc.TrayToProductTransferData transfersData = 4;</code>
+     */
+    public java.util.List<grpc.TrayToProductTransferData.Builder> 
+         getTransfersDataBuilderList() {
+      return getTransfersDataFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilder<
+        grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder> 
+        getTransfersDataFieldBuilder() {
+      if (transfersDataBuilder_ == null) {
+        transfersDataBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+            grpc.TrayToProductTransferData, grpc.TrayToProductTransferData.Builder, grpc.TrayToProductTransferDataOrBuilder>(
+                transfersData_,
+                ((bitField0_ & 0x00000008) != 0),
+                getParentForChildren(),
+                isClean());
+        transfersData_ = null;
+      }
+      return transfersDataBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:grpc.ProductData)

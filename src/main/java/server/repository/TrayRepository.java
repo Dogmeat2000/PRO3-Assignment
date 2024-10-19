@@ -4,6 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shared.model.entities.Tray;
 
+import java.util.List;
+import java.util.Optional;
+
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
  * This @Repository interface extends JpaRepository and provides access to paging, sorting and CRUD operations on the database.
  * It is automatically populated by Spring Boot JPA, so no implementation class is needed for the proper Database access operations.<br>
@@ -15,6 +18,7 @@ import shared.model.entities.Tray;
 @Repository
 public interface TrayRepository extends JpaRepository<Tray, Long> // <-- Primary key of Entity must be provided as the Type to JpaRepository!
 {
-  // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.
+  // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Tray entity.
   // If additional functionality is required, it can be added below.
+  Optional<List<Tray>> findByTransferList_TransferId(Long transferId);
 }

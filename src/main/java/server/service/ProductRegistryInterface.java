@@ -1,8 +1,12 @@
 package server.service;
 
+import jakarta.persistence.PersistenceException;
+import org.springframework.dao.DataIntegrityViolationException;
 import shared.model.entities.Product;
+import shared.model.exceptions.NotFoundException;
 
 import java.util.List;
+import java.util.Optional;
 
 // TODO: Add javaDocs description
 public interface ProductRegistryInterface

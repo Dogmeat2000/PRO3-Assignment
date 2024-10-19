@@ -2,6 +2,7 @@ package server.controller.grpc.java_to_gRPC;
 
 import grpc.*;
 import shared.model.entities.Product;
+import shared.model.entities.TrayToProductTransfer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,21 @@ public class Product_ToGrpc_ProductData
       return null;
 
     // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
-    return ProductData.newBuilder()
-        .setProductId(product.getProductId())
-        .addAllAnimalPartIds(product.getAnimalPartIdList())
-        .addAllTransferIds(product.getTransferIdList())
-        .build();
+    ProductData.Builder builder = ProductData.newBuilder();
+    builder.setProductId(product.getProductId());
+
+    if(product.getAnimalPartIdList() != null && !product.getAnimalPartIdList().isEmpty())
+      builder.addAllAnimalPartIds(product.getAnimalPartIdList());
+
+    if(product.getTransferIdList() != null && !product.getTransferIdList().isEmpty())
+      builder.addAllTransferIds(product.getTransferIdList());
+
+    if(product.getTraySupplyJoinList() != null && !product.getTraySupplyJoinList().isEmpty()) {
+      for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
+        builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer));
+    }
+
+    return builder.build();
   }
 
 

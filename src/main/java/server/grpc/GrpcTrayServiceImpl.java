@@ -73,7 +73,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
 
   @Override
   public void updateTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
-    try {
+    /*try {
       // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
 
       // Translate received gRPC information from the client, into Java compatible types,
@@ -90,7 +90,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
       responseObserver.onError(Status.NOT_FOUND.withDescription("Tray not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Tray with id '" + request.getTrayId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
-    }
+    }*/
   }
 
 

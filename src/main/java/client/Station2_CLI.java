@@ -199,7 +199,7 @@ public class Station2_CLI
         try {
           AnimalPart animalPart = animalPartRegistrationSystem.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
           // Update associated Tray repository:
-          parentTray.addAnimalPart(animalPart);
+          /*parentTray.addAnimalPart(animalPart);
           trayRegistrationSystem.updateTray(parentTray);
 
           // Update associated PartType repository:
@@ -208,7 +208,7 @@ public class Station2_CLI
 
           // Update associated Animal repository:
           parentAnimal.getPartList().add(animalPart);
-          animalRegistrationSystem.updateAnimal(parentAnimal);
+          animalRegistrationSystem.updateAnimal(parentAnimal);*/
 
           System.out.println("Added [" + animalPart + "] to Database!");
         } catch (CreateFailedException e) {
@@ -533,7 +533,7 @@ public class Station2_CLI
         }
 
         // Attempt to Update all the old associations.
-        oldParentAnimal.getPartList().remove(modifiedAnimalPart);
+        /*oldParentAnimal.getPartList().remove(modifiedAnimalPart);
         oldParentPartType.getPartList().remove(modifiedAnimalPart);
         oldParentTray.getContents().remove(modifiedAnimalPart);
         animalRegistrationSystem.updateAnimal(oldParentAnimal);
@@ -551,7 +551,7 @@ public class Station2_CLI
           newParentPartType.getPartList().add(modifiedAnimalPart);
         animalRegistrationSystem.updateAnimal(newParentAnimal);
         partTypeRegistrationSystem.updatePartType(newParentPartType);
-        trayRegistrationSystem.updateTray(newParentTray);
+        trayRegistrationSystem.updateTray(newParentTray);*/
         break;
 
 

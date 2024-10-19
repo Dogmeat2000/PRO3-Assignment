@@ -1,14 +1,11 @@
 package server.controller.grpc.java_to_gRPC;
 
 import grpc.*;
-import shared.model.entities.AnimalPart;
 import shared.model.entities.Tray;
 import shared.model.entities.TrayToProductTransfer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
 public class Tray_ToGrpc_TrayData
@@ -23,13 +20,23 @@ public class Tray_ToGrpc_TrayData
         return null;
 
       // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
-      return TrayData.newBuilder()
-          .setTrayId(tray.getTrayId())
-          .setMaxWeightKilogram(tray.getMaxWeight_kilogram().toString())
-          .setWeightKilogram(tray.getWeight_kilogram().toString())
-          .addAllAnimalPartIds(tray.getAnimalPartIdList())
-          .addAllTransferIds(tray.getTransferIdList())
-          .build();
+      TrayData.Builder builder = TrayData.newBuilder();
+      builder.setTrayId(tray.getTrayId());
+      builder.setMaxWeightKilogram(tray.getMaxWeight_kilogram().toString());
+      builder.setWeightKilogram(tray.getWeight_kilogram().toString());
+
+      if(tray.getAnimalPartIdList() != null && !tray.getAnimalPartIdList().isEmpty())
+        builder.addAllAnimalPartIds(tray.getAnimalPartIdList());
+
+      if(tray.getTransferIdList() != null && !tray.getTransferIdList().isEmpty())
+        builder.addAllTransferIds(tray.getTransferIdList());
+
+      if(tray.getTransferList() != null && !tray.getTransferList().isEmpty()) {
+        for (TrayToProductTransfer transfer : tray.getTransferList())
+          builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer));
+      }
+
+      return builder.build();
     }
 
 

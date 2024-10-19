@@ -245,7 +245,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
 
       // Attempt to update all associated Animal entities:
-      Animal oldAnimal = oldAnimalPart.getAnimal();
+     /* Animal oldAnimal = oldAnimalPart.getAnimal();
       oldAnimal.getPartList().remove(oldAnimalPart);
       animalRepository.updateAnimal(oldAnimal);
 
@@ -279,7 +279,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
         Product oldProduct = oldAnimalPart.getProduct();
         oldProduct.getContentList().remove(oldAnimalPart);
         productRepository.updateProduct(oldProduct);
-      }
+      }*/
 
       if(newAnimalPart.getProduct() != null) {
         Product newProduct = newAnimalPart.getProduct();
@@ -331,7 +331,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       logger.info("AnimalPart deleted from local cache with ID: {}", data.getPart_id());
 
       // Attempt to update all associated Animal entities:
-      Animal animal = data.getAnimal();
+      /*Animal animal = data.getAnimal();
       animal.getPartList().remove(data);
       animalRepository.updateAnimal(animal);
 
@@ -350,7 +350,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
         Product product = data.getProduct();
         product.getContentList().remove(data);
         productRepository.updateProduct(product);
-      }
+      }*/
 
       return true;
 

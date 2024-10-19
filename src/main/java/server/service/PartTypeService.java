@@ -86,7 +86,7 @@ public class PartTypeService implements PartTypeRegistryInterface
 
       logger.info("PartType read from database with ID: {}", typeId);
 
-      // Load all associated AnimalParts:
+      // Load all associated AnimalParts:  //TODO: Shouldn't be needed? JPA should be doing this already!
       List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching type_id=" + partType.getTypeId()));
@@ -204,7 +204,7 @@ public class PartTypeService implements PartTypeRegistryInterface
       // Load all PartTypes from repository:
       List<PartType> partTypes = partTypeRepository.findAll();
 
-      // Load all associated AnimalParts, for each PartType:
+      // Load all associated AnimalParts, for each PartType: //TODO: Shouldn't be needed? JPA should be doing this already!
       for (PartType partType : partTypes) {
         List<AnimalPart> animalParts = new ArrayList<>();
         try {

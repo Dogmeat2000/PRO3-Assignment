@@ -144,70 +144,73 @@ public final class SlaughterHouseSim {
       "artData\022%\n\007newData\030\002 \001(\0132\024.grpc.AnimalPa" +
       "rtData\"$\n\014AnimalPartId\022\024\n\014animalPartId\030\001" +
       " \001(\003\"<\n\017AnimalPartsData\022)\n\013animalParts\030\001" +
-      " \003(\0132\024.grpc.AnimalPartData\"{\n\010TrayData\022\016" +
-      "\n\006trayId\030\001 \001(\003\022\032\n\022maxWeight_kilogram\030\002 \001" +
-      "(\t\022\027\n\017weight_kilogram\030\003 \001(\t\022\025\n\ranimalPar" +
-      "tIds\030\004 \003(\003\022\023\n\013transferIds\030\005 \003(\003\"\030\n\006TrayI" +
-      "d\022\016\n\006trayId\030\001 \001(\003\"*\n\tTraysData\022\035\n\005trays\030" +
-      "\001 \003(\0132\016.grpc.TrayData\"K\n\014PartTypeData\022\022\n" +
-      "\npartTypeId\030\001 \001(\003\022\020\n\010partDesc\030\002 \001(\t\022\025\n\ra" +
-      "nimalPartIds\030\003 \003(\003\" \n\nPartTypeId\022\022\n\npart" +
-      "TypeId\030\001 \001(\003\"6\n\rPartTypesData\022%\n\tpartTyp" +
-      "es\030\001 \003(\0132\022.grpc.PartTypeData\"L\n\013ProductD" +
-      "ata\022\021\n\tproductId\030\001 \001(\003\022\025\n\ranimalPartIds\030" +
-      "\002 \003(\003\022\023\n\013transferIds\030\003 \003(\003\"\036\n\tProductId\022" +
-      "\021\n\tproductId\030\001 \001(\003\"3\n\014ProductsData\022#\n\010pr" +
-      "oducts\030\001 \003(\0132\021.grpc.ProductData\"q\n\031TrayT" +
-      "oProductTransferData\022\022\n\ntransferId\030\001 \001(\003" +
-      "\022\034\n\004tray\030\002 \001(\0132\016.grpc.TrayData\022\"\n\007produc" +
-      "t\030\003 \001(\0132\021.grpc.ProductData\"W\n\032TrayToProd" +
-      "uctTransfersData\0229\n\020transferDataList\030\001 \003" +
-      "(\0132\037.grpc.TrayToProductTransferData2\231\002\n\r" +
-      "AnimalService\0224\n\016registerAnimal\022\020.grpc.A" +
-      "nimalData\032\020.grpc.AnimalData\022.\n\nreadAnima" +
-      "l\022\016.grpc.AnimalId\032\020.grpc.AnimalData\0224\n\014u" +
-      "pdateAnimal\022\020.grpc.AnimalData\032\022.grpc.Emp" +
-      "tyMessage\0224\n\014removeAnimal\022\020.grpc.AnimalD" +
-      "ata\032\022.grpc.EmptyMessage\0226\n\rgetAllAnimals" +
-      "\022\022.grpc.EmptyMessage\032\021.grpc.AnimalsData2" +
-      "\347\004\n\021AnimalPartService\022@\n\022registerAnimalP" +
-      "art\022\024.grpc.AnimalPartData\032\024.grpc.AnimalP" +
-      "artData\022:\n\016readAnimalPart\022\022.grpc.AnimalP" +
-      "artId\032\024.grpc.AnimalPartData\022C\n\032readAnima" +
-      "lPartsByAnimal_id\022\016.grpc.AnimalId\032\025.grpc" +
-      ".AnimalPartsData\022G\n\034readAnimalPartsByPar" +
-      "tType_id\022\020.grpc.PartTypeId\032\025.grpc.Animal" +
-      "PartsData\022E\n\033readAnimalPartsByProduct_id" +
-      "\022\017.grpc.ProductId\032\025.grpc.AnimalPartsData" +
-      "\022?\n\030readAnimalPartsByTray_id\022\014.grpc.Tray" +
-      "Id\032\025.grpc.AnimalPartsData\022C\n\020updateAnima" +
-      "lPart\022\033.grpc.UpdatedAnimalPartData\032\022.grp" +
-      "c.EmptyMessage\022<\n\020removeAnimalPart\022\024.grp" +
-      "c.AnimalPartData\032\022.grpc.EmptyMessage\022;\n\016" +
-      "getAnimalParts\022\022.grpc.EmptyMessage\032\025.grp" +
-      "c.AnimalPartsData2\246\002\n\016ProductService\0227\n\017" +
-      "registerProduct\022\021.grpc.ProductData\032\021.grp" +
-      "c.ProductData\0221\n\013readProduct\022\017.grpc.Prod" +
-      "uctId\032\021.grpc.ProductData\0226\n\rupdateProduc" +
-      "t\022\021.grpc.ProductData\032\022.grpc.EmptyMessage" +
-      "\0226\n\rremoveProduct\022\021.grpc.ProductData\032\022.g" +
-      "rpc.EmptyMessage\0228\n\016getAllProducts\022\022.grp" +
-      "c.EmptyMessage\032\022.grpc.ProductsData2\377\001\n\013T" +
-      "rayService\022.\n\014registerTray\022\016.grpc.TrayDa" +
-      "ta\032\016.grpc.TrayData\022(\n\010readTray\022\014.grpc.Tr" +
-      "ayId\032\016.grpc.TrayData\0220\n\nupdateTray\022\016.grp" +
-      "c.TrayData\032\022.grpc.EmptyMessage\0220\n\nremove" +
-      "Tray\022\016.grpc.TrayData\032\022.grpc.EmptyMessage" +
-      "\0222\n\013getAllTrays\022\022.grpc.EmptyMessage\032\017.gr" +
-      "pc.TraysData2\263\002\n\017PartTypeService\022:\n\020regi" +
-      "sterPartType\022\022.grpc.PartTypeData\032\022.grpc." +
-      "PartTypeData\0224\n\014readPartType\022\020.grpc.Part" +
-      "TypeId\032\022.grpc.PartTypeData\0228\n\016updatePart" +
-      "Type\022\022.grpc.PartTypeData\032\022.grpc.EmptyMes" +
-      "sage\0228\n\016removePartType\022\022.grpc.PartTypeDa" +
-      "ta\032\022.grpc.EmptyMessage\022:\n\017getAllPartType" +
-      "s\022\022.grpc.EmptyMessage\032\023.grpc.PartTypesDa" +
-      "taB\002P\001b\006proto3"
+      " \003(\0132\024.grpc.AnimalPartData\"\263\001\n\010TrayData\022" +
+      "\016\n\006trayId\030\001 \001(\003\022\032\n\022maxWeight_kilogram\030\002 " +
+      "\001(\t\022\027\n\017weight_kilogram\030\003 \001(\t\022\025\n\ranimalPa" +
+      "rtIds\030\004 \003(\003\022\023\n\013transferIds\030\005 \003(\003\0226\n\rtran" +
+      "sfersData\030\006 \003(\0132\037.grpc.TrayToProductTran" +
+      "sferData\"\030\n\006TrayId\022\016\n\006trayId\030\001 \001(\003\"*\n\tTr" +
+      "aysData\022\035\n\005trays\030\001 \003(\0132\016.grpc.TrayData\"K" +
+      "\n\014PartTypeData\022\022\n\npartTypeId\030\001 \001(\003\022\020\n\010pa" +
+      "rtDesc\030\002 \001(\t\022\025\n\ranimalPartIds\030\003 \003(\003\" \n\nP" +
+      "artTypeId\022\022\n\npartTypeId\030\001 \001(\003\"6\n\rPartTyp" +
+      "esData\022%\n\tpartTypes\030\001 \003(\0132\022.grpc.PartTyp" +
+      "eData\"\204\001\n\013ProductData\022\021\n\tproductId\030\001 \001(\003" +
+      "\022\025\n\ranimalPartIds\030\002 \003(\003\022\023\n\013transferIds\030\003" +
+      " \003(\003\0226\n\rtransfersData\030\004 \003(\0132\037.grpc.TrayT" +
+      "oProductTransferData\"\036\n\tProductId\022\021\n\tpro" +
+      "ductId\030\001 \001(\003\"3\n\014ProductsData\022#\n\010products" +
+      "\030\001 \003(\0132\021.grpc.ProductData\"q\n\031TrayToProdu" +
+      "ctTransferData\022\022\n\ntransferId\030\001 \001(\003\022\034\n\004tr" +
+      "ay\030\002 \001(\0132\016.grpc.TrayData\022\"\n\007product\030\003 \001(" +
+      "\0132\021.grpc.ProductData\"W\n\032TrayToProductTra" +
+      "nsfersData\0229\n\020transferDataList\030\001 \003(\0132\037.g" +
+      "rpc.TrayToProductTransferData2\231\002\n\rAnimal" +
+      "Service\0224\n\016registerAnimal\022\020.grpc.AnimalD" +
+      "ata\032\020.grpc.AnimalData\022.\n\nreadAnimal\022\016.gr" +
+      "pc.AnimalId\032\020.grpc.AnimalData\0224\n\014updateA" +
+      "nimal\022\020.grpc.AnimalData\032\022.grpc.EmptyMess" +
+      "age\0224\n\014removeAnimal\022\020.grpc.AnimalData\032\022." +
+      "grpc.EmptyMessage\0226\n\rgetAllAnimals\022\022.grp" +
+      "c.EmptyMessage\032\021.grpc.AnimalsData2\347\004\n\021An" +
+      "imalPartService\022@\n\022registerAnimalPart\022\024." +
+      "grpc.AnimalPartData\032\024.grpc.AnimalPartDat" +
+      "a\022:\n\016readAnimalPart\022\022.grpc.AnimalPartId\032" +
+      "\024.grpc.AnimalPartData\022C\n\032readAnimalParts" +
+      "ByAnimal_id\022\016.grpc.AnimalId\032\025.grpc.Anima" +
+      "lPartsData\022G\n\034readAnimalPartsByPartType_" +
+      "id\022\020.grpc.PartTypeId\032\025.grpc.AnimalPartsD" +
+      "ata\022E\n\033readAnimalPartsByProduct_id\022\017.grp" +
+      "c.ProductId\032\025.grpc.AnimalPartsData\022?\n\030re" +
+      "adAnimalPartsByTray_id\022\014.grpc.TrayId\032\025.g" +
+      "rpc.AnimalPartsData\022C\n\020updateAnimalPart\022" +
+      "\033.grpc.UpdatedAnimalPartData\032\022.grpc.Empt" +
+      "yMessage\022<\n\020removeAnimalPart\022\024.grpc.Anim" +
+      "alPartData\032\022.grpc.EmptyMessage\022;\n\016getAni" +
+      "malParts\022\022.grpc.EmptyMessage\032\025.grpc.Anim" +
+      "alPartsData2\246\002\n\016ProductService\0227\n\017regist" +
+      "erProduct\022\021.grpc.ProductData\032\021.grpc.Prod" +
+      "uctData\0221\n\013readProduct\022\017.grpc.ProductId\032" +
+      "\021.grpc.ProductData\0226\n\rupdateProduct\022\021.gr" +
+      "pc.ProductData\032\022.grpc.EmptyMessage\0226\n\rre" +
+      "moveProduct\022\021.grpc.ProductData\032\022.grpc.Em" +
+      "ptyMessage\0228\n\016getAllProducts\022\022.grpc.Empt" +
+      "yMessage\032\022.grpc.ProductsData2\377\001\n\013TraySer" +
+      "vice\022.\n\014registerTray\022\016.grpc.TrayData\032\016.g" +
+      "rpc.TrayData\022(\n\010readTray\022\014.grpc.TrayId\032\016" +
+      ".grpc.TrayData\0220\n\nupdateTray\022\016.grpc.Tray" +
+      "Data\032\022.grpc.EmptyMessage\0220\n\nremoveTray\022\016" +
+      ".grpc.TrayData\032\022.grpc.EmptyMessage\0222\n\013ge" +
+      "tAllTrays\022\022.grpc.EmptyMessage\032\017.grpc.Tra" +
+      "ysData2\263\002\n\017PartTypeService\022:\n\020registerPa" +
+      "rtType\022\022.grpc.PartTypeData\032\022.grpc.PartTy" +
+      "peData\0224\n\014readPartType\022\020.grpc.PartTypeId" +
+      "\032\022.grpc.PartTypeData\0228\n\016updatePartType\022\022" +
+      ".grpc.PartTypeData\032\022.grpc.EmptyMessage\0228" +
+      "\n\016removePartType\022\022.grpc.PartTypeData\032\022.g" +
+      "rpc.EmptyMessage\022:\n\017getAllPartTypes\022\022.gr" +
+      "pc.EmptyMessage\032\023.grpc.PartTypesDataB\002P\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -266,7 +269,7 @@ public final class SlaughterHouseSim {
     internal_static_grpc_TrayData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_grpc_TrayData_descriptor,
-        new java.lang.String[] { "TrayId", "MaxWeightKilogram", "WeightKilogram", "AnimalPartIds", "TransferIds", });
+        new java.lang.String[] { "TrayId", "MaxWeightKilogram", "WeightKilogram", "AnimalPartIds", "TransferIds", "TransfersData", });
     internal_static_grpc_TrayId_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_grpc_TrayId_fieldAccessorTable = new
@@ -302,7 +305,7 @@ public final class SlaughterHouseSim {
     internal_static_grpc_ProductData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_grpc_ProductData_descriptor,
-        new java.lang.String[] { "ProductId", "AnimalPartIds", "TransferIds", });
+        new java.lang.String[] { "ProductId", "AnimalPartIds", "TransferIds", "TransfersData", });
     internal_static_grpc_ProductId_descriptor =
       getDescriptor().getMessageTypes().get(15);
     internal_static_grpc_ProductId_fieldAccessorTable = new

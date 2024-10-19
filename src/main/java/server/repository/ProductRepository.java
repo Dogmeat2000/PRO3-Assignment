@@ -3,6 +3,10 @@ package server.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shared.model.entities.Product;
+import shared.model.entities.TrayToProductTransfer;
+
+import java.util.List;
+import java.util.Optional;
 
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
  * This @Repository interface extends JpaRepository and provides access to paging, sorting and CRUD operations on the database.
@@ -15,6 +19,6 @@ import shared.model.entities.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> // <-- Primary key of Entity must be provided as the Type to JpaRepository!
 {
-  // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.
+  // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Product entity.
   // If additional functionality is required, it can be added below.
 }
