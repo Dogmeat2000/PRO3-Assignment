@@ -8,6 +8,7 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.java_to_gRPC.PartType_ToGrpc_PartTypeData;
@@ -32,6 +33,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   }
 
 
+  @Transactional
   @Override
   public void registerPartType(PartTypeData request, StreamObserver<PartTypeData> responseObserver) {
     try {
@@ -52,6 +54,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   }
 
 
+  @Transactional
   @Override
   public void readPartType(PartTypeId request, StreamObserver<grpc.PartTypeData> responseObserver) {
     try {
@@ -74,6 +77,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   }
 
 
+  @Transactional
   @Override
   public void updatePartType(PartTypeData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
     try {
@@ -97,6 +101,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   }
 
 
+  @Transactional
   @Override
   public void removePartType(PartTypeData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
     try {
@@ -118,6 +123,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   }
 
 
+  @Transactional
   @Override
   public void getAllPartTypes(EmptyMessage request, StreamObserver<grpc.PartTypesData> responseObserver) {
     try {

@@ -39,7 +39,7 @@ public interface AnimalPartRegistrationSystem
    * @return The identified AnimalPart instance.
    * @throws NotFoundException Thrown if AnimalPart is not be found.
    */
-  AnimalPart readAnimalPart (long animalPartId, Animal animal, PartType type, Tray tray) throws NotFoundException;
+  AnimalPart readAnimalPart (long animalPartId) throws NotFoundException;
 
 
   //TODO: Missing javaDocs

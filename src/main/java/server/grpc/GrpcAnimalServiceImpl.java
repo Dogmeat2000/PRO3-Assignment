@@ -5,6 +5,7 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;

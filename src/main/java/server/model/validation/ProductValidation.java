@@ -32,8 +32,8 @@ public class ProductValidation
 
   public static void validateId(long productId) throws DataIntegrityViolationException {
     // productId must be larger than 0:
-    if(productId <= 0)
-      throw new DataIntegrityViolationException("productId is invalid (0 or less)");
+    if(productId < 0)
+      throw new DataIntegrityViolationException("productId is invalid (less then 0)");
 
     // Validation passed:
   }

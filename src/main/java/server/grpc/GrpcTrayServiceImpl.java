@@ -29,6 +29,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     this.trayService = trayService;
   }
 
+
   @Override
   public void registerTray(TrayData request, StreamObserver<TrayData> responseObserver) {
     try {
