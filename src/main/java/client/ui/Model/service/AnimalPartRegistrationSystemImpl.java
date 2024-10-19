@@ -229,7 +229,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
       AnimalPart animalPart = readAnimalPart(data.getPart_id(), data.getAnimal(), data.getType(), data.getTray());
 
       // Create a gRPC compatible version of AnimalPart (Convert AnimalPart to AnimalPartData)
-      AnimalPartData animalPartData = AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      AnimalPartData animalPartData = AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart);
 
       // Prompt gRPC to delete the AnimalPart:
       EmptyMessage deleted = stub.removeAnimalPart(animalPartData);

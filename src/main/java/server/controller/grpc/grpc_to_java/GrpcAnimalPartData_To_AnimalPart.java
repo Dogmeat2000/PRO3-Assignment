@@ -6,9 +6,7 @@ import shared.model.entities.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
 public class GrpcAnimalPartData_To_AnimalPart
@@ -41,9 +39,12 @@ public class GrpcAnimalPartData_To_AnimalPart
 
 
   public static List<AnimalPart> convertToAnimalPartList(AnimalPartsData data) {
-    List<AnimalPart> animalPartList = new ArrayList<>();
+    // Return an empty list, if received list is null or empty.
+    if(data == null || data.getAnimalPartsList().isEmpty())
+      return new ArrayList<>();
 
     // Convert List of AnimalPartsData to a java compatible list by iteration through each entry and running the method previously declared:
+    List<AnimalPart> animalPartList = new ArrayList<>();
     for (AnimalPartData animalPartData : data.getAnimalPartsList())
       animalPartList.add(convertToAnimalPart(animalPartData));
 

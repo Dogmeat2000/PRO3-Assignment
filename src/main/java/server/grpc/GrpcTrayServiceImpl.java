@@ -41,7 +41,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
         throw new CreateFailedException("Tray could not be created");
 
       // Translate the created Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Tray_ToGrpc_TrayData.convertToTrayData(createdTray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Tray_ToGrpc_TrayData.convertToTrayData(createdTray));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering tray, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -61,7 +61,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
         throw new NotFoundException("Tray not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Tray_ToGrpc_TrayData.convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Tray_ToGrpc_TrayData.convertToTrayData(tray));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Tray with id " + request.getTrayId() + "not found in DB").withCause(e).asRuntimeException());

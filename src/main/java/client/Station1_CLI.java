@@ -1,8 +1,6 @@
 package client;
 
-import client.interfaces.AnimalPartRegistrationSystem;
 import client.interfaces.AnimalRegistrationSystem;
-import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import shared.model.entities.Animal;
 import shared.model.exceptions.NotFoundException;
@@ -163,12 +161,7 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            // Read the base object:
             Animal animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
-
-            // Read any associations:
-            //animal.setAnimalParts(animalPartRegistrationSystem.readAnimalPartsByAnimalId(animal.getId()));
-
             System.out.println("Found [" + animal + "]");
           } catch (NotFoundException e) {
             System.out.println("No Animals found in Database!");
@@ -178,12 +171,7 @@ public class Station1_CLI
       case "viewall":
         System.out.println("Retrieving all Animals from Database: ");
         try {
-          // Read base objects:
           List<Animal> animals = animalRegistrationSystem.getAllAnimals();
-
-          // For each base object, read associated AnimalParts:
-          /*for (Animal animal : animals)
-            animal.setAnimalParts(animalPartRegistrationSystem.readAnimalPartsByAnimalId(animal.getId()));*/
 
           if(animals.isEmpty())
             throw new NotFoundException("");

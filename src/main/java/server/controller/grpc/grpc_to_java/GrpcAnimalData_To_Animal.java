@@ -30,9 +30,12 @@ public class GrpcAnimalData_To_Animal
 
 
   public static List<Animal> convertToAnimalList(AnimalsData data) {
-    List<Animal> animalList = new ArrayList<>();
+    // Return an empty list, if received list is null or empty.
+    if(data == null || data.getAnimalsList().isEmpty())
+      return new ArrayList<>();
 
     // Convert List of AnimalsData to a java compatible list by iteration through each entry and running the method previously declared:
+    List<Animal> animalList = new ArrayList<>();
     for (AnimalData animalData : data.getAnimalsList())
       animalList.add(convertToAnimal(animalData));
 

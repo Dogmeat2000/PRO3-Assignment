@@ -136,12 +136,16 @@ public class Animal implements Serializable
         + getId()
         + "', weight: '"
         + getWeight_kilogram()
-        +  "kg', List of part_ids for parts cut from this animal: [";
+        +  "kg', animalPart_ids cut from this animal: [";
 
-    for (AnimalPart animalPart : getPartList())
-      returnValue += animalPart.getPart_id() + ", ";
-
-    returnValue += "]";
+    for (int i = 0; i < getPartList().size(); i++) {
+      returnValue += getPartList().get(i).getPart_id();
+      if(i != getPartList().size() - 1)
+        returnValue += ", ";
+      else
+        returnValue += "]";
+    }
+        
     return returnValue;
   }
 

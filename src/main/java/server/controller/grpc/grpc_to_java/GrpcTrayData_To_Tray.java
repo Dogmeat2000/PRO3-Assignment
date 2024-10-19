@@ -31,9 +31,12 @@ public class GrpcTrayData_To_Tray
 
 
     public static List<Tray> convertToTrayList(TraysData data) {
-      List<Tray> trayList = new ArrayList<>();
+      // Return an empty list, if received list is null or empty.
+      if(data == null || data.getTraysList().isEmpty())
+        return new ArrayList<>();
 
       // Convert List of TraysData to a java compatible list by iteration through each entry and running the method previously declared:
+      List<Tray> trayList = new ArrayList<>();
       for (TrayData trayData : data.getTraysList())
         trayList.add(convertToTray(trayData));
 

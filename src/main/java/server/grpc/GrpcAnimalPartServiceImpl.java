@@ -42,7 +42,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new CreateFailedException("AnimalPart could not be created");
 
       // Translate the created AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -61,7 +61,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("AnimalPart not found");
 
       // Translate the found AnimalPart into a gRPC compatible type, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart with id " + request.getAnimalPartId() + "not found in DB").withCause(e).asRuntimeException());
@@ -81,13 +81,14 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       if (animalParts == null || animalParts.isEmpty())
         throw new NotFoundException("No AnimalParts associated with animal_id '" + request.getAnimalId() + "' found.");
 
+
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
       responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with animal_id '" + request.getAnimalId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with animal_id '" + request.getAnimalId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -108,7 +109,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with partType_id '" + request.getPartTypeId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with partType_id '" + request.getPartTypeId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -129,7 +130,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with product_id '" + request.getProductId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with product_id '" + request.getProductId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 
@@ -150,7 +151,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with tray_id '" + request.getTrayId() + ", " + e.getMessage()).withCause(e).asRuntimeException());
+      responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all AnimalParts associated with tray_id '" + request.getTrayId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
 

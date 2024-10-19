@@ -33,9 +33,12 @@ public class GrpcPartTypeData_To_PartType
 
 
     public static List<PartType> convertToPartTypeList(PartTypesData data) {
-      List<PartType> partTypeList = new ArrayList<>();
+      // Return an empty list, if received list is null or empty.
+      if(data == null || data.getPartTypesList().isEmpty())
+        return new ArrayList<>();
 
       // Convert List of PartTypesData to a java compatible list by iteration through each entry and running the method previously declared:
+      List<PartType> partTypeList = new ArrayList<>();
       for (PartTypeData partTypeData : data.getPartTypesList())
         partTypeList.add(convertToPartType(partTypeData));
 

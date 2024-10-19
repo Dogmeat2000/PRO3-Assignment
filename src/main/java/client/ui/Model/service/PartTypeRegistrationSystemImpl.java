@@ -89,7 +89,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeServiceGrpc.PartTypeServiceBlockingStub stub = PartTypeServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partType = PartType_ToGrpc_PartTypeData.convertToPartTypeData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      PartTypeData partType = PartType_ToGrpc_PartTypeData.convertToPartTypeData(data);
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = stub.updatePartType(partType);
@@ -122,7 +122,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartType partType = readPartType(typeId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partTypeData = PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      PartTypeData partTypeData = PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType);
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = stub.removePartType(partTypeData);

@@ -42,7 +42,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new CreateFailedException("Product could not be created");
 
       // Translate the created Product into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -62,7 +62,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new NotFoundException("Product not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product with id " + request.getProductId() + "not found in DB").withCause(e).asRuntimeException());

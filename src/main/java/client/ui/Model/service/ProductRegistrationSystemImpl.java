@@ -39,15 +39,15 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductServiceGrpc.ProductServiceBlockingStub stub = ProductServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Product (ProductData), with an initially empty list of Tray relations
-      ProductData data = GrpcFactory.buildGrpcProductData(0, animalPartContentList, new ArrayList<>());
+      ProductData data = GrpcFactory.buildGrpcProductData(null, null/*animalPartContentList, new ArrayList<>()*/);
 
       // Prompt gRPC to register the ProductData:
       ProductData createdProduct = stub.registerProduct(data);
 
       // Add associations between this Product and all the specified Trays delivering parts:
-      for (Tray tray : receivedPartsFromTrayList) {
-        createdProduct.getTrayToProductTransfersListList().add(GrpcFactory.buildGrpcTrayToProductTransferData(GrpcProductData_To_Product.convertToProduct(createdProduct), tray));
-      }
+      /*for (Tray tray : receivedPartsFromTrayList) {
+        createdProduct.getAnimalPartIdsList().add(tray.get);
+      }*/
 
       // Update the repository with the updated connections:
       updateProduct(GrpcProductData_To_Product.convertToProduct(createdProduct));
@@ -99,7 +99,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductServiceGrpc.ProductServiceBlockingStub stub = ProductServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Product (Convert Product to ProductData)
-      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data);
 
       // Prompt gRPC to update the Product:
       EmptyMessage updated = stub.updateProduct(product);
@@ -132,7 +132,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       Product product = readProduct(productId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product);
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = stub.removeProduct(productData);

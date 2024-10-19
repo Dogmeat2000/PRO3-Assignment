@@ -31,9 +31,12 @@ public class Product_ToGrpc_ProductData
    * @param products A list containing all the Product entities to convert.
    * @return A gRPC compatible ProductsData data type, containing all the converted entities.*/
   public static ProductsData convertToProductsDataList(List<Product> products) {
-    List<ProductData> productDataList = new ArrayList<>();
+    // Return an empty list, if received list is null or empty.
+    if(products == null || products.isEmpty())
+      return ProductsData.newBuilder().addAllProducts(new ArrayList<>()).build();
 
     // Convert List of Products to a gRPC compatible list by iteration through each entry and running the method previously declared:
+    List<ProductData> productDataList = new ArrayList<>();
     for (Product product : products)
       productDataList.add(convertToProductData(product));
 

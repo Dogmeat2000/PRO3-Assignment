@@ -45,7 +45,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
         throw new CreateFailedException("PartType could not be created");
 
       // Translate the created PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(createdPartType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(createdPartType));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering partType, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -64,7 +64,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
         throw new NotFoundException("PartType not found");
 
       // Translate the found PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("PartType with id " + request.getPartTypeId() + "not found in DB").withCause(e).asRuntimeException());

@@ -37,9 +37,12 @@ public class Tray_ToGrpc_TrayData
      * @param trays A list containing all the Tray entities to convert.
      * @return A gRPC compatible TraysData data type, containing all the converted entities.*/
     public static TraysData convertToTraysDataList(List<Tray> trays) {
-      List<TrayData> trayDataList = new ArrayList<>();
+      // Return an empty list, if received list is null or empty.
+      if(trays == null || trays.isEmpty())
+        return TraysData.newBuilder().addAllTrays(new ArrayList<>()).build();
 
       // Convert List of Trays to a gRPC compatible list by iteration through each entry and running the method previously declared:
+      List<TrayData> trayDataList = new ArrayList<>();
       for (Tray tray : trays)
         trayDataList.add(convertToTrayData(tray));
 

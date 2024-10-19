@@ -90,7 +90,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayServiceGrpc.TrayServiceBlockingStub stub = TrayServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data);
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = stub.updateTray(tray);
@@ -123,7 +123,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       Tray tray = readTray(trayId);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray);
 
       // Prompt gRPC to delete the Tray:
       EmptyMessage deleted = stub.removeTray(trayData);

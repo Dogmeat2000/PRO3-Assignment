@@ -28,9 +28,12 @@ public class GrpcProductData_To_Product
 
 
     public static List<Product> convertToProductList(ProductsData data) {
-      List<Product> productList = new ArrayList<>();
+      // Return an empty list, if received list is null or empty.
+      if(data == null || data.getProductsList().isEmpty())
+        return new ArrayList<>();
 
       // Convert List of ProductsData to a java compatible list by iteration through each entry and running the method previously declared:
+      List<Product> productList = new ArrayList<>();
       for (ProductData productData : data.getProductsList())
         productList.add(convertToProduct(productData));
 

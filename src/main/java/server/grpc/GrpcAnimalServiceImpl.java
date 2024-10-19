@@ -43,7 +43,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
         throw new CreateFailedException("Animal could not be created");
 
       // Translate the created Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(createdAnimal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(createdAnimal));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering animal, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -63,7 +63,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
         throw new NotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(animal, new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>()));
+      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(animal));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Animal with id " + request.getAnimalId() + "not found in DB").withCause(e).asRuntimeException());
@@ -130,8 +130,8 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No Animals found").withCause(e).asRuntimeException());
-    } /*catch (Exception e) {
+    } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error retrieving all animals, " + e.getMessage()).withCause(e).asRuntimeException());
-    }*/
+    }
   }
 }

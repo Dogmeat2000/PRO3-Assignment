@@ -224,7 +224,6 @@ public class AnimalService implements AnimalRegistryInterface
         animal.setAnimalPartIdList(animalPartIds);
       }
 
-
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
       animalCache.clear();
       for (Animal animal : animals) {

@@ -29,9 +29,12 @@ public class Animal_ToGrpc_AnimalData
 
   /** Converts a List of Animals into the gRPC compatible AnimalsData format */
   public static AnimalsData convertToAnimalsDataList(List<Animal> animals) {
-    List<AnimalData> animalDataList = new ArrayList<>();
+    // Return an empty list, if received list is null or empty.
+    if(animals == null || animals.isEmpty())
+      return AnimalsData.newBuilder().addAllAnimals(new ArrayList<>()).build();
 
     // Convert List of Animals to a gRPC compatible list by iteration through each entry and running the method previously declared:
+    List<AnimalData> animalDataList = new ArrayList<>();
     for (Animal animal : animals)
       animalDataList.add(convertToAnimalData(animal));
 

@@ -31,9 +31,12 @@ public class PartType_ToGrpc_PartTypeData
    * @param partTypes A list containing all the PartType entities to convert.
    * @return A gRPC compatible PartTypesData data type, containing all the converted entities.*/
   public static PartTypesData convertToPartTypesDataList(List<PartType> partTypes) {
-    List<PartTypeData> partTypeDataList = new ArrayList<>();
+    // Return an empty list, if received list is null or empty.
+    if(partTypes == null || partTypes.isEmpty())
+      return PartTypesData.newBuilder().addAllPartTypes(new ArrayList<>()).build();
 
     // Convert List of PartTypes to a gRPC compatible list by iteration through each entry and running the method previously declared:
+    List<PartTypeData> partTypeDataList = new ArrayList<>();
     for (PartType partType : partTypes)
       partTypeDataList.add(convertToPartTypeData(partType));
 
