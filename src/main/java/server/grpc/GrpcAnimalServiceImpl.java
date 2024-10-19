@@ -3,7 +3,6 @@ package server.grpc;
 import grpc.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import jakarta.transaction.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
@@ -16,7 +15,6 @@ import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
-import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
@@ -76,6 +74,8 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   @Override
   public void updateAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
+      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Animal with the provided ID:
       if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {

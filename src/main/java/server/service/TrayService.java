@@ -146,6 +146,8 @@ public class TrayService implements TrayRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateTray(Tray data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+    // TODO: Not finished implemented yet.
+
     // Validate received data, before passing to repository/database:
     TrayValidation.validateTray(data);
 

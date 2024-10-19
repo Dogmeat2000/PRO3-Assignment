@@ -74,6 +74,8 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
   @Override
   public void updateTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
+      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Tray with the provided ID:
       if (!trayService.updateTray(GrpcTrayData_To_Tray.convertToTray(request))) {

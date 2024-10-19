@@ -115,6 +115,8 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override
   public boolean updatePartType (PartType data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+    // TODO: Not finished implemented yet.
+
     // Validate received data, before passing to repository/database:
     PartTypeValidation.validatePartType(data);
 
@@ -198,8 +200,8 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Transactional (readOnly = true)
   @Override
   public List<PartType> getAllPartTypes() throws PersistenceException {
-
     try {
+      // Load all PartTypes from repository:
       List<PartType> partTypes = partTypeRepository.findAll();
 
       // Load all associated AnimalParts, for each PartType:

@@ -81,7 +81,6 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       if (animalParts == null || animalParts.isEmpty())
         throw new NotFoundException("No AnimalParts associated with animal_id '" + request.getAnimalId() + "' found.");
 
-
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
       responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
@@ -159,6 +158,8 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   @Override
   public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
+      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+
       // Translate received gRPC information from the client, into Java compatible types:
       AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData());
       AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData());

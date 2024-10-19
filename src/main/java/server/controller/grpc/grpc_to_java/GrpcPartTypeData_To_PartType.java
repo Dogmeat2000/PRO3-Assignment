@@ -1,14 +1,11 @@
 package server.controller.grpc.grpc_to_java;
 
-import grpc.AnimalPartData;
 import grpc.PartTypeData;
 import grpc.PartTypesData;
 import shared.model.entities.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
 public class GrpcPartTypeData_To_PartType

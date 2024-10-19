@@ -33,7 +33,8 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public Animal registerAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
+  @Override
+  public Animal registerAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
 
     // Validate received data, before passing to repository/database:
     AnimalValidation.validateAnimal(data);
@@ -64,7 +65,8 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional (readOnly = true)
-  @Override public Animal readAnimal(long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Override
+  public Animal readAnimal(long animalId) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received id, before passing to repository/database:
     AnimalValidation.validateId(animalId);
 
@@ -110,7 +112,9 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean updateAnimal(Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+  @Override
+  public boolean updateAnimal(Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+    // TODO: Not finished implemented yet.
     // Validate received data, before passing to repository/database:
     AnimalValidation.validateAnimal(data);
 
@@ -161,7 +165,8 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean removeAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
+  @Override
+  public boolean removeAnimal(Animal data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
     AnimalValidation.validateAnimal(data);
 
@@ -200,7 +205,8 @@ public class AnimalService implements AnimalRegistryInterface
 
 
   @Transactional (readOnly = true)
-  @Override public List<Animal> getAllAnimals() throws PersistenceException {
+  @Override
+  public List<Animal> getAllAnimals() throws PersistenceException {
     try {
       // Load all Animals from repository:
       List<Animal> animals = animalRepository.findAll();

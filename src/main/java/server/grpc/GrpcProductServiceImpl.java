@@ -75,6 +75,8 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   @Override
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
+      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to update the Product with the provided ID:
       if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request))) {

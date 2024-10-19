@@ -139,6 +139,8 @@ public class ProductRegistryService implements ProductRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateProduct(Product data) {
+    // TODO: Not finished implemented yet.
+
     // Validate received data, before passing to repository/database:
     ProductValidation.validateProduct(data);
 

@@ -220,6 +220,8 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateAnimalPart(AnimalPart oldData, AnimalPart newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+    // TODO: Not finished implemented yet.
+
     // Validate received data, before passing to repository/database:
     AnimalPartValidation.validateAnimalPart(oldData);
     AnimalPartValidation.validateAnimalPart(newData);
