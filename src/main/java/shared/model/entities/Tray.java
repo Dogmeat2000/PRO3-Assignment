@@ -44,7 +44,7 @@ public class Tray implements Serializable
   // also that TrayToProductTransferRepository entity should 'own' the mapping (using the tray attribute in its class).
   // This makes logical sense, since it is from within the TrayToProductTransferRepository class that references to the Tray are stored in the DB, between Product and Tray.
   @OneToMany(mappedBy="tray", fetch = FetchType.EAGER)
-  private List<TrayToProductTransfer> deliveredToProducts;
+  private List<TrayToProductTransfer> transferList = new ArrayList<>();
 
   @Transient
   private PartType trayType;
@@ -54,6 +54,9 @@ public class Tray implements Serializable
 
   @Transient
   private List<Long> transferIdList = new ArrayList<>();
+
+  @Transient
+  private List<Product> productList = new ArrayList<>();
 
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Tray() {
@@ -65,14 +68,10 @@ public class Tray implements Serializable
     setTrayId(trayId);
     setMaxWeight_kilogram(maxWeight_kilogram);
     setWeight_kilogram(weight_kilogram);
-    setDeliveredToProducts(new ArrayList<>());
-    this.contents = new ArrayList<>();
 
-    this.animalPartIdList = new ArrayList<>();
     if(contentIdList != null && !contentIdList.isEmpty())
       this.animalPartIdList.addAll(contentIdList);
 
-    this.transferIdList = new ArrayList<>();
     if(transferIdList != null && !transferIdList.isEmpty())
       this.transferIdList.addAll(transferIdList);
   }
@@ -187,19 +186,27 @@ public class Tray implements Serializable
     this.transferIdList = transferIds;
   }
 
-  public List<TrayToProductTransfer> getDeliveredToProducts() {
-    if(deliveredToProducts == null)
+  public List<TrayToProductTransfer> getTransferList() {
+    if(transferList == null)
       return new ArrayList<>();
     else
-      return deliveredToProducts;
+      return transferList;
   }
 
 
-  public void setDeliveredToProducts(List<TrayToProductTransfer> deliveredToProducts) {
+  public void setTransferList(List<TrayToProductTransfer> deliveredToProducts) {
     if(deliveredToProducts == null)
-      this.deliveredToProducts = new ArrayList<>();
+      this.transferList = new ArrayList<>();
     else
-      this.deliveredToProducts = deliveredToProducts;
+      this.transferList = deliveredToProducts;
+  }
+
+  public List<Product> getProductList() {
+    return productList;
+  }
+
+  public void setProductList(List<Product> productList) {
+    this.productList = productList;
   }
 
 
@@ -223,7 +230,7 @@ public class Tray implements Serializable
         && Objects.equals(getWeight_kilogram(), ((Tray) o).getWeight_kilogram())
         && Objects.equals(getMaxWeight_kilogram(), ((Tray) o).getMaxWeight_kilogram())
         && Objects.equals(getContents(), ((Tray) o).getContents()) //TODO Confirm that this equals method also performs equals check on contents.
-        && Objects.equals(getDeliveredToProducts(), ((Tray) o).getDeliveredToProducts()); //TODO Confirm that this equals method also performs equals check on contents.
+        && Objects.equals(getTransferList(), ((Tray) o).getTransferList()); //TODO Confirm that this equals method also performs equals check on contents.
   }
 
 
@@ -243,7 +250,7 @@ public class Tray implements Serializable
         + getTrayType().getTypeId()
         + "', List of product_id's into which animalParts were packed: [";
 
-    for (TrayToProductTransfer transfer : getDeliveredToProducts())
+    for (TrayToProductTransfer transfer : getTransferList())
       returnValue += transfer.getProduct().getProductId() + ",";
 
     returnValue += "], List of animalPart_id's transported in this Tray: [";
@@ -264,7 +271,7 @@ public class Tray implements Serializable
     trayCopy.setWeight_kilogram(getWeight_kilogram());
     trayCopy.setMaxWeight_kilogram(getMaxWeight_kilogram());
     trayCopy.getContents().addAll(getContents());
-    trayCopy.getDeliveredToProducts().addAll(getDeliveredToProducts());
+    trayCopy.getTransferList().addAll(getTransferList());
 
     return trayCopy;
   }

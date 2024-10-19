@@ -86,11 +86,8 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
         // Convert to java language, and attach to PartType Object:
         partType.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
       } catch (StatusRuntimeException e) {
-        if(e.getStatus().getCode().equals(NOT_FOUND.getCode())) {
+        if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           // No AnimalParts found with this PartType:
-          partType.setAnimalParts(new ArrayList<>());
-        }
-        else
           throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
       }
 
@@ -212,12 +209,9 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
           // Convert to java language, and attach to PartType Object:
           partType.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
         } catch (StatusRuntimeException e) {
-          if(e.getStatus().getCode().equals(NOT_FOUND.getCode())) {
-            // No AnimalParts found assigned to this PartType:
-            partType.setAnimalParts(new ArrayList<>());
-          }
-          else
-            throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with PartType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
+          if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
+            // No AnimalParts found with this PartType:
+            throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
         }
       }
 

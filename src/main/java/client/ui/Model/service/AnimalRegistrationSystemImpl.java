@@ -87,11 +87,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
         // Convert to java language, and attach to Animal Object:
         animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
       } catch (StatusRuntimeException e) {
-        if(e.getStatus().getCode().equals(NOT_FOUND.getCode())) {
+        if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           // No AnimalParts found assigned to this Animal:
-          animal.setAnimalParts(new ArrayList<>());
-        }
-        else
           throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with Animal_id '" + animal.getId() + "' (" + e.getMessage() + ")");
       }
 
@@ -218,11 +215,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
           // Convert to java language, and attach to Animal Object:
           animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
         } catch (StatusRuntimeException e) {
-          if(e.getStatus().getCode().equals(NOT_FOUND.getCode())) {
+          if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
             // No AnimalParts found assigned to this Animal:
-            animal.setAnimalParts(new ArrayList<>());
-          }
-          else
             throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with Animal_id '" + animal.getId() + "' (" + e.getMessage() + ")");
         }
       }

@@ -13,7 +13,6 @@ import server.repository.AnimalPartRepository;
 import server.repository.TrayRepository;
 import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.AnimalPart;
-import shared.model.entities.PartType;
 import shared.model.entities.Tray;
 import shared.model.entities.TrayToProductTransfer;
 import shared.model.exceptions.NotFoundException;
@@ -54,7 +53,7 @@ public class TrayService implements TrayRegistryInterface
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
       //trayToProductTransferRepository.save(transferId);
-      trayToProductTransferRepository.saveAll(data.getDeliveredToProducts());
+      trayToProductTransferRepository.saveAll(data.getTransferList());
 
       // Attempt to add Tray to local cache:
       trayCache.put(newTray.getTrayId(), newTray);
@@ -124,11 +123,11 @@ public class TrayService implements TrayRegistryInterface
       } catch (NotFoundException ignored) {}
 
       if(!transfers.isEmpty())
-        tray.setDeliveredToProducts(transfers);
+        tray.setTransferList(transfers);
 
       // Populate the id association list:
       List<Long> transferIds = new ArrayList<>();
-      for (TrayToProductTransfer transfer : tray.getDeliveredToProducts())
+      for (TrayToProductTransfer transfer : tray.getTransferList())
         transferIds.add(transfer.getTransferId());
       tray.setTransferIdList(transferIds);
 
@@ -161,8 +160,8 @@ public class TrayService implements TrayRegistryInterface
       tray.setWeight_kilogram(data.getWeight_kilogram());
       tray.clearAnimalPartContents();
       tray.addAllAnimalParts(data.getContents());
-      tray.getDeliveredToProducts().clear();
-      tray.getDeliveredToProducts().addAll(data.getDeliveredToProducts());
+      tray.getTransferList().clear();
+      tray.getTransferList().addAll(data.getTransferList());
 
       // Save the modified entity back to database:
       trayRepository.save(tray);
@@ -171,7 +170,7 @@ public class TrayService implements TrayRegistryInterface
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
       //trayToProductTransferRepository.save(transferId);
-      trayToProductTransferRepository.saveAll(data.getDeliveredToProducts());
+      trayToProductTransferRepository.saveAll(data.getTransferList());
 
       // Identify any AnimalParts that were removed from the Tray:
       List<AnimalPart> listOfRemovedAnimalParts = new ArrayList<>(data.getContents());
@@ -235,7 +234,7 @@ public class TrayService implements TrayRegistryInterface
       // Ensure that all associated TrayToProductTransfer transfers are removed:
       //TrayToProductTransferId id = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
       //trayToProductTransferRepository.delete(id);
-      trayToProductTransferRepository.deleteAll(data.getDeliveredToProducts());
+      trayToProductTransferRepository.deleteAll(data.getTransferList());
 
       return true;
 
@@ -282,13 +281,13 @@ public class TrayService implements TrayRegistryInterface
         } catch (NotFoundException ignored) {}
 
         if(!transfers.isEmpty())
-          tray.setDeliveredToProducts(transfers);
+          tray.setTransferList(transfers);
       }
 
       // Populate the id association list:
       for (Tray tray : trays) {
         List<Long> transferIds = new ArrayList<>();
-        for (TrayToProductTransfer transfer : tray.getDeliveredToProducts())
+        for (TrayToProductTransfer transfer : tray.getTransferList())
           transferIds.add(transfer.getTransferId());
         tray.setTransferIdList(transferIds);
       }

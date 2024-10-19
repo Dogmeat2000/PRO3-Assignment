@@ -2,12 +2,9 @@ package server.controller.grpc.java_to_gRPC;
 
 import grpc.*;
 import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
 public class Animal_ToGrpc_AnimalData
