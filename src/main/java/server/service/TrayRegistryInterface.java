@@ -44,7 +44,7 @@ public interface TrayRegistryInterface
      * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
      * @throws DataIntegrityViolationException Thrown if Tray contains invalid attributes (i.e. 0 or negative id specified).
      */
-    boolean updateTray (Tray oldData, Tray newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
+    boolean updateTray (Tray data) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
     /** <p>Deletes the given Tray from the repository. Unique id is extracted from the Tray entity

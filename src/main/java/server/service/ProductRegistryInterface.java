@@ -6,7 +6,6 @@ import shared.model.entities.Product;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 // TODO: Add javaDocs description
 public interface ProductRegistryInterface
@@ -16,6 +15,9 @@ public interface ProductRegistryInterface
 
   // Read:
   Product readProduct (long productId);
+
+  // TODO: add javaDocs
+  List<Product> readProductsByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
 
   // Update:
   boolean updateProduct (Product data);

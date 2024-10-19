@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.PartTypeValidation;
 import server.repository.AnimalPartRepository;
 import server.repository.PartTypeRepository;
-import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
+import shared.model.entities.Product;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
@@ -87,13 +87,13 @@ public class PartTypeService implements PartTypeRegistryInterface
       logger.info("PartType read from database with ID: {}", typeId);
 
       // Load all associated AnimalParts:  //TODO: Shouldn't be needed? JPA should be doing this already!
-      List<AnimalPart> animalParts = new ArrayList<>();
+      /*List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching type_id=" + partType.getTypeId()));
       } catch (NotFoundException ignored) {}
 
       if(!animalParts.isEmpty())
-        partType.setAnimalParts(animalParts);
+        partType.setAnimalParts(animalParts);*/
 
       // Populate the id association list:
       List<Long> animalPartIds = new ArrayList<>();
@@ -115,8 +115,6 @@ public class PartTypeService implements PartTypeRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override
   public boolean updatePartType (PartType data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
-    // TODO: Not finished implemented yet.
-
     // Validate received data, before passing to repository/database:
     PartTypeValidation.validatePartType(data);
 
@@ -128,21 +126,42 @@ public class PartTypeService implements PartTypeRegistryInterface
       // Modify the database Entity locally:
       partType.setTypeDesc(data.getTypeDesc());
       partType.getPartList().clear();
-      partType.getPartList().addAll(data.getPartList());
+      for (AnimalPart animalPart : data.getPartList()) {
+        try {
+          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
+          partType.addAnimalPart(animalPartToAdd);
+        } catch (NotFoundException ignored) {}
+      }
 
       // Save the modified entity back to database:
-      partTypeRepository.save(partType);
+      partType = partTypeRepository.save(partType);
       logger.info("PartType updated in database with ID: {}", partType.getTypeId());
 
-      // Attempt to add PartType to local cache:
-      partTypeCache.put(partType.getTypeId(), partType);
-      logger.info("PartType saved to local cache with ID: {}", partType.getTypeId());
+      // Attempt to add updated PartType to local cache:
+      PartType updatedPartType = readPartType(partType.getTypeId());
+      partTypeCache.put(updatedPartType.getTypeId(), updatedPartType);
+      logger.info("PartType saved to local cache with ID: {}", updatedPartType.getTypeId());
 
-      // Attempt to update all associated AnimalPart entities:
-      for (AnimalPart animalPart : data.getPartList()) {
+      // Get a list of AnimalParts that are no longer associated with this PartType:
+      List<AnimalPart> listOfAnimalPartsNotInUpdatedPartType = new ArrayList<>(data.getPartList());
+
+      for (AnimalPart oldAnimalPart : data.getPartList()) {
+        for (AnimalPart newAnimalPart : partType.getPartList()) {
+          if(oldAnimalPart.getPart_id() == newAnimalPart.getPart_id()) {
+            listOfAnimalPartsNotInUpdatedPartType.remove(oldAnimalPart);
+          }
+        }
+      }
+
+      // Update all still-existing AnimalPart compositions:
+      for (AnimalPart animalPart : partType.getPartList()) {
         animalPart.setType(partType);
         animalPartRepository.save(animalPart);
       }
+
+      // Delete any AnimalPart objects that are no longer associated with any Animal entity:
+      for (AnimalPart voidAnimalPart : listOfAnimalPartsNotInUpdatedPartType)
+        animalPartRepository.findById(voidAnimalPart.getPart_id()).ifPresent(animalPartRepository::delete);
 
       return true;
 
@@ -157,7 +176,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override
   public boolean removePartType (PartType data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
@@ -205,7 +224,7 @@ public class PartTypeService implements PartTypeRegistryInterface
       List<PartType> partTypes = partTypeRepository.findAll();
 
       // Load all associated AnimalParts, for each PartType: //TODO: Shouldn't be needed? JPA should be doing this already!
-      for (PartType partType : partTypes) {
+      /*for (PartType partType : partTypes) {
         List<AnimalPart> animalParts = new ArrayList<>();
         try {
           animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + partType.getTypeId()));
@@ -213,7 +232,7 @@ public class PartTypeService implements PartTypeRegistryInterface
 
         if(!animalParts.isEmpty())
           partType.setAnimalParts(animalParts);
-      }
+      }*/
 
       // Populate the id association list:
       for (PartType partType : partTypes) {

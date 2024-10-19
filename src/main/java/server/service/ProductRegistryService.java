@@ -9,7 +9,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.ProductValidation;
+import server.repository.AnimalPartRepository;
 import server.repository.ProductRepository;
+import server.repository.TrayRepository;
 import server.repository.TrayToProductTransferRepository;
 import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
@@ -23,11 +25,15 @@ public class ProductRegistryService implements ProductRegistryInterface
   private final Map<Long, Product> productCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(ProductRegistryService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
+  private final TrayRepository trayRepository;
+  private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository) {
+  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository, TrayRepository trayRepository, AnimalPartRepository animalPartRepository) {
     this.productRepository = productRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
+    this.trayRepository = trayRepository;
+    this.animalPartRepository = animalPartRepository;
   }
 
 
@@ -125,14 +131,58 @@ public class ProductRegistryService implements ProductRegistryInterface
     }
   }
 
+  @Override public List<Product> readProductsByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
+    // Validate received id, before passing to repository/database:
+    ProductValidation.validateId(transferId);
+
+    // Attempt to read from DB:
+    try {
+      List<Product> products = productRepository.findByTraySupplyJoinList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Products found in database associated with transferId=" + transferId));
+
+      logger.info("Products associated with transferId {} read from database.", transferId);
+
+      // Populate transient values for each Product:
+      for (Product product : products) {
+
+        // Populate the transient animalId association list:
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : product.getContentList())
+          animalPartIds.add(animalPart.getPart_id());
+        product.setAnimalPartIdList(animalPartIds);
+
+        // Populate the transient transferId association list:
+        List<Long> transferIds = new ArrayList<>();
+        for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
+          transferIds.add(transfer.getTransferId());
+        product.setTransferIdList(transferIds);
+
+        // Populate the transient traySuppliers association list:
+        List<Tray> traySupplierList = new ArrayList<>();
+        for (Long transfer_id : product.getTransferIdList()){
+          List<Tray> supplierList = new ArrayList<>();
+          try {
+            supplierList = trayRepository.findByTransferList_TransferId(transfer_id).orElseThrow(() -> new NotFoundException("No Products found in database associated with transferId=" + transferId));
+          } catch (NotFoundException ignored) {}
+          traySupplierList.addAll(supplierList);
+        }
+        product.setTraySuppliersList(traySupplierList);
+
+        // Add found Product to local cache, to improve performance next time Product is requested.
+        productCache.put(product.getProductId(), product);
+        logger.info("Product added to local cache with ID: {}", product.getProductId());
+      }
+
+      return products;
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred while retrieving all Products associated with transferId {}: {}", transferId, e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override public boolean updateProduct(Product data) {
-    // TODO: Not finished implemented yet.
-    return false;
-
     // Validate received data, before passing to repository/database:
-    /*ProductValidation.validateProduct(data);
+    ProductValidation.validateProduct(data);
 
     // Attempt to update Product in database:
     try {
@@ -140,30 +190,55 @@ public class ProductRegistryService implements ProductRegistryInterface
       Product product = productRepository.findById(data.getProductId()).orElseThrow(() -> new NotFoundException("No Product found in database with matching id=" + data.getProductId()));
 
       // Modify the database Entity locally:
+      // AnimalPart List
       product.getContentList().clear();
-      product.getContentList().addAll(data.getContentList());
+      for (AnimalPart animalPart : data.getContentList()) {
+        try {
+          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
+          product.addAnimalPart(animalPartToAdd);
+        } catch (NotFoundException ignored) {}
+      }
 
+      // TrayToProductTransfer List
       product.getTraySupplyJoinList().clear();
-      product.getTraySupplyJoinList().addAll(data.getTraySupplyJoinList());
-
-      // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      //TrayToProductTransferId transferId = new TrayToProductTransferId(transfer.getProduct_id(), transfer.getTray_id());
-      //trayToProductTransferRepository.save(transferId);
-      trayToProductTransferRepository.saveAll(product.getTraySupplyJoinList());
-
-      // Ensure that all associated AnimalPart entities are updated:
-      for (AnimalPart animalPart : data.getContentList()){
-        animalPart.setProduct(product);
-        animalPartRepository.save(animalPart);
+      for (TrayToProductTransfer transfer : data.getTraySupplyJoinList()) {
+        try {
+          TrayToProductTransfer transferToAdd = trayToProductTransferRepository.findById(transfer.getTransferId()).orElseThrow(() -> new NotFoundException(""));
+          product.getTraySupplyJoinList().add(transferToAdd);
+        } catch (NotFoundException ignored) {}
       }
 
       // Save the modified entity back to database:
-      productRepository.save(product);
+      product = productRepository.save(product);
       logger.info("Product updated in database with ID: {}", product.getProductId());
 
-      // Attempt to add PartType to local cache:
-      productCache.put(product.getProductId(), product);
-      logger.info("Product saved to local cache with ID: {}", product.getProductId());
+      // Attempt to add Product to local cache:
+      Product updatedProduct = readProduct(product.getProductId());
+      productCache.put(updatedProduct.getProductId(), updatedProduct);
+      logger.info("Product saved to local cache with ID: {}", updatedProduct.getProductId());
+
+      // Get a list of AnimalParts that are no longer associated with this Product:
+      List<AnimalPart> listOfAnimalPartsNotInUpdatedProduct = new ArrayList<>(data.getContentList());
+
+      for (AnimalPart oldAnimalPart : data.getContentList())
+        for (AnimalPart newAnimalPart : updatedProduct.getContentList())
+          if(oldAnimalPart.getPart_id() == newAnimalPart.getPart_id())
+            listOfAnimalPartsNotInUpdatedProduct.remove(oldAnimalPart);
+
+      // Update all still-existing AnimalPart compositions:
+      for (AnimalPart animalPart : updatedProduct.getContentList()) {
+        animalPart.setProduct(updatedProduct);
+        animalPartRepository.save(animalPart);
+      }
+
+      // Update any AnimalPart objects that are no longer associated with any Product entity:
+      for (AnimalPart voidAnimalPart : listOfAnimalPartsNotInUpdatedProduct){
+        try {
+          AnimalPart animalPartVoid = animalPartRepository.findById(voidAnimalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
+          animalPartVoid.setProduct(null);
+          animalPartRepository.save(animalPartVoid);
+        } catch (NotFoundException ignored) {}
+      }
 
       return true;
 
@@ -174,7 +249,7 @@ public class ProductRegistryService implements ProductRegistryInterface
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while updating Product with ID {}: {}", data.getProductId(), e.getMessage());
       throw new PersistenceException(e);
-    }*/
+    }
   }
 
 

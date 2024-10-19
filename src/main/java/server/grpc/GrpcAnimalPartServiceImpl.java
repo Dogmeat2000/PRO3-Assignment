@@ -41,7 +41,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   @Transactional
   @Override
   public void registerAnimalPart(AnimalPartData request, StreamObserver<AnimalPartData> responseObserver) {
-    //try {
+    try {
       // Translate received gRPC information from the client, into Java compatible types
       AnimalPart animalPartReceived = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request);
 
@@ -76,9 +76,9 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
       responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart));
       responseObserver.onCompleted();
-    /*} catch (Exception e) {
+    } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
-    }*/
+    }
   }
 
 
@@ -187,6 +187,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   }
 
 
+  @Transactional
   @Override
   public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     //try {
@@ -212,6 +213,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   }
 
 
+  @Transactional
   @Override
   public void removeAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
@@ -230,7 +232,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
 
       // Read associated PartType Data:
       Product associatedProduct = null;
-      if(animalPartReceived.getProduct() != null)
+      if(animalPartReceived.getProduct() != null && animalPartReceived.getProduct().getProductId() > 0)
         associatedProduct = productService.readProduct(animalPartReceived.getProduct().getProductId());
 
       // Assign the entities with proper data:

@@ -9,10 +9,13 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.java_to_gRPC.PartType_ToGrpc_PartTypeData;
+import server.service.AnimalPartRegistryInterface;
 import server.service.PartTypeRegistryInterface;
+import shared.model.entities.Animal;
 import shared.model.entities.PartType;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
@@ -25,11 +28,13 @@ import java.util.List;
 public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeServiceImplBase
 {
   private final PartTypeRegistryInterface partTypeService;
+  private final AnimalPartRegistryInterface animalPartService;
 
   @Autowired
-  public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService) {
+  public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService, AnimalPartRegistryInterface animalPartService) {
     super();
     this.partTypeService = partTypeService;
+    this.animalPartService = animalPartService;
   }
 
 
@@ -81,12 +86,17 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   @Override
   public void updatePartType(PartTypeData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
     try {
-      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+      // Translate received gRPC information from the client, into a Java compatible type:
+      PartType partTypeReceived = GrpcPartTypeData_To_PartType.convertToPartType(request);
 
-      // Translate received gRPC information from the client, into Java compatible types,
-      // and attempt to update the PartType with the provided ID:
-      if (!partTypeService.updatePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
-        // If PartType update failed:
+      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
+      partTypeReceived.getPartList().clear();
+      for (Long animalPartId : partTypeReceived.getAnimalPartIdList())
+        partTypeReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+
+      // Attempt to update the PartType:
+      if (!partTypeService.updatePartType(partTypeReceived)) {
+        // If Animal update failed:
         throw new UpdateFailedException("Error occurred while updated partType with id='" + request.getPartTypeId() + "'");
       }
 

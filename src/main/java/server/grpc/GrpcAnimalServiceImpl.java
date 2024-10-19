@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
+import server.service.AnimalPartRegistryInterface;
 import server.service.AnimalRegistryInterface;
 import shared.model.entities.Animal;
 import shared.model.exceptions.NotFoundException;
@@ -22,14 +23,17 @@ import java.util.List;
 public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBase
 {
   private final AnimalRegistryInterface animalService;
+  private final AnimalPartRegistryInterface animalPartService;
 
   @Autowired
-  public GrpcAnimalServiceImpl(AnimalRegistryInterface animalService) {
+  public GrpcAnimalServiceImpl(AnimalRegistryInterface animalService, AnimalPartRegistryInterface animalPartService) {
     super();
     this.animalService = animalService;
+    this.animalPartService = animalPartService;
   }
 
 
+  @Transactional
   @Override
   public void registerAnimal(AnimalData request, StreamObserver<AnimalData> responseObserver) {
     try {
@@ -72,14 +76,20 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   }
 
 
+  @Transactional
   @Override
   public void updateAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
-      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+      // Translate received gRPC information from the client, into a Java compatible type:
+      Animal animalReceived = GrpcAnimalData_To_Animal.convertToAnimal(request);
 
-      // Translate received gRPC information from the client, into Java compatible types,
-      // and attempt to update the Animal with the provided ID:
-      if (!animalService.updateAnimal(GrpcAnimalData_To_Animal.convertToAnimal(request))) {
+      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
+      animalReceived.getPartList().clear();
+      for (Long animalPartId : animalReceived.getAnimalPartIdList())
+        animalReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+
+      // Attempt to update the Animal:
+      if (!animalService.updateAnimal(animalReceived)) {
         // If Animal update failed:
         throw new UpdateFailedException("Error occurred while updated animal with id='" + request.getAnimalId() + "'");
       }
@@ -95,6 +105,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   }
 
 
+  @Transactional
   @Override
   public void removeAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
     try {

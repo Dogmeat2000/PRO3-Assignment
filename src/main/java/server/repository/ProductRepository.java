@@ -3,7 +3,6 @@ package server.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shared.model.entities.Product;
-import shared.model.entities.TrayToProductTransfer;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +20,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> // <-- P
 {
   // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Product entity.
   // If additional functionality is required, it can be added below.
+  Optional<List<Product>> findByTraySupplyJoinList_TransferId(Long transferId);
 }

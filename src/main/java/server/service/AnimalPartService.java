@@ -26,18 +26,18 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   private final TrayRegistryInterface trayRepository;
   private final PartTypeRegistryInterface partTypeRepository;
   private final ProductRegistryInterface productRepository;
+  private final EntityManager entityManager;
 
-  @Autowired
-  private EntityManager entityManager;
 
   @Autowired
   public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRegistryInterface animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
-      ProductRegistryInterface productRepository) {
+      ProductRegistryInterface productRepository, EntityManager entityManager) {
     this.animalPartRepository = animalPartRepository;
     this.animalRepository = animalRepository;
     this.trayRepository = trayRepository;
     this.partTypeRepository = partTypeRepository;
     this.productRepository = productRepository;
+    this.entityManager = entityManager;
   }
 
 
@@ -80,9 +80,11 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
       // Parent Tray:
       Tray parentTray = data.getTray();
-      if(!parentTray.getContents().contains(newAnimalPart))
+      if(!parentTray.getContents().contains(newAnimalPart)) {
         parentTray.addAnimalPart(newAnimalPart);
-      trayRepository.updateTray(trayRepository.readTray(parentTray.getTrayId()), parentTray);
+        parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().add(newAnimalPart.getWeight_kilogram()));
+      }
+      trayRepository.updateTray(trayRepository.readTray(parentTray.getTrayId()));
 
       // Parent PartType:
       PartType parentPartType = data.getType();
@@ -369,9 +371,11 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
       // Parent Tray:
       Tray parentTray = data.getTray();
-      if(!parentTray.getContents().contains(animalPartToRemove))
+      if(!parentTray.getContents().contains(animalPartToRemove)) {
         parentTray.removeAnimalPart(animalPartToRemove);
-      trayRepository.updateTray(trayRepository.readTray(parentTray.getTrayId()), parentTray);
+        parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().subtract(animalPartToRemove.getWeight_kilogram()));
+      }
+      trayRepository.updateTray(trayRepository.readTray(parentTray.getTrayId()));
 
       // Parent PartType:
       PartType parentPartType = data.getType();

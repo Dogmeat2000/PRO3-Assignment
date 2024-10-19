@@ -5,9 +5,12 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcTrayData_To_Tray;
 import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
+import server.service.AnimalPartRegistryInterface;
+import server.service.ProductRegistryInterface;
 import server.service.TrayRegistryInterface;
 import shared.model.entities.Tray;
 import shared.model.exceptions.CreateFailedException;
@@ -15,21 +18,25 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
-import java.util.HashMap;
 import java.util.List;
 
 @GrpcService
 public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
 {
   private final TrayRegistryInterface trayService;
+  private final ProductRegistryInterface productService;
+  private final AnimalPartRegistryInterface animalPartService;
 
   @Autowired
-  public GrpcTrayServiceImpl(TrayRegistryInterface trayService) {
+  public GrpcTrayServiceImpl(TrayRegistryInterface trayService, ProductRegistryInterface productService, AnimalPartRegistryInterface animalPartService) {
     super();
     this.trayService = trayService;
+    this.productService = productService;
+    this.animalPartService = animalPartService;
   }
 
 
+  @Transactional
   @Override
   public void registerTray(TrayData request, StreamObserver<TrayData> responseObserver) {
     try {
@@ -72,16 +79,28 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
   }
 
 
+  @Transactional
   @Override
   public void updateTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
-    /*try {
-      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+    try {
+      // Translate received gRPC information from the client, into a Java compatible type:
+      Tray trayReceived = GrpcTrayData_To_Tray.convertToTray(request);
 
-      // Translate received gRPC information from the client, into Java compatible types,
-      // and attempt to update the Tray with the provided ID:
-      if (!trayService.updateTray(GrpcTrayData_To_Tray.convertToTray(request))) {
+      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
+      // AnimalPart associations:
+      trayReceived.getContents().clear();
+      for (Long animalPartId : trayReceived.getAnimalPartIdList())
+        trayReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+
+      // Product associations:
+      trayReceived.getProductList().clear();
+      for (Long transferId : trayReceived.getTransferIdList())
+        trayReceived.getProductList().addAll(productService.readProductsByTransferId(transferId));
+
+      // Attempt to update the Tray:
+      if (!trayService.updateTray(trayReceived)) {
         // If Tray update failed:
-        throw new UpdateFailedException("Error occurred while updated tray with id='" + request.getTrayId() + "'");
+        throw new UpdateFailedException("Error occurred while updated Tray with id='" + request.getTrayId() + "'");
       }
 
       // Signal to client to complete the gRPC operation:
@@ -91,10 +110,11 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
       responseObserver.onError(Status.NOT_FOUND.withDescription("Tray not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update Tray with id '" + request.getTrayId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
-    }*/
+    }
   }
 
 
+  @Transactional
   @Override
   public void removeTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
     try {

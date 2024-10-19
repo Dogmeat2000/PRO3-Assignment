@@ -39,6 +39,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
+  @Transactional
   @Override
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
@@ -73,10 +74,9 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
       }
 
       for (Tray tray : associatedTrays) {
-        Tray oldTray = tray.copy();
         if(!tray.getProductList().contains(createdProduct)) {
           tray.getProductList().add(createdProduct);
-          trayService.updateTray(tray, oldTray);
+          trayService.updateTray(tray);
         }
       }
 
@@ -111,14 +111,26 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
+  @Transactional
   @Override
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
-      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+      // Translate received gRPC information from the client, into a Java compatible type:
+      Product productReceived = GrpcProductData_To_Product.convertToProduct(request);
 
-      // Translate received gRPC information from the client, into Java compatible types,
-      // and attempt to update the Product with the provided ID:
-      if (!productService.updateProduct(GrpcProductData_To_Product.convertToProduct(request))) {
+      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
+      // AnimalPart associations:
+      productReceived.getContentList().clear();
+      for (Long animalPartId : productReceived.getAnimalPartIdList())
+        productReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+
+      // Tray associations:
+      productReceived.getTraySuppliersList().clear();
+      for (Long transferId : productReceived.getTransferIdList())
+        productReceived.getTraySuppliersList().addAll(trayService.readTraysByTransferId(transferId));
+
+      // Attempt to update the Product:
+      if (!productService.updateProduct(productReceived)) {
         // If Product update failed:
         throw new UpdateFailedException("Error occurred while updated Product with id='" + request.getProductId() + "'");
       }
@@ -134,6 +146,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
+  @Transactional
   @Override
   public void removeProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {

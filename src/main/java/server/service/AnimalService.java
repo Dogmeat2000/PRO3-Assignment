@@ -13,6 +13,7 @@ import server.repository.AnimalPartRepository;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
+import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
@@ -85,15 +86,6 @@ public class AnimalService implements AnimalRegistryInterface
 
       logger.info("Animal read from database with ID: {}", animalId);
 
-      // Load all associated AnimalParts: //TODO: Shouldn't be needed? JPA should be doing this already!
-      List<AnimalPart> animalParts = new ArrayList<>();
-      try {
-        animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animal.getId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + animal.getId()));
-      } catch (NotFoundException ignored) {}
-
-      if(!animalParts.isEmpty())
-        animal.setAnimalParts(animalParts);
-
       // Populate the id association list:
       List<Long> animalPartIds = new ArrayList<>();
       for (AnimalPart animalPart : animal.getPartList())
@@ -114,7 +106,6 @@ public class AnimalService implements AnimalRegistryInterface
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
   @Override
   public boolean updateAnimal(Animal data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
-    // TODO: Not finished implemented yet.
     // Validate received data, before passing to repository/database:
     AnimalValidation.validateAnimal(data);
 
@@ -126,30 +117,42 @@ public class AnimalService implements AnimalRegistryInterface
       // Modify the database Entity locally:
       animal.setWeight_kilogram(data.getWeight_kilogram());
       animal.getPartList().clear();
-      animal.getPartList().addAll(data.getPartList());
+      for (AnimalPart animalPart : data.getPartList()) {
+        try {
+          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
+          animal.addAnimalPart(animalPartToAdd);
+        } catch (NotFoundException ignored) {}
+      }
 
       // Save the modified entity back to database:
-      animalRepository.save(animal);
+      animal = animalRepository.save(animal);
       logger.info("Animal updated in database with ID: {}", animal.getId());
 
-      // Attempt to add Animal to local cache:
-      animalCache.put(animal.getId(), animal);
+      // Attempt to add updated Animal to local cache:
+      Animal updatedAnimal = readAnimal(animal.getId());
+      animalCache.put(updatedAnimal.getId(), updatedAnimal);
       logger.info("Animal saved to local cache with ID: {}", animal.getId());
 
       // Get a list of AnimalParts that are no longer associated with this Animal:
       List<AnimalPart> listOfAnimalPartsNotInUpdatedAnimal = new ArrayList<>(data.getPartList());
-      listOfAnimalPartsNotInUpdatedAnimal.removeAll(animal.getPartList());
+
+      for (AnimalPart oldAnimalPart : data.getPartList()) {
+        for (AnimalPart newAnimalPart : animal.getPartList()) {
+          if(oldAnimalPart.getPart_id() == newAnimalPart.getPart_id()) {
+            listOfAnimalPartsNotInUpdatedAnimal.remove(oldAnimalPart);
+          }
+        }
+      }
 
       // Update all still-existing AnimalPart compositions:
       for (AnimalPart animalPart : animal.getPartList()) {
-        AnimalPart oldAnimalPart = animalPart.copy();
         animalPart.setAnimal(animal);
-        //animalPartRepository.updateAnimalPart(oldAnimalPart, animalPart);
         animalPartRepository.save(animalPart);
       }
 
       // Delete any AnimalPart objects that are no longer associated with any Animal entity:
-      animalPartRepository.deleteAll(listOfAnimalPartsNotInUpdatedAnimal);
+      for (AnimalPart voidAnimalPart : listOfAnimalPartsNotInUpdatedAnimal)
+        animalPartRepository.findById(voidAnimalPart.getPart_id()).ifPresent(animalPartRepository::delete);
 
       return true;
 
@@ -210,17 +213,6 @@ public class AnimalService implements AnimalRegistryInterface
     try {
       // Load all Animals from repository:
       List<Animal> animals = animalRepository.findAll();
-
-      // Load all associated AnimalParts, for each Animal: //TODO: Shouldn't be needed? JPA should be doing this already!
-      for (Animal animal : animals) {
-        List<AnimalPart> animalParts = new ArrayList<>();
-        try {
-          animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animal.getId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + animal.getId()));
-        } catch (NotFoundException ignored) {}
-
-        if(!animalParts.isEmpty())
-          animal.setAnimalParts(animalParts);
-      }
 
       // Populate the id association list:
       for (Animal animal : animals) {
