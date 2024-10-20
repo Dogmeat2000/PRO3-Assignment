@@ -201,27 +201,27 @@ public final class AnimalPartServiceGrpc {
     return getReadAnimalPartsByTrayIdMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<grpc.UpdatedAnimalPartData,
+  private static volatile io.grpc.MethodDescriptor<grpc.AnimalPartData,
       grpc.EmptyMessage> getUpdateAnimalPartMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "updateAnimalPart",
-      requestType = grpc.UpdatedAnimalPartData.class,
+      requestType = grpc.AnimalPartData.class,
       responseType = grpc.EmptyMessage.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<grpc.UpdatedAnimalPartData,
+  public static io.grpc.MethodDescriptor<grpc.AnimalPartData,
       grpc.EmptyMessage> getUpdateAnimalPartMethod() {
-    io.grpc.MethodDescriptor<grpc.UpdatedAnimalPartData, grpc.EmptyMessage> getUpdateAnimalPartMethod;
+    io.grpc.MethodDescriptor<grpc.AnimalPartData, grpc.EmptyMessage> getUpdateAnimalPartMethod;
     if ((getUpdateAnimalPartMethod = AnimalPartServiceGrpc.getUpdateAnimalPartMethod) == null) {
       synchronized (AnimalPartServiceGrpc.class) {
         if ((getUpdateAnimalPartMethod = AnimalPartServiceGrpc.getUpdateAnimalPartMethod) == null) {
           AnimalPartServiceGrpc.getUpdateAnimalPartMethod = getUpdateAnimalPartMethod =
-              io.grpc.MethodDescriptor.<grpc.UpdatedAnimalPartData, grpc.EmptyMessage>newBuilder()
+              io.grpc.MethodDescriptor.<grpc.AnimalPartData, grpc.EmptyMessage>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "updateAnimalPart"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  grpc.UpdatedAnimalPartData.getDefaultInstance()))
+                  grpc.AnimalPartData.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   grpc.EmptyMessage.getDefaultInstance()))
               .setSchemaDescriptor(new AnimalPartServiceMethodDescriptorSupplier("updateAnimalPart"))
@@ -395,7 +395,7 @@ public final class AnimalPartServiceGrpc {
      * Update:
      * </pre>
      */
-    default void updateAnimalPart(grpc.UpdatedAnimalPartData request,
+    default void updateAnimalPart(grpc.AnimalPartData request,
         io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateAnimalPartMethod(), responseObserver);
     }
@@ -507,7 +507,7 @@ public final class AnimalPartServiceGrpc {
      * Update:
      * </pre>
      */
-    public void updateAnimalPart(grpc.UpdatedAnimalPartData request,
+    public void updateAnimalPart(grpc.AnimalPartData request,
         io.grpc.stub.StreamObserver<grpc.EmptyMessage> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getUpdateAnimalPartMethod(), getCallOptions()), request, responseObserver);
@@ -605,7 +605,7 @@ public final class AnimalPartServiceGrpc {
      * Update:
      * </pre>
      */
-    public grpc.EmptyMessage updateAnimalPart(grpc.UpdatedAnimalPartData request) {
+    public grpc.EmptyMessage updateAnimalPart(grpc.AnimalPartData request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateAnimalPartMethod(), getCallOptions(), request);
     }
@@ -707,7 +707,7 @@ public final class AnimalPartServiceGrpc {
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<grpc.EmptyMessage> updateAnimalPart(
-        grpc.UpdatedAnimalPartData request) {
+        grpc.AnimalPartData request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateAnimalPartMethod(), getCallOptions()), request);
     }
@@ -787,7 +787,7 @@ public final class AnimalPartServiceGrpc {
               (io.grpc.stub.StreamObserver<grpc.AnimalPartsData>) responseObserver);
           break;
         case METHODID_UPDATE_ANIMAL_PART:
-          serviceImpl.updateAnimalPart((grpc.UpdatedAnimalPartData) request,
+          serviceImpl.updateAnimalPart((grpc.AnimalPartData) request,
               (io.grpc.stub.StreamObserver<grpc.EmptyMessage>) responseObserver);
           break;
         case METHODID_REMOVE_ANIMAL_PART:
@@ -862,7 +862,7 @@ public final class AnimalPartServiceGrpc {
           getUpdateAnimalPartMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              grpc.UpdatedAnimalPartData,
+              grpc.AnimalPartData,
               grpc.EmptyMessage>(
                 service, METHODID_UPDATE_ANIMAL_PART)))
         .addMethod(

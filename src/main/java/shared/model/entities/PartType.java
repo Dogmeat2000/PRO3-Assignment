@@ -127,11 +127,13 @@ public class PartType implements Serializable
         + getTypeId()
         + "', desc: '"
         + getTypeDesc()
-        +  "', List of animalPart_ids of this PartType: [";
+        +  "', animalPart_ids of this Type: [";
 
-    for (AnimalPart animalPart : getPartList())
-      returnValue += animalPart.getPart_id() + ",";
-
+    for (int i = 0; i < getPartList().size(); i++) {
+      returnValue += getPartList().get(i).getPart_id();
+      if(i != getPartList().size() - 1)
+        returnValue += ", ";
+    }
     returnValue += "]";
 
     return returnValue;

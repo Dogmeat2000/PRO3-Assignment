@@ -68,9 +68,8 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
 
       // Update associated Entities:
       for (AnimalPart animalPart : associatedAnimalParts) {
-        AnimalPart oldAnimalPart = animalPart.copy();
         animalPart.setProduct(createdProduct);
-        animalPartService.updateAnimalPart(animalPart, oldAnimalPart);
+        animalPartService.updateAnimalPart(animalPart);
       }
 
       for (Tray tray : associatedTrays) {

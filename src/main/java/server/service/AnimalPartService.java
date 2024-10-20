@@ -165,7 +165,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
           animalPartCache.put(animalPart.getPart_id(), animalPart);
 
       }
-      logger.info("Added all AnimalParts associated with animalId '" + animalId + "' to Local Cache");
+      logger.info("Added all AnimalParts associated with animalId '{}' to Local Cache", animalId);
       return animalParts;
 
     } catch (PersistenceException e) {
@@ -189,7 +189,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
           animalPartCache.put(animalPart.getPart_id(), animalPart);
 
       }
-      logger.info("Added all AnimalParts associated with type_ID '" + typeId + "' to Local Cache");
+      logger.info("Added all AnimalParts associated with type_ID '{}' to Local Cache", typeId);
       return animalParts;
 
     } catch (PersistenceException e) {
@@ -213,7 +213,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
           animalPartCache.put(animalPart.getPart_id(), animalPart);
 
       }
-      logger.info("Added all AnimalParts associated with product_id '" + productId + "' to Local Cache");
+      logger.info("Added all AnimalParts associated with product_id '{}' to Local Cache", productId);
       return animalParts;
 
     } catch (PersistenceException e) {
@@ -237,7 +237,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
           animalPartCache.put(animalPart.getPart_id(), animalPart);
 
       }
-      logger.info("Added all AnimalParts associated with tray_id '" + trayId + "' to Local Cache");
+      logger.info("Added all AnimalParts associated with tray_id '{}' to Local Cache", trayId);
       return animalParts;
 
     } catch (PersistenceException e) {
@@ -248,89 +248,85 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
 
   @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
-  @Override public boolean updateAnimalPart(AnimalPart oldData, AnimalPart newData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
-    // TODO: Not finished implemented yet.
-
+  @Override public boolean updateAnimalPart(AnimalPart data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
-    AnimalPartValidation.validateAnimalPart(oldData);
-    AnimalPartValidation.validateAnimalPart(newData);
+    AnimalPartValidation.validateAnimalPart(data);
 
     // Attempt to update AnimalPart in database:
     try {
-      // Fetch the existing Entity from DB:
-      AnimalPart oldAnimalPart = animalPartRepository.findById(oldData.getPart_id()).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + oldData.getPart_id()));
+      // Fetch existing entity from DB:
+      AnimalPart oldAnimalPart = animalPartRepository.findById(data.getPart_id()).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + data.getPart_id()));
+
+
+      // Retrieve most recent repository versions of associated entities, for the modified AnimalPart:
+      Animal managedModifiedAnimal = entityManager.merge(animalRepository.readAnimal(data.getAnimal().getId()));
+      data.setAnimal(managedModifiedAnimal);
+
+      Tray managedModifiedTray = entityManager.merge(trayRepository.readTray(data.getTray().getTrayId()));
+      data.setTray(managedModifiedTray);
+
+      PartType managedModifiedPartType = entityManager.merge(partTypeRepository.readPartType(data.getType().getTypeId()));
+      data.setType(managedModifiedPartType);
+
+      Product managedModifiedProduct = null;
+      if(data.getProduct() != null && data.getProduct().getProductId() > 0)
+        managedModifiedProduct = productRepository.readProduct(data.getProduct().getProductId());
+      data.setProduct(managedModifiedProduct);
 
       // Modify the database Entity locally:
-      AnimalPart newAnimalPart = oldAnimalPart.copy();
-      newAnimalPart.setWeight_kilogram(newData.getWeight_kilogram());
-      newAnimalPart.setAnimal(newData.getAnimal());
-      newAnimalPart.setType(newData.getType());
-      newAnimalPart.setTray(newData.getTray());
-      newAnimalPart.setProduct(newData.getProduct());
+      AnimalPart modifiedAnimalPart = data.copy();
 
       // Save modified AnimalPart to Db:
-      newAnimalPart = animalPartRepository.save(newAnimalPart);
-      logger.info("AnimalPart updated in database with ID: {}", newAnimalPart.getPart_id());
+      modifiedAnimalPart = animalPartRepository.save(modifiedAnimalPart);
+      logger.info("AnimalPart updated in database with ID: {}", modifiedAnimalPart.getPart_id());
 
+      // Check if there are any of the associated entities, that changed. If so, update the old/void ones, to remove this AnimalPart from their associations:
 
-      // Attempt to update all associated Animal entities:
-     /* Animal oldAnimal = oldAnimalPart.getAnimal();
-      oldAnimal.getPartList().remove(oldAnimalPart);
-      animalRepository.updateAnimal(oldAnimal);
+      // Check associated Animal:
+      if(modifiedAnimalPart.getAnimal().getId() != oldAnimalPart.getAnimal().getId()) {
+        //Old Animal no longer has association to this AnimalPart. Remove it:
+        oldAnimalPart.getAnimal().removeAnimalPart(oldAnimalPart);
+        animalRepository.updateAnimal(oldAnimalPart.getAnimal());
+      }
 
-      Animal newAnimal = newAnimalPart.getAnimal();
-      newAnimal.getPartList().add(newAnimalPart);
-      animalRepository.updateAnimal(newAnimal);
+      // Check associated PartType:
+      if(modifiedAnimalPart.getType().getTypeId() != oldAnimalPart.getType().getTypeId()) {
+        //Old PartType no longer has association to this AnimalPart. Remove it:
+        oldAnimalPart.getType().removeAnimalPart(oldAnimalPart);
+        partTypeRepository.updatePartType(oldAnimalPart.getType());
+      }
 
+      // Check associated Tray:
+      if(modifiedAnimalPart.getTray().getTrayId() != oldAnimalPart.getTray().getTrayId()) {
+        //Old Tray no longer has association to this AnimalPart. Remove it:
+        oldAnimalPart.getType().removeAnimalPart(oldAnimalPart);
+        trayRepository.updateTray(oldAnimalPart.getTray());
+      }
 
-      // Attempt to update all associated Tray entities:
-      Tray oldTray = oldAnimalPart.getTray();
-      oldTray.removeAnimalPart(oldAnimalPart);
-      trayRepository.updateTray(oldTray);
-
-      Tray newTray = newAnimalPart.getTray();
-      newTray.removeAnimalPart(oldAnimalPart);
-      trayRepository.updateTray(newTray);
-
-
-      // Attempt to update all associated PartType entities:
-      PartType oldPartType = oldAnimalPart.getType();
-      oldPartType.getPartList().remove(oldAnimalPart);
-      partTypeRepository.updatePartType(oldPartType);
-
-      PartType newPartType = newAnimalPart.getType();
-      newPartType.getPartList().add(newAnimalPart);
-      partTypeRepository.updatePartType(newPartType);
-
-
-      // Attempt to update all associated Product entities:
-      if(oldAnimalPart.getProduct() != null) {
-        Product oldProduct = oldAnimalPart.getProduct();
-        oldProduct.getContentList().remove(oldAnimalPart);
-        productRepository.updateProduct(oldProduct);
-      }*/
-
-      if(newAnimalPart.getProduct() != null) {
-        Product newProduct = newAnimalPart.getProduct();
-        newProduct.getContentList().remove(newAnimalPart);
-        productRepository.updateProduct(newProduct);
+      // Check associated Tray:
+      if(oldAnimalPart.getProduct() != null && oldAnimalPart.getProduct().getProductId() > 0) {
+        if(modifiedAnimalPart.getProduct().getProductId() != oldAnimalPart.getProduct().getProductId()) {
+          //Old Product no longer has association to this AnimalPart. Remove it:
+          oldAnimalPart.getProduct().removeAnimalPart(oldAnimalPart);
+          productRepository.updateProduct(oldAnimalPart.getProduct());
+        }
       }
 
       // Reset the local cache, since updates done inside the other service classes might not be downloaded from the Database:
       animalPartCache.clear();
 
       // Attempt to add new AnimalPart to local cache:
-      animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
-      logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
+      animalPartCache.put(modifiedAnimalPart.getPart_id(), modifiedAnimalPart);
+      logger.info("AnimalPart saved to local cache with ID: {}", modifiedAnimalPart.getPart_id());
 
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", oldData.getPart_id(), e.getMessage());
+      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", data.getPart_id(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", oldData.getPart_id(), e.getMessage());
+      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", data.getPart_id(), e.getMessage());
       throw new PersistenceException(e);
     }
   }

@@ -139,10 +139,12 @@ public class Tray implements Serializable
     if(contents != null) {
       animalPart.setTray(this);
       contents.add(animalPart);
-    }else {
+      setWeight_kilogram(getWeight_kilogram().add(animalPart.getWeight_kilogram()));
+    } else {
       contents = new ArrayList<>();
       animalPart.setTray(this);
       contents.add(animalPart);
+      setWeight_kilogram(getWeight_kilogram().add(animalPart.getWeight_kilogram()));
     }
   }
 
@@ -242,22 +244,27 @@ public class Tray implements Serializable
   @Override public String toString() {
     String returnValue = "tray_id: '"
         + getTrayId()
-        + ", with a maxCapacity: '"
+        + ", maxCapacity: '"
         + getMaxWeight_kilogram()
-        + "kg, with a currentWeight of: '"
+        + "kg, currentWeight: '"
         + getWeight_kilogram()
-        + "kg', transporting animalParts of type_id: '"
-        + getTrayType().getTypeId()
-        + "', List of product_id's into which animalParts were packed: [";
+        + "kg', only holds partType: '";
 
-    for (TrayToProductTransfer transfer : getTransferList())
-      returnValue += transfer.getProduct().getProductId() + ",";
+    returnValue += (getTrayType() != null) ? getTrayType().getTypeDesc() : "NULL";
+    returnValue += "', product_id's parts were handed to: [";
 
-    returnValue += "], List of animalPart_id's transported in this Tray: [";
+    for (int i = 0; i < getTransferList().size(); i++) {
+      returnValue += getTransferList().get(i).getProduct().getProductId();
+      if(i != getTransferList().size() - 1)
+        returnValue += ", ";
+    }
+    returnValue += "], animalPart_id's in Tray: [";
 
-    for (AnimalPart animalPart : getContents())
-      returnValue += animalPart.getPart_id() + ",";
-
+    for (int i = 0; i < getContents().size(); i++) {
+      returnValue += getContents().get(i).getPart_id();
+      if(i != getContents().size() - 1)
+        returnValue += ", ";
+    }
     returnValue += "]";
 
     return returnValue;
@@ -270,7 +277,7 @@ public class Tray implements Serializable
     trayCopy.setTrayType(getTrayType());
     trayCopy.setWeight_kilogram(getWeight_kilogram());
     trayCopy.setMaxWeight_kilogram(getMaxWeight_kilogram());
-    trayCopy.getContents().addAll(getContents());
+    trayCopy.addAllAnimalParts(getContents());
     trayCopy.getTransferList().addAll(getTransferList());
 
     return trayCopy;

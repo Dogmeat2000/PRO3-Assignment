@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.grpc.Status.NOT_FOUND;
+import static io.grpc.Status.INTERNAL;
 
 public class TrayRegistrationSystemImpl extends Client implements TrayRegistrationSystem
 {
@@ -126,11 +127,8 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
   @Transactional
   @Override
-  public void updateTray(Tray newTray, Tray oldTray) throws UpdateFailedException, NotFoundException {
-    // TODO: Not implemented yet.
-    throw new UpdateFailedException("Method not implemented!");
-
-    /*// Create a managed channel to connect to the gRPC server:
+  public void updateTray(Tray data) throws UpdateFailedException, NotFoundException {
+    // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
     try {
@@ -155,7 +153,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
-    }*/
+    }
   }
 
 

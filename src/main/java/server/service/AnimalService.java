@@ -13,7 +13,6 @@ import server.repository.AnimalPartRepository;
 import server.repository.AnimalRepository;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
-import shared.model.entities.PartType;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;

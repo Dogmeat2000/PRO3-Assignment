@@ -37,10 +37,10 @@ message AnimalPartData {
 }
 
 
-message UpdatedAnimalPartData {
+/*message UpdatedAnimalPartData {
   AnimalPartData oldData = 1;
   AnimalPartData newData = 2;
-}
+}*/
 
 
 message AnimalPartId {
@@ -154,7 +154,7 @@ service AnimalPartService {
   rpc readAnimalPartsByTray_id(TrayId) returns (AnimalPartsData);
 
   // Update:
-  rpc updateAnimalPart(UpdatedAnimalPartData) returns (EmptyMessage);
+  rpc updateAnimalPart(AnimalPartData) returns (EmptyMessage);
 
   // Delete:
   rpc removeAnimalPart(AnimalPartData) returns (EmptyMessage);

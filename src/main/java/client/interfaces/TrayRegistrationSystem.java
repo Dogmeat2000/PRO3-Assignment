@@ -38,7 +38,7 @@ public interface TrayRegistrationSystem
    * @throws NotFoundException Thrown if no matching Tray could be found in the repository.
    * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified Tray entity.
    */
-  void updateTray (Tray newTray, Tray oldTray) throws UpdateFailedException, NotFoundException;
+  void updateTray (Tray data) throws UpdateFailedException, NotFoundException;
 
 
   /** <p>Deletes the given Tray from the repository. Unique id is extracted from the Tray entity

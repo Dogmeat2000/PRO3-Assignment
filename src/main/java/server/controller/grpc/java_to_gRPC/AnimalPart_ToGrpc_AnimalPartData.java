@@ -32,7 +32,7 @@ public class AnimalPart_ToGrpc_AnimalPartData
   }
 
 
-  public static UpdatedAnimalPartData covertToUpdatedAnimalPartData(AnimalPart oldData, AnimalPart newData) {
+  /*public static UpdatedAnimalPartData covertToUpdatedAnimalPartData(AnimalPart oldData, AnimalPart newData) {
     if (oldData == null || newData == null)
       return null;
 
@@ -41,7 +41,7 @@ public class AnimalPart_ToGrpc_AnimalPartData
         .setNewData(convertToAnimalPartData(newData));
 
     return updatedAnimalPartBuilder.build();
-  }
+  }*/
 
 
   /** Converts a List of AnimalParts into the gRPC compatible AnimalPartsData format */

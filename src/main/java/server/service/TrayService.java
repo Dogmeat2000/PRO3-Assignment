@@ -90,7 +90,7 @@ public class TrayService implements TrayRegistryInterface
 
       logger.info("Tray read from database with ID: {}", trayId);
 
-      // Load all associated AnimalParts:
+      // Load all associated AnimalParts: //TODO: Shouldn't be needed? JPA should be doing this already!
       List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
@@ -121,6 +121,10 @@ public class TrayService implements TrayRegistryInterface
         transferIds.add(transfer.getTransferId());
       tray.setTransferIdList(transferIds);
 
+      // Populate the transient TrayType:
+      if(!tray.getContents().isEmpty())
+        tray.setTrayType(tray.getContents().get(0).getType());
+
 
       // Add found Tray to local cache, to improve performance next time Tray is requested.
       trayCache.put(tray.getTrayId(), tray);
@@ -138,17 +142,6 @@ public class TrayService implements TrayRegistryInterface
     try {
       List<Tray> trays = trayRepository.findByTransferList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Trays found in database associated with transferId=" + transferId));
 
-      // Load all associated AnimalParts, for each Tray: //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*for (Tray tray : trays) {
-        List<AnimalPart> animalParts = new ArrayList<>();
-        try {
-          animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
-        } catch (NotFoundException ignored) {}
-
-        if(!animalParts.isEmpty())
-          tray.addAllAnimalParts(animalParts);
-      }*/
-
       // Populate the transient id association list:
       for (Tray tray : trays) {
         List<Long> animalPartIds = new ArrayList<>();
@@ -157,23 +150,18 @@ public class TrayService implements TrayRegistryInterface
         tray.setAnimalPartIdList(animalPartIds);
       }
 
-      // Load all associated TrayToProductTransfer, for each Tray: //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*for (Tray tray : trays) {
-        List<TrayToProductTransfer> transfers = new ArrayList<>();
-        try {
-          transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching tray_id=" + tray.getTrayId()));
-        } catch (NotFoundException ignored) {}
-
-        if(!transfers.isEmpty())
-          tray.setTransferList(transfers);
-      }*/
-
       // Populate the transient id association list:
       for (Tray tray : trays) {
         List<Long> transferIds = new ArrayList<>();
         for (TrayToProductTransfer transfer : tray.getTransferList())
           transferIds.add(transfer.getTransferId());
         tray.setTransferIdList(transferIds);
+      }
+
+      // Populate the transient TrayType:
+      for (Tray tray : trays) {
+        if(!tray.getContents().isEmpty())
+          tray.setTrayType(tray.getContents().get(0).getType());
       }
 
       // Add all the found Trays to local cache, to improve performance next time a Tray is requested.
@@ -311,8 +299,8 @@ public class TrayService implements TrayRegistryInterface
     try {
       List<Tray> trays = trayRepository.findAll();
 
-      // Load all associated AnimalParts, for each Tray:
-      for (Tray tray : trays) {
+      // Load all associated AnimalParts, for each Tray: //TODO: JPA should be doing this automatically!
+      /*for (Tray tray : trays) {
         List<AnimalPart> animalParts = new ArrayList<>();
         try {
           animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
@@ -320,9 +308,9 @@ public class TrayService implements TrayRegistryInterface
 
         if(!animalParts.isEmpty())
           tray.addAllAnimalParts(animalParts);
-      }
+      }*/
 
-      // Populate the id association list:
+      // Populate the transient AnimalId association list:
       for (Tray tray : trays) {
         List<Long> animalPartIds = new ArrayList<>();
         for (AnimalPart animalPart : tray.getContents())
@@ -330,8 +318,8 @@ public class TrayService implements TrayRegistryInterface
         tray.setAnimalPartIdList(animalPartIds);
       }
 
-      // Load all associated TrayToProductTransfer, for each Tray:
-      for (Tray tray : trays) {
+      // Load all associated TrayToProductTransfer, for each Tray: //TODO: JPA should be doing this automatically!
+      /*for (Tray tray : trays) {
         List<TrayToProductTransfer> transfers = new ArrayList<>();
         try {
           transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfers found in database matching tray_id=" + tray.getTrayId()));
@@ -339,14 +327,20 @@ public class TrayService implements TrayRegistryInterface
 
         if(!transfers.isEmpty())
           tray.setTransferList(transfers);
-      }
+      }*/
 
-      // Populate the id association list:
+      // Populate the transient TrayId association list:
       for (Tray tray : trays) {
         List<Long> transferIds = new ArrayList<>();
         for (TrayToProductTransfer transfer : tray.getTransferList())
           transferIds.add(transfer.getTransferId());
         tray.setTransferIdList(transferIds);
+      }
+
+      // Populate the transient TrayType:
+      for (Tray tray : trays) {
+        if(!tray.getContents().isEmpty())
+          tray.setTrayType(tray.getContents().get(0).getType());
       }
 
       // Add all the found Trays to local cache, to improve performance next time a Tray is requested.

@@ -124,7 +124,7 @@ public class Station2_CLI
         //Show a list of valid Animals:
         System.out.println("\nValid Animals are:");
         for (Animal animal : animalRegistrationSystem.getAllAnimals()) {
-          System.out.println("id: '" + animal.getId() + "', Weight_kilogram: '" + animal.getWeight_kilogram() + "', Parts: " + animal.getPartList());
+          System.out.println(animal);
           validAnimalIds.add(animal.getId());
         }
 
@@ -139,7 +139,6 @@ public class Station2_CLI
         try {
           parentAnimal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace();
           System.out.println("Invalid Animal Id!");
           break;
         }
@@ -147,7 +146,7 @@ public class Station2_CLI
         //Show a list of valid PartTypes:
         System.out.println("\nValid PartTypes are:");
         for (PartType partType : partTypeRegistrationSystem.getAllPartTypes()) {
-          System.out.println("id: '" + partType.getTypeId() + "', Description: '" + partType.getTypeDesc() + "'");
+          System.out.println(partType);
           validTypeIds.add(partType.getTypeId());
         }
 
@@ -162,7 +161,6 @@ public class Station2_CLI
         try {
           parentPartType = partTypeRegistrationSystem.readPartType(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace();
           System.out.println("Invalid PartType Id!");
           break;
         }
@@ -172,9 +170,15 @@ public class Station2_CLI
         for (Tray tray : trayRegistrationSystem.getAllTrays()) {
           // Calculate available space:
           BigDecimal availableSpace = tray.getMaxWeight_kilogram().subtract(tray.getWeight_kilogram());
-          // Only display Trays with space remaining:
-          if(availableSpace.subtract(weight).compareTo(BigDecimal.valueOf(0)) > 0) {
-            System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
+
+          // Only display Trays with enough space remaining, and of the proper type:
+          if(availableSpace.subtract(weight).compareTo(BigDecimal.valueOf(0)) > 0
+              && (tray.getTrayType() != null
+              && (tray.getTrayType().getTypeId() == 0
+              || tray.getTrayType().getTypeId() == parentPartType.getTypeId()))
+              || tray.getTrayType() == null) {
+
+            System.out.println(tray);
             validTrayIds.add(tray.getTrayId());
           }
         }
@@ -243,26 +247,13 @@ public class Station2_CLI
         System.out.println("\nValid AnimalParts are:");
         validPartIds.clear();
         validAnimalIds.clear();
-        validTrayIds.clear();
         validTypeIds.clear();
+        validTrayIds.clear();
         for (AnimalPart animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
-          System.out.println("Part_id: '"
-              + animalPart.getPart_id()
-              + "', Type_id: '"
-              + animalPart.getType().getTypeId()
-              + "' ("
-              + animalPart.getType().getTypeDesc()
-              + "' "
-              + "Cut from animal_id: '" + animalPart.getAnimal().getId()
-              + "', Transported in tray_id: '"
-              + animalPart.getTray().getTrayId()
-              + "', with weight: '"
-              + animalPart.getWeight_kilogram()
-              + "'");
+          System.out.println(animalPart);
           validPartIds.add(animalPart.getPart_id());
           validAnimalIds.add(animalPart.getAnimal().getId());
           validTypeIds.add(animalPart.getType().getTypeId());
-          validTrayIds.add(animalPart.getTray().getTrayId());
         }
 
         // Prompt user to enter the part_id to update:
@@ -273,54 +264,6 @@ public class Station2_CLI
           break;
         }
         long part_idToUpdate = Long.parseLong(value);
-
-        // Prompt user to enter the animal_id associated with the AnimalPart to update:
-        System.out.print("Enter animal_id belonging to the AnimalPart you want to update: ");
-        value = getUserInput();
-        if(!validateLongInput(value) || !validAnimalIds.contains(Long.parseLong(value))){
-          System.out.println("Invalid input!");
-          break;
-        }
-        Animal oldParentAnimal = null;
-        try {
-          oldParentAnimal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
-        } catch (NotFoundException e) {
-          e.printStackTrace();
-          System.out.println("Invalid Animal_Id!");
-          break;
-        }
-
-        // Prompt user to enter the type_id associated with the AnimalPart to update:
-        System.out.print("Enter type_id belonging to the AnimalPart you want to update: ");
-        value = getUserInput();
-        if(!validateLongInput(value) || !validTypeIds.contains(Long.parseLong(value))){
-          System.out.println("Invalid input!");
-          break;
-        }
-        PartType oldParentPartType = null;
-        try {
-          oldParentPartType = partTypeRegistrationSystem.readPartType(Long.parseLong(value));
-        } catch (NotFoundException e) {
-          e.printStackTrace();
-          System.out.println("Invalid Type_Id!");
-          break;
-        }
-
-        // Prompt user to enter the tray_id associated with the AnimalPart to update:
-        System.out.print("Enter tray_id belonging to the AnimalPart you want to update: ");
-        value = getUserInput();
-        if(!validateLongInput(value) || !validTrayIds.contains(Long.parseLong(value))){
-          System.out.println("Invalid input!");
-          break;
-        }
-        Tray oldParentTray = null;
-        try {
-          oldParentTray = trayRegistrationSystem.readTray(Long.parseLong(value));
-        } catch (NotFoundException e) {
-          e.printStackTrace();
-          System.out.println("Invalid Tray_Id!");
-          break;
-        }
 
         // Read the AnimalPart to modify from the database:
         AnimalPart modifiedAnimalPart = null;
@@ -337,10 +280,7 @@ public class Station2_CLI
 
         // Prompt user for modified values:
         // Prompt user for new Weight:
-        if(oldAnimalPart != null)
-          System.out.println("Please enter new weight_kilogram for this AnimalPart (Old is: " + oldAnimalPart.getWeight_kilogram() + "kg: ");
-        else
-          System.out.println("Please enter new weight_kilogram for this AnimalPart (Old is: NULL kg): ");
+        System.out.println("Please enter new weight_kilogram for this AnimalPart (Old is: " + oldAnimalPart.getWeight_kilogram() + "kg: ");
 
         value = getUserInput();
         if(!validateBigDecimalInput(value)){
@@ -353,14 +293,11 @@ public class Station2_CLI
         //Show a list of valid Animals:
         System.out.println("\nValid Animals are:");
         for (Animal animal : animalRegistrationSystem.getAllAnimals()) {
-          System.out.println("id: '" + animal.getId() + "', Weight_kilogram: '" + animal.getWeight_kilogram() + "', Parts: " + animal.getPartList());
+          System.out.println(animal);
         }
 
         // Prompt user to enter the new id of Animal this part was cut from:
-        if(oldAnimalPart != null)
-          System.out.println("Please enter new animal_id for this AnimalPart (Old is: " + oldAnimalPart.getAnimal().getId() + "): ");
-        else
-          System.out.println("Please enter new animal_id for this AnimalPart (Old is: NULL): ");
+        System.out.println("Please enter new animal_id for this AnimalPart (Old is: " + oldAnimalPart.getAnimal().getId() + "): ");
 
         value = getUserInput();
         if(!validateLongInput(value) || !validAnimalIds.contains(Long.parseLong(value))){
@@ -371,23 +308,20 @@ public class Station2_CLI
         try {
           newParentAnimal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace();
           System.out.println("Invalid Animal Id!");
           break;
         }
+        modifiedAnimalPart.setAnimal(newParentAnimal);
 
         // Prompt user for new Parent PartType:
         //Show a list of valid PartTypes:
         System.out.println("\nValid PartTypes are:");
         for (PartType partType : partTypeRegistrationSystem.getAllPartTypes()) {
-          System.out.println("id: '" + partType.getTypeId() + "', Description: '" + partType.getTypeDesc() + "'");
+          System.out.println(partType);
         }
 
         // Prompt user to enter the id of Type of part this AnimalPart should become:
-        if(modifiedAnimalPart != null)
-          System.out.println("Please enter new Type_id for this AnimalPart (Old is: " + oldAnimalPart.getType().getTypeId() + "): ");
-        else
-          System.out.println("Please enter new Type_id for this AnimalPart (Old is: NULL): ");
+        System.out.println("Please enter new Type_id for this AnimalPart (Old is: " + oldAnimalPart.getType().getTypeId() + "): ");
 
         value = getUserInput();
         if(!validateLongInput(value) || !validTypeIds.contains(Long.parseLong(value))){
@@ -398,37 +332,31 @@ public class Station2_CLI
         try {
           newParentPartType = partTypeRegistrationSystem.readPartType(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace();
           System.out.println("Invalid PartType Id!");
           break;
         }
+        modifiedAnimalPart.setType(newParentPartType);
 
         //Show a list of valid Trays:
         System.out.println("\nValid Trays are:");
         for (Tray tray : trayRegistrationSystem.getAllTrays()) {
           // Calculate available space:
           BigDecimal availableSpace = tray.getMaxWeight_kilogram().subtract(tray.getWeight_kilogram());
-          // Only display Trays with space remaining:
-          if(modifiedAnimalPart != null) {
-            if(availableSpace.subtract(modifiedAnimalPart.getWeight_kilogram()).compareTo(BigDecimal.valueOf(0)) > 0) {
-              System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
-              validTrayIds.add(tray.getTrayId());
-            }
-          } else {
-            if(availableSpace.compareTo(BigDecimal.valueOf(0)) > 0) {
-              System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
-              validTrayIds.add(tray.getTrayId());
-            }
+
+          // Only display Trays with space remaining, and of the proper type:
+          if(availableSpace.subtract(modifiedAnimalPart.getWeight_kilogram()).compareTo(BigDecimal.valueOf(0)) > 0
+              && tray.getTrayType() != null
+              && (tray.getTrayType().getTypeId() == 0
+              || tray.getTrayType().getTypeId() == modifiedAnimalPart.getType().getTypeId())) {
+
+            System.out.println("Tray_id: '" + tray.getTrayId() + "', Available space: '" + availableSpace + "kg'");
+            validTrayIds.add(tray.getTrayId());
           }
         }
-        if(modifiedAnimalPart != null)
-          validTrayIds.add(modifiedAnimalPart.getTray().getTrayId());
+        validTrayIds.add(modifiedAnimalPart.getTray().getTrayId());
 
         // Prompt user to enter the tray_id associated with the AnimalPart to update:
-        if(modifiedAnimalPart != null)
-          System.out.println("Please enter new Tray_id for this AnimalPart (Old is: " + oldAnimalPart.getTray().getTrayId() + "): ");
-        else
-          System.out.println("Please enter new Tray_id for this AnimalPart (Old is: NULL): ");
+        System.out.println("Please enter new Tray_id for this AnimalPart (Old is: " + oldAnimalPart.getTray().getTrayId() + "): ");
 
         value = getUserInput();
         if(!validateLongInput(value) || !validTrayIds.contains(Long.parseLong(value))){
@@ -439,41 +367,20 @@ public class Station2_CLI
         try {
           newParentTray = trayRegistrationSystem.readTray(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace();
           System.out.println("Invalid Tray_Id!");
           break;
         }
+        modifiedAnimalPart.setTray(newParentTray);
 
         // Attempt to persist the user defined modifications:
         modifiedAnimalPart.setWeight_kilogram(newUpdatedWeight);
         try {
-          animalPartRegistrationSystem.updateAnimalPart(oldAnimalPart, modifiedAnimalPart);
+          animalPartRegistrationSystem.updateAnimalPart(modifiedAnimalPart);
         } catch (UpdateFailedException e) {
           System.out.println("Update failed. Reason: " + e.getMessage());
         } catch (NotFoundException e) {
           System.out.println("Unable to update. Could not find AnimalPart in Repository");
         }
-
-        // Attempt to Update all the old associations.
-        /*oldParentAnimal.getPartList().remove(modifiedAnimalPart);
-        oldParentPartType.getPartList().remove(modifiedAnimalPart);
-        oldParentTray.getContents().remove(modifiedAnimalPart);
-        animalRegistrationSystem.updateAnimal(oldParentAnimal);
-        partTypeRegistrationSystem.updatePartType(oldParentPartType);
-        trayRegistrationSystem.updateTray(oldParentTray);
-
-        // Attempt to update all the new associations.
-        if(modifiedAnimalPart != null && !newParentAnimal.getPartList().contains(modifiedAnimalPart))
-          newParentAnimal.getPartList().add(modifiedAnimalPart);
-
-        if(modifiedAnimalPart != null && !newParentTray.getContents().contains(modifiedAnimalPart))
-          newParentTray.getContents().add(modifiedAnimalPart);
-
-        if(modifiedAnimalPart != null && !newParentPartType.getPartList().contains(modifiedAnimalPart))
-          newParentPartType.getPartList().add(modifiedAnimalPart);
-        animalRegistrationSystem.updateAnimal(newParentAnimal);
-        partTypeRegistrationSystem.updatePartType(newParentPartType);
-        trayRegistrationSystem.updateTray(newParentTray);*/
         break;
 
 

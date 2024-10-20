@@ -189,17 +189,37 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
 
   @Transactional
   @Override
-  public void updateAnimalPart(UpdatedAnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
-    //try {
-      // TODO: Probably need to re-fetch all associated entity lists here, so that the object to update has all the proper object relations.
+  public void updateAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
+    try {
 
       // Translate received gRPC information from the client, into Java compatible types:
-      /*AnimalPart oldAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getOldData());
-      AnimalPart newAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(UpdatedAnimalPartData.newBuilder().getNewData());
-      // and attempt to update the AnimalPart with the provided ID:
-      if (!animalPartService.updateAnimalPart(oldAnimalPart, newAnimalPart)) {
+      AnimalPart modifiedAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request);
+
+      // Query database for the data lost during gRPC transmission:
+      // Read associated Tray Data:
+      Tray associatedTray = trayService.readTray(modifiedAnimalPart.getTray().getTrayId());
+
+      // Read associated Animal Data:
+      Animal associatedAnimal = animalService.readAnimal(modifiedAnimalPart.getAnimal().getId());
+
+      // Read associated PartType Data:
+      PartType associatedPartType = partTypeService.readPartType(modifiedAnimalPart.getType().getTypeId());
+
+      // Read associated PartType Data:
+      Product associatedProduct = null;
+      if(modifiedAnimalPart.getProduct() != null && modifiedAnimalPart.getProduct().getProductId() > 0)
+        associatedProduct = productService.readProduct(modifiedAnimalPart.getProduct().getProductId());
+
+      // Assign the entities with proper data:
+      modifiedAnimalPart.setType(associatedPartType);
+      modifiedAnimalPart.setProduct(associatedProduct);
+      modifiedAnimalPart.setAnimal(associatedAnimal);
+      modifiedAnimalPart.setTray(associatedTray);
+
+      // Attempt to update the AnimalPart with the provided ID:
+      if (!animalPartService.updateAnimalPart(modifiedAnimalPart)) {
         // If AnimalPart update failed:
-        throw new UpdateFailedException("Error occurred while updated AnimalPart with id='" + request.getOldData().getAnimalPartId() + "'");
+        throw new UpdateFailedException("Error occurred while updated AnimalPart with id='" + request.getAnimalPartId().getAnimalPartId() + "'");
       }
 
       // Signal to client to complete the gRPC operation:
@@ -208,8 +228,8 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
-      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getOldData().getAnimalPartId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
-    }*/
+      responseObserver.onError(Status.INTERNAL.withDescription("Error occurred while attempting to update AnimalPart with id '" + request.getAnimalPartId().getAnimalPartId() + "', " + e.getMessage()).withCause(e).asRuntimeException());
+    }
   }
 
 

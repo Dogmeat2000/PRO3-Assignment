@@ -142,9 +142,8 @@ public class Animal implements Serializable
       returnValue += getPartList().get(i).getPart_id();
       if(i != getPartList().size() - 1)
         returnValue += ", ";
-      else
-        returnValue += "]";
     }
+    returnValue += "]";
         
     return returnValue;
   }
