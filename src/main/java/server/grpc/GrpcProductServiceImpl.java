@@ -39,7 +39,6 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
-  @Transactional
   @Override
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
@@ -47,17 +46,26 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
       Product productReceived = GrpcProductData_To_Product.convertToProduct(request);
 
       // Add/Query for the data lost during gRPC transmission:
-      // Read associated Tray Data:
+      // Read associated AnimalPart and Tray Data:
+      /*List<AnimalPart> associatedAnimalParts = new ArrayList<>();
       List<Tray> associatedTrays = new ArrayList<>();
-      for (Long transferId : productReceived.getTransferIdList())
-        associatedTrays.addAll(trayService.readTraysByTransferId(transferId));
-      productReceived.getTraySuppliersList().addAll(associatedTrays);
 
-      // Read associated AnimalPart Data:
-      List<AnimalPart> associatedAnimalParts = new ArrayList<>();
-      for (Long animalPartId : productReceived.getAnimalPartIdList())
-        associatedAnimalParts.add(animalPartService.readAnimalPart(animalPartId));
+      for (Long animalPartId : productReceived.getAnimalPartIdList()) {
+        AnimalPart animalPart = animalPartService.readAnimalPart(animalPartId);
+        Tray tray = trayService.readTray(animalPart.getTray().getTrayId());
+        associatedAnimalParts.add(animalPart);
+
+        // Check for duplicate AnimalPart entries and reassign, so that only 1 representation of each database entity persists:
+        for (int i = 0; i < tray.getContents().size(); i++) {
+          if(tray.getContents().get(i).getPart_id() == animalPart.getPart_id()) {
+            tray.removeAnimalPart(tray.getContents().get(i));
+            tray.addAnimalPart(animalPart);
+          }
+        }
+        associatedTrays.add(tray);
+      }
       productReceived.getContentList().addAll(associatedAnimalParts);
+      productReceived.getTraySuppliersList().addAll(associatedTrays);*/
 
       // Register the Product:
       Product createdProduct = productService.registerProduct(productReceived);
@@ -67,7 +75,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new CreateFailedException("Product could not be created");
 
       // Update associated Entities:
-      for (AnimalPart animalPart : associatedAnimalParts) {
+      /*for (AnimalPart animalPart : associatedAnimalParts) {
         animalPart.setProduct(createdProduct);
         animalPartService.updateAnimalPart(animalPart);
       }
@@ -77,12 +85,13 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
           tray.getProductList().add(createdProduct);
           trayService.updateTray(tray);
         }
-      }
+      }*/
 
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, 3));
       responseObserver.onCompleted();
     } catch (Exception e) {
+      e.printStackTrace();
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -100,7 +109,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new NotFoundException("Product not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, 3));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product with id " + request.getProductId() + "not found in DB").withCause(e).asRuntimeException());
@@ -110,7 +119,6 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
-  @Transactional
   @Override
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
@@ -145,7 +153,6 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   }
 
 
-  @Transactional
   @Override
   public void removeProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {

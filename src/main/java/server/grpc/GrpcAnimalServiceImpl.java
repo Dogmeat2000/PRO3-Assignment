@@ -58,6 +58,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   public void readAnimal(AnimalId request, StreamObserver<AnimalData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible type,
+
       // and attempt to read the Animal with the provided ID:
       Animal animal = animalService.readAnimal(GrpcId_To_LongId.ConvertToLongId(request));
 

@@ -14,10 +14,15 @@ public class Tray_ToGrpc_TrayData
      * @param tray The Tray entity to convert
      * @return a gRPC compatible TrayData data type.
      * */
-    public static TrayData convertToTrayData(Tray tray) {
+    public static TrayData convertToTrayData(Tray tray, int maxNestingDepth) {
 
       if (tray == null)
         return null;
+
+      if(maxNestingDepth < 0)
+        return TrayData.newBuilder().build();
+
+      int currentNestingDepth = maxNestingDepth-1;
 
       // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
       TrayData.Builder builder = TrayData.newBuilder();
@@ -33,7 +38,7 @@ public class Tray_ToGrpc_TrayData
 
       if(tray.getTransferList() != null && !tray.getTransferList().isEmpty()) {
         for (TrayToProductTransfer transfer : tray.getTransferList())
-          builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer));
+          builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, currentNestingDepth));
       }
 
       return builder.build();
@@ -51,7 +56,7 @@ public class Tray_ToGrpc_TrayData
       // Convert List of Trays to a gRPC compatible list by iteration through each entry and running the method previously declared:
       List<TrayData> trayDataList = new ArrayList<>();
       for (Tray tray : trays)
-        trayDataList.add(convertToTrayData(tray));
+        trayDataList.add(convertToTrayData(tray, 3));
 
       // Construct and return a new List of TrayData entities:
       return TraysData.newBuilder().addAllTrays(trayDataList).build();

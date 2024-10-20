@@ -22,7 +22,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   private final AnimalPartRepository animalPartRepository;
   private final Map<Long, AnimalPart> animalPartCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalPartService.class);
-  private final AnimalRegistryInterface animalRepository;
+  private final AnimalRepository animalRepository;
   private final TrayRegistryInterface trayRepository;
   private final PartTypeRegistryInterface partTypeRepository;
   private final ProductRegistryInterface productRepository;
@@ -30,7 +30,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
 
   @Autowired
-  public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRegistryInterface animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
+  public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRepository animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
       ProductRegistryInterface productRepository, EntityManager entityManager) {
     this.animalPartRepository = animalPartRepository;
     this.animalRepository = animalRepository;
@@ -53,61 +53,31 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     // Attempt to add AnimalPart to DB:
     try {
       // First retrieve most recent versions of associated entities:
-      Animal managedAnimal = entityManager.merge(animalRepository.readAnimal(data.getAnimal().getId()));
-      data.setAnimal(managedAnimal);
+      Animal managedAnimal = animalRepository.findById(data.getAnimal().getId()).orElseThrow(() -> new NotFoundException("Animal not found"));
+      data.setAnimal(entityManager.merge(managedAnimal));
 
-      Tray managedTray = entityManager.merge(trayRepository.readTray(data.getTray().getTrayId()));
-      data.setTray(managedTray);
+      Tray managedTray = trayRepository.readTray(data.getTray().getTrayId());
+      data.setTray(entityManager.merge(managedTray));
 
-      PartType managedPartType = entityManager.merge(partTypeRepository.readPartType(data.getType().getTypeId()));
-      data.setType(managedPartType);
+      PartType managedPartType = partTypeRepository.readPartType(data.getType().getTypeId());
+      data.setType(entityManager.merge(managedPartType));
 
       Product managedProduct = null;
-      if(data.getProduct() != null && data.getProduct().getProductId() > 0)
+      if(data.getProduct() != null && data.getProduct().getProductId() > 0) {
         managedProduct = productRepository.readProduct(data.getProduct().getProductId());
-      data.setProduct(managedProduct);
+        data.setProduct(entityManager.merge(managedProduct));
+      }
+
 
       // Register the AnimalPart:
       AnimalPart newAnimalPart = animalPartRepository.save(data);
       logger.info("AnimalPart added to DB with ID: {}", newAnimalPart.getPart_id());
 
-      // Update associated entities:
-      // Parent Animal:
-      Animal parentAnimal = data.getAnimal();
-      if(!parentAnimal.getPartList().contains(newAnimalPart))
-        parentAnimal.addAnimalPart(newAnimalPart);
-      animalRepository.updateAnimal(parentAnimal);
-
-      // Parent Tray:
-      Tray parentTray = data.getTray();
-      if(!parentTray.getContents().contains(newAnimalPart)) {
-        parentTray.addAnimalPart(newAnimalPart);
-        parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().add(newAnimalPart.getWeight_kilogram()));
-      }
-      trayRepository.updateTray(trayRepository.readTray(parentTray.getTrayId()));
-
-      // Parent PartType:
-      PartType parentPartType = data.getType();
-      if(!parentPartType.getPartList().contains(newAnimalPart))
-        parentPartType.addAnimalPart(newAnimalPart);
-      partTypeRepository.updatePartType(parentPartType);
-
-      // Parent Product:
-      if(data.getProduct() != null && data.getProduct().getProductId() != 0) {
-        Product parentProduct = data.getProduct();
-        if(!parentProduct.getContentList().contains(newAnimalPart))
-          parentProduct.addAnimalPart(newAnimalPart);
-        productRepository.updateProduct(parentProduct);
-      }
-
-      // Read the most recent AnimalPart version from repository:
-      AnimalPart finalAnimalPart = readAnimalPart(newAnimalPart.getPart_id());
-
       // Attempt to add AnimalPart to local cache:
       animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
       logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
 
-      return finalAnimalPart;
+      return newAnimalPart;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
       logger.error("Unable to register AnimalPart in DB with weight: {}, Reason: {}", data.getWeight_kilogram(), e.getMessage());
@@ -126,10 +96,10 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateId(part_id);
 
     // Attempt to read AnimalPart from local cache first:
-    if(animalPartCache.containsKey(part_id)) {
+    /*if(animalPartCache.containsKey(part_id)) {
       logger.info("AnimalPart read from local cache with ID: {}", part_id);
       return animalPartCache.get(part_id);
-    }
+    }*/
 
     // AnimalPart not found in local cache. Attempt to read from DB:
     try {
@@ -259,7 +229,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
 
       // Retrieve most recent repository versions of associated entities, for the modified AnimalPart:
-      Animal managedModifiedAnimal = entityManager.merge(animalRepository.readAnimal(data.getAnimal().getId()));
+      Animal managedModifiedAnimal = entityManager.merge(animalRepository.findById(data.getAnimal().getId()).orElseThrow(() -> new NotFoundException("Animal not found")));
       data.setAnimal(managedModifiedAnimal);
 
       Tray managedModifiedTray = entityManager.merge(trayRepository.readTray(data.getTray().getTrayId()));
@@ -286,7 +256,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       if(modifiedAnimalPart.getAnimal().getId() != oldAnimalPart.getAnimal().getId()) {
         //Old Animal no longer has association to this AnimalPart. Remove it:
         oldAnimalPart.getAnimal().removeAnimalPart(oldAnimalPart);
-        animalRepository.updateAnimal(oldAnimalPart.getAnimal());
+        animalRepository.save(oldAnimalPart.getAnimal());
       }
 
       // Check associated PartType:
@@ -360,7 +330,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
 
       // Update associated entities:
       // Parent Animal:
-      Animal parentAnimal = data.getAnimal();
+      /*Animal parentAnimal = data.getAnimal();
       if(parentAnimal.getPartList().contains(animalPartToRemove))
         parentAnimal.removeAnimalPart(animalPartToRemove);
       animalRepository.updateAnimal(parentAnimal);
@@ -385,7 +355,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
         if(!parentProduct.getContentList().contains(animalPartToRemove))
           parentProduct.removeAnimalPart(animalPartToRemove);
         productRepository.updateProduct(parentProduct);
-      }
+      }*/
 
       return true;
 

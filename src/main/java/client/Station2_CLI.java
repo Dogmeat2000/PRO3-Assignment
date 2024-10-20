@@ -257,7 +257,7 @@ public class Station2_CLI
         }
 
         // Prompt user to enter the part_id to update:
-        System.out.print("Enter part_id to remove belonging to the AnimalPart you want to remove: ");
+        System.out.print("Enter part_id belonging to AnimalPart to update: ");
         value = getUserInput();
         if(!validateLongInput(value) || !validPartIds.contains(Long.parseLong(value))){
           System.out.println("Invalid input!");
@@ -412,7 +412,7 @@ public class Station2_CLI
         try {
           List<AnimalPart> animalPartsFound = animalPartRegistrationSystem.getAllAnimalParts();
           if(!animalPartsFound.isEmpty()){
-            for (AnimalPart localAnimalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
+            for (AnimalPart localAnimalPart : animalPartsFound) {
               System.out.println(localAnimalPart);
             }
           } else {

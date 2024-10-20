@@ -17,6 +17,7 @@ import shared.model.entities.Product;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class PartTypeService implements PartTypeRegistryInterface
@@ -72,10 +73,10 @@ public class PartTypeService implements PartTypeRegistryInterface
     PartTypeValidation.validateId(typeId);
 
     // Attempt to read PartType from local cache first:
-    if(partTypeCache.containsKey(typeId)) {
+    /*if(partTypeCache.containsKey(typeId)) {
       logger.info("PartType read from local cache with ID: {}", typeId);
       return partTypeCache.get(typeId);
-    }
+    }*/
 
     // PartType not found in local cache. Attempt to read from DB:
     try {
@@ -154,7 +155,8 @@ public class PartTypeService implements PartTypeRegistryInterface
       }
 
       // Update all still-existing AnimalPart compositions:
-      for (AnimalPart animalPart : partType.getPartList()) {
+      List<AnimalPart> threadSafePartTypes = new CopyOnWriteArrayList<>(partType.getPartList());
+      for (AnimalPart animalPart : threadSafePartTypes) {
         animalPart.setType(partType);
         animalPartRepository.save(animalPart);
       }

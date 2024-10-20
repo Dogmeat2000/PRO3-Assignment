@@ -43,7 +43,7 @@ public class AnimalPart implements Serializable
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Animal entity,
   // and that the Animal entity should NOT 'own' the mapping. In other words, the animal_id assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the Animal are stored as Foreign Keys, and not in the Animal entity!
-  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name="animal_id", nullable=false) // Tells Spring Boot which DB column to use in the Animal entity when joining tables.
   private Animal animal;
 
@@ -51,7 +51,7 @@ public class AnimalPart implements Serializable
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the PartType entity,
   // and that the PartType entity should NOT 'own' the mapping. In other words, the type_id assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the PartType are stored as Foreign Keys, and not in the PartType entity!
-  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name="type_id", nullable = false)  // Tells Spring Boot which DB column to use in the PartType entity when joining tables.
   private PartType type;
 
@@ -59,7 +59,7 @@ public class AnimalPart implements Serializable
   // @ManyToOne Tells Spring Boot, that this database entity has a ManyToOne relationship with the Tray entity,
   // and that the Tray entity should NOT 'own' the mapping. In other words, the tray assigned inside this 'AnimalPart' entity should be prioritized.
   // This makes logical sense, since it is from within this AnimalPart class that references to the Tray are stored as Foreign Keys, and not in the Tray entity!
-  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name="tray_id", nullable=false) // Tells Spring Boot which DB column to use in the Tray entity when joining tables.
   private Tray tray;
 

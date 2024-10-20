@@ -83,6 +83,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
       // Populate Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read all animalParts associated with this Animal:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByAnimalId(LongId_ToGrpc_Id.convertToAnimalId(animal.getId()));
@@ -203,6 +204,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
       // Populate each Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       for (Animal animal : animals) {
         try {
           // Read all animalParts associated with this Animal:

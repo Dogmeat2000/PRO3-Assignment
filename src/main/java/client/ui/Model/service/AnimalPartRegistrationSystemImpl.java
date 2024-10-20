@@ -29,7 +29,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public AnimalPart registerNewAnimalPart(Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
@@ -47,6 +46,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
 
       // Populate AnimalPart with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. AnimalPart and Animal have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       return readAnimalPart(createdAnimalPartData.getAnimalPartId().getAnimalPartId());
 
     } catch (StatusRuntimeException e) {
@@ -58,7 +58,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public AnimalPart readAnimalPart(long animalPartId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -83,6 +82,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
 
       // Populate AnimalPart with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both AnimalPart and Animal have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read the Animal associated with this AnimalPart:
         AnimalData animalData = animalStub.readAnimal(LongId_ToGrpc_Id.convertToAnimalId(foundAnimalPart.getAnimal().getAnimalId()));
@@ -145,7 +145,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public List<AnimalPart> readAnimalPartsByAnimalId(long animalId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -177,7 +176,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public List<AnimalPart> readAnimalPartsByPartTypeId(long partTypeId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -209,7 +207,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public List<AnimalPart> readAnimalPartsByProductId(long productId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -241,7 +238,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public List<AnimalPart> readAnimalPartsByTrayId(long trayId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -273,7 +269,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public void updateAnimalPart(AnimalPart data) throws UpdateFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -305,7 +300,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public boolean removeAnimalPart(AnimalPart data) throws DeleteFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -341,7 +335,6 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
   }
 
 
-  @Transactional
   @Override
   public List<AnimalPart> getAllAnimalParts() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:

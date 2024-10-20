@@ -48,7 +48,8 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData createdPartType = stub.registerPartType(data);
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
-      return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
+      return readPartType(createdPartType.getPartTypeId());
+      //return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register PartType with desc '" + desc + "' (" + e.getMessage() + ")");
@@ -80,6 +81,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       // Populate PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read all animalParts associated with this PartType:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(partType.getTypeId()));
@@ -201,6 +203,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       // Populate each PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       for (PartType partType : partTypes) {
         try {
           // Read all animalParts associated with this PartType:

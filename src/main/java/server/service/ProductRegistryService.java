@@ -1,5 +1,6 @@
 package server.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class ProductRegistryService implements ProductRegistryInterface
@@ -27,13 +29,15 @@ public class ProductRegistryService implements ProductRegistryInterface
   private final TrayToProductTransferRepository trayToProductTransferRepository;
   private final TrayRepository trayRepository;
   private final AnimalPartRepository animalPartRepository;
+  private final EntityManager entityManager;
 
   @Autowired
-  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository, TrayRepository trayRepository, AnimalPartRepository animalPartRepository) {
+  public ProductRegistryService(ProductRepository productRepository, TrayToProductTransferRepository trayToProductTransferRepository, TrayRepository trayRepository, AnimalPartRepository animalPartRepository, EntityManager entityManager) {
     this.productRepository = productRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
     this.trayRepository = trayRepository;
     this.animalPartRepository = animalPartRepository;
+    this.entityManager = entityManager;
   }
 
 
@@ -41,14 +45,63 @@ public class ProductRegistryService implements ProductRegistryInterface
   @Override public Product registerProduct(Product data) {
 
     // Validate received data, before passing to repository/database:
-    ProductValidation.validateProduct(data);
+    ProductValidation.validateProductRegistration(data);
 
     // Reset productId, since the database handles this assignment:
     data.setProductId(0);
 
     // Attempt to add Product to DB:
     try {
+      // First retrieve most recent versions of associated entities:
+      /*List<AnimalPart> managedAnimalParts = new ArrayList<>();
+      for (Long animalPartId : data.getAnimalPartIdList())
+        managedAnimalParts.add(entityManager.merge(animalPartRepository.findById(animalPartId).orElseThrow(() -> new NotFoundException("Animal part " + animalPartId + " not found"))));
+
+      data.setAnimalParts(managedAnimalParts);
+
+      List<Tray> managedTrays = new ArrayList<>();
+      for (Tray tray : data.getTraySuppliersList())
+        managedTrays.add(entityManager.merge(trayRepository.findById(tray.getTrayId()).orElseThrow(() -> new NotFoundException("Animal part " + tray.getTrayId() + " not found"))));
+
+      data.setTraySuppliersList(managedTrays);*/
+
+      // Read associated AnimalPart and Tray Data:
+      List<AnimalPart> associatedAnimalParts = new ArrayList<>();
+      List<Tray> associatedTrays = new ArrayList<>();
+
+      for (Long animalPartId : data.getAnimalPartIdList()) {
+        AnimalPart animalPart = animalPartRepository.findById(animalPartId).get();
+        Tray tray = trayRepository.findById(animalPart.getTray().getTrayId()).get();
+        associatedAnimalParts.add(animalPart);
+
+        // Check for duplicate AnimalPart entries and reassign, so that only 1 representation of each database entity persists:
+        for (int i = 0; i < tray.getContents().size(); i++) {
+          if(tray.getContents().get(i).getPart_id() == animalPart.getPart_id()) {
+            tray.removeAnimalPart(tray.getContents().get(i));
+            tray.addAnimalPart(animalPart);
+          }
+        }
+        associatedTrays.add(tray);
+      }
+      data.getContentList().clear();
+      data.getTraySuppliersList().clear();
+      data.getContentList().addAll(associatedAnimalParts);
+      data.getTraySuppliersList().addAll(associatedTrays);
+
       Product newProduct = productRepository.save(data);
+      logger.info("Product added to DB with ID: {}", newProduct.getProductId());
+
+      // Register the transfers, before registering the Product:
+      List<TrayToProductTransfer> transfers = new ArrayList<>();
+      for (Tray tray : data.getTraySuppliersList()) {
+        transfers.add(trayToProductTransferRepository.save(new TrayToProductTransfer(0, tray, newProduct)));
+      }
+      data.getTraySupplyJoinList().clear();
+      data.getTraySupplyJoinList().addAll(transfers);
+
+
+      // Resave the Product, with the added TrayToProductTransfer associations:
+      newProduct = productRepository.save(data);
       logger.info("Product added to DB with ID: {}", newProduct.getProductId());
 
       // Attempt to add Product to local cache:
@@ -56,7 +109,18 @@ public class ProductRegistryService implements ProductRegistryInterface
       logger.info("Product saved to local cache with ID: {}", newProduct.getProductId());
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
-      trayToProductTransferRepository.saveAll(data.getTraySupplyJoinList());
+      //trayToProductTransferRepository.saveAll(data.getTraySupplyJoinList());
+
+      // Ensure that Tray also get an updated transferId:
+      for (Tray tray : data.getTraySuppliersList()) {
+        Tray loadedTray = trayRepository.findById(tray.getTrayId()).orElse(null);
+        if(loadedTray != null) {
+          loadedTray.getTransferList().clear();
+          loadedTray.getTransferList().addAll(transfers);
+          trayRepository.save(loadedTray);
+        }
+      }
+
 
       return newProduct;
 
@@ -77,10 +141,10 @@ public class ProductRegistryService implements ProductRegistryInterface
     ProductValidation.validateId(productId);
 
     // Attempt to read Product from local cache first:
-    if(productCache.containsKey(productId)) {
+    /*if(productCache.containsKey(productId)) {
       logger.info("Product read from local cache with ID: {}", productId);
       return productCache.get(productId);
-    }
+    }*/
 
     // Product not found in local cache. Attempt to read from DB:
     try {
@@ -226,7 +290,8 @@ public class ProductRegistryService implements ProductRegistryInterface
             listOfAnimalPartsNotInUpdatedProduct.remove(oldAnimalPart);
 
       // Update all still-existing AnimalPart compositions:
-      for (AnimalPart animalPart : updatedProduct.getContentList()) {
+      List<AnimalPart> threadSafeAnimalParts = new CopyOnWriteArrayList<>(updatedProduct.getContentList());
+      for (AnimalPart animalPart : threadSafeAnimalParts) {
         animalPart.setProduct(updatedProduct);
         animalPartRepository.save(animalPart);
       }

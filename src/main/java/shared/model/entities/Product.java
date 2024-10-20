@@ -39,7 +39,6 @@ public class Product implements Serializable
   @Transient
   private List<Long> animalPartIdList = new ArrayList<>();
 
-
   @Transient
   private List<Long> transferIdList = new ArrayList<>();
 
@@ -77,6 +76,9 @@ public class Product implements Serializable
 
 
   public List<AnimalPart> getContentList() {
+    if(contentList == null)
+      contentList = new ArrayList<>();
+
     return contentList;
   }
 
@@ -102,6 +104,8 @@ public class Product implements Serializable
 
 
   public List<Long> getAnimalPartIdList() {
+    if(animalPartIdList == null)
+      setAnimalPartIdList(animalPartIdList);
     return animalPartIdList;
   }
 
@@ -112,6 +116,8 @@ public class Product implements Serializable
 
 
   public List<TrayToProductTransfer> getTraySupplyJoinList() {
+    if(traySupplyJoinList == null)
+      setTraySupplyJoinList(new ArrayList<>());
     return traySupplyJoinList;
   }
 
@@ -134,6 +140,8 @@ public class Product implements Serializable
 
 
   public List<Tray> getTraySuppliersList() {
+    if(traySuppliersList == null)
+      setTraySuppliersList(new ArrayList<>());
     return traySuppliersList;
   }
 

@@ -84,6 +84,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
       // Populate Tray with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Tray and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read all Products associated with this Tray:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByTrayId(LongId_ToGrpc_Id.convertToTrayId(tray.getTrayId()));
@@ -136,7 +137,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayServiceGrpc.TrayServiceBlockingStub trayStub = TrayServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data);
+      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data,3);
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = trayStub.updateTray(tray);
@@ -173,7 +174,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       Tray tray = readTray(trayId);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray);
+      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray,3);
 
       // Prompt gRPC to delete the Tray:
       EmptyMessage deleted = trayStub.removeTray(trayData);
@@ -196,7 +197,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       if(!tray.getTransferList().isEmpty()) {
         // Prompt gRPC to delete the Product:
         for (Product product : tray.getProductList()) {
-          deleted = productStub.removeProduct(Product_ToGrpc_ProductData.convertToProductData(product));
+          deleted = productStub.removeProduct(Product_ToGrpc_ProductData.convertToProductData(product, 3));
 
           if(deleted == null && product != null)
             throw new DeleteFailedException("Failed to delete Product with id '" + product.getProductId() + "' associated with Tray_id '" + trayId + "'");
@@ -237,6 +238,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
 
       // Populate each Tray with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Tray and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       for (Tray tray : trays) {
         try {
           // Read all AnimalParts associated with this Tray:

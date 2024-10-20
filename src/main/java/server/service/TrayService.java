@@ -18,6 +18,7 @@ import shared.model.entities.TrayToProductTransfer;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class TrayService implements TrayRegistryInterface
@@ -76,10 +77,10 @@ public class TrayService implements TrayRegistryInterface
     TrayValidation.validateId(trayId);
 
     // Attempt to read Tray from local cache first:
-    if(trayCache.containsKey(trayId)) {
+    /*if(trayCache.containsKey(trayId)) {
       logger.info("Tray read from local cache with ID: {}", trayId);
       return trayCache.get(trayId);
-    }
+    }*/
 
     // Tray not found in local cache. Attempt to read from DB:
     try {
@@ -91,13 +92,13 @@ public class TrayService implements TrayRegistryInterface
       logger.info("Tray read from database with ID: {}", trayId);
 
       // Load all associated AnimalParts: //TODO: Shouldn't be needed? JPA should be doing this already!
-      List<AnimalPart> animalParts = new ArrayList<>();
+      /*List<AnimalPart> animalParts = new ArrayList<>();
       try {
         animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
       } catch (NotFoundException ignored) {}
 
       if(!animalParts.isEmpty())
-        tray.addAllAnimalParts(animalParts);
+        tray.addAllAnimalParts(animalParts);*/
 
       // Populate the id association list:
       List<Long> animalPartIds = new ArrayList<>();
@@ -107,13 +108,13 @@ public class TrayService implements TrayRegistryInterface
 
 
       // Load all associated Transfers: //TODO: Shouldn't be needed? JPA should be doing this already!
-      List<TrayToProductTransfer> transfers = new ArrayList<>();
+      /*List<TrayToProductTransfer> transfers = new ArrayList<>();
       try {
         transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching tray_id=" + tray.getTrayId()));
       } catch (NotFoundException ignored) {}
 
       if(!transfers.isEmpty())
-        tray.setTransferList(transfers);
+        tray.setTransferList(transfers);*/
 
       // Populate the id association list:
       List<Long> transferIds = new ArrayList<>();
@@ -193,24 +194,6 @@ public class TrayService implements TrayRegistryInterface
       tray.setMaxWeight_kilogram(data.getMaxWeight_kilogram());
       tray.setWeight_kilogram(data.getWeight_kilogram());
 
-      // AnimalPart List
-      tray.clearAnimalPartContents();
-      for (AnimalPart animalPart : data.getContents()) {
-        try {
-          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
-          tray.addAnimalPart(animalPartToAdd);
-        } catch (NotFoundException ignored) {}
-      }
-
-      // TrayToProductTransfer List
-      tray.getTransferList().clear();
-      for (TrayToProductTransfer transfer : data.getTransferList()) {
-        try {
-          TrayToProductTransfer transferToAdd = trayToProductTransferRepository.findById(transfer.getTransferId()).orElseThrow(() -> new NotFoundException(""));
-          tray.getTransferList().add(transferToAdd);
-        } catch (NotFoundException ignored) {}
-      }
-
       // Save the modified entity back to database:
       tray = trayRepository.save(tray);
       logger.info("Tray updated in database with ID: {}", tray.getTrayId());
@@ -229,7 +212,8 @@ public class TrayService implements TrayRegistryInterface
             listOfAnimalPartsNotInUpdatedTray.remove(oldAnimalPart);
 
       // Update all still-existing AnimalPart compositions:
-      for (AnimalPart animalPart : updatedTray.getContents()) {
+      List<AnimalPart> threadSafeAnimalParts = new CopyOnWriteArrayList<>(updatedTray.getContents());
+      for (AnimalPart animalPart : threadSafeAnimalParts) {
         animalPart.setTray(updatedTray);
         animalPartRepository.save(animalPart);
       }

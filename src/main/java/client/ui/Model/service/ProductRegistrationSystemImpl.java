@@ -34,7 +34,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
     super(host, port);
   }
 
-  @Transactional
+
   @Override
   public Product registerNewProduct(List<AnimalPart> animalPartContentList, List<Tray> receivedPartsFromTrayList) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
@@ -65,6 +65,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       // Populate Product with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Product and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read all animalParts associated with this Product:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByProductId(LongId_ToGrpc_Id.convertToProductId(createdProduct.getProductId()));
@@ -105,7 +106,6 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
   }
 
 
-  @Transactional
   @Override
   public Product readProduct(long productId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -128,6 +128,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       // Populate Product with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Product and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       try {
         // Read all AnimalParts associated with this Product:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByTrayId(LongId_ToGrpc_Id.convertToTrayId(product.getProductId()));
@@ -169,7 +170,6 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
   }
 
 
-  @Transactional
   @Override
   public void updateProduct(Product data) throws UpdateFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -180,7 +180,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductServiceGrpc.ProductServiceBlockingStub productStub = ProductServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Product (Convert Product to ProductData)
-      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data);
+      ProductData product = Product_ToGrpc_ProductData.convertToProductData(data, 3);
 
       // Prompt gRPC to update the Product:
       EmptyMessage updated = productStub.updateProduct(product);
@@ -201,7 +201,6 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
   }
 
 
-  @Transactional
   @Override
   public boolean removeProduct(long productId) throws DeleteFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -217,7 +216,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       Product product = readProduct(productId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product);
+      ProductData productData = Product_ToGrpc_ProductData.convertToProductData(product, 3);
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = productStub.removeProduct(productData);
@@ -242,7 +241,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
         // Prompt gRPC to delete the Product:
         for (Tray tray : product.getTraySuppliersList()) {
           tray.getProductList().remove(product);
-          trayStub.updateTray(Tray_ToGrpc_TrayData.convertToTrayData(tray));
+          trayStub.updateTray(Tray_ToGrpc_TrayData.convertToTrayData(tray,3));
 
           if(deleted == null)
             throw new UpdateFailedException("Failed to update Tray with id '" + product.getProductId() + "' associated with Tray_id '" + productId + "'");
@@ -263,7 +262,6 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
   }
 
 
-  @Transactional
   @Override
   public List<Product> getAllProducts() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -283,6 +281,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
 
       // Populate each Product with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Product and AnimalPart have relations to each other), so must be repopulated:
+      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
       for (Product product : products) {
         try {
           // Read all AnimalParts associated with this Product:

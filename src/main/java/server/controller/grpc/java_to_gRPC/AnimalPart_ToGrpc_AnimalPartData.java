@@ -22,11 +22,11 @@ public class AnimalPart_ToGrpc_AnimalPartData
     animalbuilder.setPartWeight(animalPart.getWeight_kilogram().toString());
     animalbuilder.setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animalPart.getAnimal()));
     animalbuilder.setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(animalPart.getType()));
-    animalbuilder.setTray(Tray_ToGrpc_TrayData.convertToTrayData(animalPart.getTray()));
+    animalbuilder.setTray(Tray_ToGrpc_TrayData.convertToTrayData(animalPart.getTray(),3));
 
     // Only set a Product, if the value is not null. AnimalParts do not necessarily have a Product associated with them:
     if(animalPart.getProduct() != null)
-      animalbuilder.setProduct(Product_ToGrpc_ProductData.convertToProductData(animalPart.getProduct()));
+      animalbuilder.setProduct(Product_ToGrpc_ProductData.convertToProductData(animalPart.getProduct(), 3));
 
     return animalbuilder.build();
   }

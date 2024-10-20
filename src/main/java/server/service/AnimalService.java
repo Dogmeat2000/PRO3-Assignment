@@ -16,6 +16,7 @@ import shared.model.entities.AnimalPart;
 import shared.model.exceptions.NotFoundException;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class AnimalService implements AnimalRegistryInterface
@@ -71,10 +72,10 @@ public class AnimalService implements AnimalRegistryInterface
     AnimalValidation.validateId(animalId);
 
     // Attempt to read Animal from local cache first:
-    if(animalCache.containsKey(animalId)) {
+    /*if(animalCache.containsKey(animalId)) {
       logger.info("Animal read from local cache with ID: {}", animalId);
       return animalCache.get(animalId);
-    }
+    }*/
 
     // Animal not found in local cache. Attempt to read from DB:
     try {
@@ -144,7 +145,8 @@ public class AnimalService implements AnimalRegistryInterface
       }
 
       // Update all still-existing AnimalPart compositions:
-      for (AnimalPart animalPart : animal.getPartList()) {
+      List<AnimalPart> threadSafeAnimalParts = new CopyOnWriteArrayList<>(animal.getPartList());
+      for (AnimalPart animalPart : threadSafeAnimalParts) {
         animalPart.setAnimal(animal);
         animalPartRepository.save(animalPart);
       }

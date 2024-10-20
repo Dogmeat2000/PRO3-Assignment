@@ -34,7 +34,7 @@ public class GrpcFactory
         .setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId))
         .setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal))
         .setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(type))
-        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray, 3))
         .setPartWeight(weightInKilogram.toString())
         .build();
   }
@@ -70,8 +70,8 @@ public class GrpcFactory
   public static TrayToProductTransferData buildGrpcTrayToProductTransferData (Product product, Tray tray){
     return TrayToProductTransferData.newBuilder()
         .setTransferId(1)
-        .setProduct(Product_ToGrpc_ProductData.convertToProductData(product))
-        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray))
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(product, 3))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(tray,3))
         .build();
   }
 }

@@ -38,7 +38,6 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   }
 
 
-  @Transactional
   @Override
   public void registerAnimalPart(AnimalPartData request, StreamObserver<AnimalPartData> responseObserver) {
     try {
@@ -73,10 +72,40 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       if (createdAnimalPart == null)
         throw new CreateFailedException("AnimalPart could not be created");
 
+      // Update associated entities:
+      // Parent Animal:
+      Animal parentAnimal = createdAnimalPart.getAnimal();
+      if(!parentAnimal.getPartList().contains(createdAnimalPart))
+        parentAnimal.addAnimalPart(createdAnimalPart);
+      animalService.updateAnimal(parentAnimal);
+
+      // Parent Tray:
+      Tray parentTray = createdAnimalPart.getTray();
+      if(!parentTray.getContents().contains(createdAnimalPart)) {
+        parentTray.addAnimalPart(createdAnimalPart);
+        parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().add(createdAnimalPart.getWeight_kilogram()));
+      }
+      trayService.updateTray(parentTray);
+
+      // Parent PartType:
+      PartType parentPartType = createdAnimalPart.getType();
+      if(!parentPartType.getPartList().contains(createdAnimalPart))
+        parentPartType.addAnimalPart(createdAnimalPart);
+      partTypeService.updatePartType(parentPartType);
+
+      // Parent Product:
+      if(createdAnimalPart.getProduct() != null && createdAnimalPart.getProduct().getProductId() != 0) {
+        Product parentProduct = createdAnimalPart.getProduct();
+        if(!parentProduct.getContentList().contains(createdAnimalPart))
+          parentProduct.addAnimalPart(createdAnimalPart);
+        productService.updateProduct(parentProduct);
+      }
+
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
       responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart));
       responseObserver.onCompleted();
     } catch (Exception e) {
+      e.printStackTrace();
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -187,7 +216,6 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   }
 
 
-  @Transactional
   @Override
   public void updateAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
@@ -233,7 +261,6 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   }
 
 
-  @Transactional
   @Override
   public void removeAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {

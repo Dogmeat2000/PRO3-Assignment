@@ -14,10 +14,15 @@ public class Product_ToGrpc_ProductData
    * @param product The Product entity to convert
    * @return a gRPC compatible ProductData data type.
    * */
-  public static ProductData convertToProductData(Product product) {
+  public static ProductData convertToProductData(Product product, int maxNestingDepth) {
 
     if (product == null)
       return null;
+
+    if(maxNestingDepth < 0)
+      return ProductData.newBuilder().build();
+
+    int currentNestingDepth = maxNestingDepth-1;
 
     // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
     ProductData.Builder builder = ProductData.newBuilder();
@@ -31,7 +36,7 @@ public class Product_ToGrpc_ProductData
 
     if(product.getTraySupplyJoinList() != null && !product.getTraySupplyJoinList().isEmpty()) {
       for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
-        builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer));
+        builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, currentNestingDepth));
     }
 
     return builder.build();
@@ -49,7 +54,7 @@ public class Product_ToGrpc_ProductData
     // Convert List of Products to a gRPC compatible list by iteration through each entry and running the method previously declared:
     List<ProductData> productDataList = new ArrayList<>();
     for (Product product : products)
-      productDataList.add(convertToProductData(product));
+      productDataList.add(convertToProductData(product, 3));
 
     // Construct and return a new List of ProductData entities:
     return ProductsData.newBuilder().addAllProducts(productDataList).build();

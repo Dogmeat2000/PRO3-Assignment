@@ -10,15 +10,20 @@ public class TrayToProductTransfer_ToGrpc_TrayToProductTransferData
    * @param transfer The TrayToProductTransfer entity to convert
    * @return a gRPC compatible TrayData data type.
    * */
-  public static TrayToProductTransferData convertToTrayToProductTransferData(TrayToProductTransfer transfer) {
+  public static TrayToProductTransferData convertToTrayToProductTransferData(TrayToProductTransfer transfer, int maxNestingDepth) {
 
     if (transfer == null)
       return null;
 
+    if(maxNestingDepth < 0)
+      return TrayToProductTransferData.newBuilder().build();
+
+    int currentNestingDepth = maxNestingDepth-1;
+
     return TrayToProductTransferData.newBuilder()
         .setTransferId(transfer.getTransferId())
-        .setProduct(Product_ToGrpc_ProductData.convertToProductData(transfer.getProduct()))
-        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(transfer.getTray()))
+        .setProduct(Product_ToGrpc_ProductData.convertToProductData(transfer.getProduct(), currentNestingDepth))
+        .setTray(Tray_ToGrpc_TrayData.convertToTrayData(transfer.getTray(), currentNestingDepth))
         .build();
   }
 }
