@@ -152,27 +152,33 @@ public class AnimalPart implements Serializable
 
   // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
+
   @Override public boolean equals(Object o) {
-    if (o == null || this.getClass() != o.getClass())
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
       return false;
-
-    return Objects.equals(getWeight_kilogram(), ((AnimalPart) o).getWeight_kilogram())
-        && Objects.equals(getPart_id(), ((AnimalPart) o).getPart_id())
-        && Objects.equals(getAnimal(), ((AnimalPart) o).getAnimal())
-        && Objects.equals(getTray(), ((AnimalPart) o).getTray())
-        && Objects.equals(getProduct(), ((AnimalPart) o).getProduct())
-        && Objects.equals(getType(), ((AnimalPart) o).getType());
+    AnimalPart that = (AnimalPart) o;
+    return getPart_id() == that.getPart_id()
+        && Objects.equals(getWeight_kilogram(), that.getWeight_kilogram())
+        && Objects.equals(getAnimal(), that.getAnimal())
+        && Objects.equals(getType(),that.getType())
+        && Objects.equals(getTray(), that.getTray())
+        && Objects.equals(getProduct(), that.getProduct());
   }
 
-
-  // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(getPart_id(), getWeight_kilogram(), getAnimal(), getTray());
+    return Objects.hash(getPart_id(),
+        getWeight_kilogram(),
+        getAnimal() != null ? getAnimal().getId() : 0,
+        getType() != null ? getType().getTypeId() : 0,
+        getTray() != null ? getTray().getTrayId() : 0,
+        getProduct() != null ? getProduct().getProductId() : 0
+    );
   }
-
 
   @Override public String toString() {
-    return "animalPart_id: '"
+    String returnValue = "animalPart_id: '"
         + getPart_id()
         + "', weighing: '"
         + getWeight_kilogram()
@@ -182,9 +188,15 @@ public class AnimalPart implements Serializable
         + getType().getTypeId()
         + "', stored in tray_id: '"
         + getTray().getTrayId()
-        + "', packed into product_id: '"
-        + getProduct().getProductId()
-        +  "'";
+        + "', packed into product_id: '";
+
+    if(getProduct() != null)
+      returnValue += getProduct().getProductId();
+    else
+      returnValue += "Null";
+    returnValue += "'";
+
+    return returnValue;
   }
 
 

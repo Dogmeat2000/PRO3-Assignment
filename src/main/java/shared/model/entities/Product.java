@@ -93,7 +93,7 @@ public class Product implements Serializable
   public void addAnimalPart(AnimalPart animalPart) {
     // Set parent Product to this Product when adding:
     animalPart.setProduct(this);
-    this.contentList.add(animalPart);
+    getContentList().add(animalPart);
   }
 
   public void removeAnimalPart(AnimalPart animalPart) {
@@ -105,7 +105,7 @@ public class Product implements Serializable
 
   public List<Long> getAnimalPartIdList() {
     if(animalPartIdList == null)
-      setAnimalPartIdList(animalPartIdList);
+      setAnimalPartIdList(new ArrayList<>());
     return animalPartIdList;
   }
 
@@ -173,15 +173,20 @@ public class Product implements Serializable
   @Override public String toString() {
     String returnValue = "product_id: '"
         + getProductId()
-        + "', List of trayId's from which animalParts were provided: [";
+        + "', List of associated trayId's: [";
 
-    for (TrayToProductTransfer transfer : getTraySupplyJoinList())
-      returnValue += transfer.getTray().getTrayId() + ",";
+    for (int i = 0; i < getTraySupplyJoinList().size(); i++) {
+      returnValue += getTraySupplyJoinList().get(i).getTray().getTrayId();
+      if(i < getTraySupplyJoinList().size() - 1)
+        returnValue += ", ";
+    }
+    returnValue += "], List of animalPart_id's in this product: [";
 
-    returnValue += "], List of animalPart_id's contained in this product: [";
-
-    for (AnimalPart animalPart : getContentList())
-      returnValue += animalPart.getPart_id() + ",";
+    for (int i = 0; i < getContentList().size(); i++) {
+      returnValue += getContentList().get(i).getPart_id();
+      if(i < getContentList().size() - 1)
+        returnValue += ", ";
+    }
 
     returnValue += "]";
 

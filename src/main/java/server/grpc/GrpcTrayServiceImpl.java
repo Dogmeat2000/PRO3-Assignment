@@ -42,7 +42,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Tray:
-      Tray createdTray = trayService.registerTray(GrpcTrayData_To_Tray.convertToTray(request));
+      Tray createdTray = trayService.registerTray(GrpcTrayData_To_Tray.convertToTray(request,3));
 
       // If animal creation fails
       if (createdTray == null)
@@ -84,7 +84,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
   public void updateTray(TrayData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      Tray trayReceived = GrpcTrayData_To_Tray.convertToTray(request);
+      Tray trayReceived = GrpcTrayData_To_Tray.convertToTray(request,3);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
       // AnimalPart associations:
@@ -120,7 +120,7 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Tray with the provided ID:
-      if(!trayService.removeTray(GrpcTrayData_To_Tray.convertToTray(request))) {
+      if(!trayService.removeTray(GrpcTrayData_To_Tray.convertToTray(request,3))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting tray with id='" + request.getTrayId() + "'");
       }

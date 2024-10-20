@@ -223,22 +223,33 @@ public class Tray implements Serializable
 
 
   // TODO: Update/Review equals, toString and hashcode methods
-  // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
-    if (o == null || this.getClass() != o.getClass())
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
       return false;
-
-    return Objects.equals(getTrayId(), ((Tray) o).getTrayId())
-        && Objects.equals(getWeight_kilogram(), ((Tray) o).getWeight_kilogram())
-        && Objects.equals(getMaxWeight_kilogram(), ((Tray) o).getMaxWeight_kilogram())
-        && Objects.equals(getContents(), ((Tray) o).getContents()) //TODO Confirm that this equals method also performs equals check on contents.
-        && Objects.equals(getTransferList(), ((Tray) o).getTransferList()); //TODO Confirm that this equals method also performs equals check on contents.
+    Tray tray = (Tray) o;
+    return getTrayId() == tray.getTrayId()
+        && Objects.equals(getMaxWeight_kilogram(), tray.getMaxWeight_kilogram())
+        && Objects.equals(getWeight_kilogram(), tray.getWeight_kilogram())
+        && Objects.equals(getContents(), tray.getContents())
+        && Objects.equals(getTransferList(), tray.getTransferList())
+        && Objects.equals(getTrayType(), tray.getTrayType())
+        && Objects.equals(getAnimalPartIdList(), tray.getAnimalPartIdList())
+        && Objects.equals(getTransferIdList(), tray.getTransferIdList())
+        && Objects.equals(getProductList(), tray.getProductList());
   }
 
-
-  // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(getTrayId(), getMaxWeight_kilogram(), getWeight_kilogram(), getContents());
+    return Objects.hash(getTrayId(),
+        getMaxWeight_kilogram(),
+        getWeight_kilogram(),
+        getContents(),
+        getTransferList(),
+        getTrayType(),
+        getAnimalPartIdList(),
+        getTransferIdList(),
+        getProductList());
   }
 
   @Override public String toString() {

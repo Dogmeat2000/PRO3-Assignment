@@ -43,7 +43,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      Product productReceived = GrpcProductData_To_Product.convertToProduct(request);
+      Product productReceived = GrpcProductData_To_Product.convertToProduct(request, 3);
 
       // Add/Query for the data lost during gRPC transmission:
       // Read associated AnimalPart and Tray Data:
@@ -123,7 +123,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      Product productReceived = GrpcProductData_To_Product.convertToProduct(request);
+      Product productReceived = GrpcProductData_To_Product.convertToProduct(request,3);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
       // AnimalPart associations:
@@ -158,7 +158,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Product with the provided ID:
-      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request))) {
+      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request,3))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting Product with id='" + request.getProductId() + "'");
       }

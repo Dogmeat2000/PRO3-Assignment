@@ -28,16 +28,16 @@ public class Product_ToGrpc_ProductData
     ProductData.Builder builder = ProductData.newBuilder();
     builder.setProductId(product.getProductId());
 
-    if(product.getAnimalPartIdList() != null && !product.getAnimalPartIdList().isEmpty())
-      builder.addAllAnimalPartIds(product.getAnimalPartIdList());
-
-    if(product.getTransferIdList() != null && !product.getTransferIdList().isEmpty())
-      builder.addAllTransferIds(product.getTransferIdList());
-
     if(product.getTraySupplyJoinList() != null && !product.getTraySupplyJoinList().isEmpty()) {
       for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
         builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, currentNestingDepth));
     }
+
+    if(product.getTransferIdList() != null && !product.getTransferIdList().isEmpty())
+      builder.addAllTransferIds(product.getTransferIdList());
+
+    if(product.getAnimalPartIdList() != null && !product.getAnimalPartIdList().isEmpty())
+      builder.addAllAnimalPartIds(product.getAnimalPartIdList());
 
     return builder.build();
   }

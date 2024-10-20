@@ -7,15 +7,17 @@ import shared.model.entities.*;
 public class GrpcTrayToProductTransferData_To_TrayToProductTransfer
 {
     /** Converts database/gRPC compatible TrayToProductTransferData information into an application compatible TrayToProductTransfer entity */
-    public static TrayToProductTransfer convertToTrayToProductTransfer(TrayToProductTransferData trayToProductTransferData) {
+    public static TrayToProductTransfer convertToTrayToProductTransfer(TrayToProductTransferData trayToProductTransferData, int maxNestingDepth) {
 
-      if (trayToProductTransferData == null)
+      if (trayToProductTransferData == null || maxNestingDepth < 0)
         return null;
+
+      int currentNestingDepth = maxNestingDepth-1;
 
       // Read TrayToProductTransfer information from the gRPC data:
       long id = trayToProductTransferData.getTransferId();
-      Product product = GrpcProductData_To_Product.convertToProduct(trayToProductTransferData.getProduct());
-      Tray tray = GrpcTrayData_To_Tray.convertToTray(trayToProductTransferData.getTray());
+      Product product = GrpcProductData_To_Product.convertToProduct(trayToProductTransferData.getProduct(), currentNestingDepth);
+      Tray tray = GrpcTrayData_To_Tray.convertToTray(trayToProductTransferData.getTray(), currentNestingDepth);
 
       // Construct and return a new Tray entity with the above read attributes set:
       return new TrayToProductTransfer(id, tray, product);

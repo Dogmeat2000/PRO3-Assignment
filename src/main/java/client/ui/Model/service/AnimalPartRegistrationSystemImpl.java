@@ -100,7 +100,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
         TrayData trayData = trayStub.readTray(LongId_ToGrpc_Id.convertToTrayId(foundAnimalPart.getTray().getTrayId()));
 
         // Convert to java language, and attach to AnimalPart Object:
-        animalPart.setTray(GrpcTrayData_To_Tray.convertToTray(trayData));
+        animalPart.setTray(GrpcTrayData_To_Tray.convertToTray(trayData,3));
       } catch (StatusRuntimeException e) {
         if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           // No Tray found assigned to this AnimalPart:
@@ -125,7 +125,7 @@ public class AnimalPartRegistrationSystemImpl extends Client implements AnimalPa
           ProductData productData = productStub.readProduct(LongId_ToGrpc_Id.convertToProductId(foundAnimalPart.getProduct().getProductId()));
 
           // Convert to java language, and attach to AnimalPart Object:
-          animalPart.setProduct(GrpcProductData_To_Product.convertToProduct(productData));
+          animalPart.setProduct(GrpcProductData_To_Product.convertToProduct(productData, 3));
         } catch (StatusRuntimeException e) {
           if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
             // No Product found assigned to this AnimalPart:

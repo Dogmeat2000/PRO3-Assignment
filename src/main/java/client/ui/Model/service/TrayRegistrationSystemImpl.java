@@ -50,7 +50,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData createdTray = trayStub.registerTray(data);
 
       // Convert, and return, the Tray that was added to the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(createdTray);
+      return GrpcTrayData_To_Tray.convertToTray(createdTray,3);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register Tray with maxWeight '" + maxWeight_kilogram + "kg' and currentWeight '" + currentWeight_kilogram + "kg'. (" + e.getMessage() + ")");
@@ -80,7 +80,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData foundTrayData = trayStub.readTray(id);
 
       // Convert the TrayData that was read from the DB into an application compatible format:
-      Tray tray = GrpcTrayData_To_Tray.convertToTray(foundTrayData);
+      Tray tray = GrpcTrayData_To_Tray.convertToTray(foundTrayData,3);
 
       // Populate Tray with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Tray and AnimalPart have relations to each other), so must be repopulated:
@@ -106,7 +106,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
           productData = productStub.readProduct(LongId_ToGrpc_Id.convertToProductId(transfer.getProduct().getProductId()));
 
           // Convert to java language, and attach to Tray Object:
-          tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData));
+          tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, 3));
         }
 
       } catch (StatusRuntimeException e) {
@@ -261,7 +261,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
             productData = productStub.readProduct(LongId_ToGrpc_Id.convertToProductId(transfer.getProduct().getProductId()));
 
             // Convert to java language, and attach to Tray Object:
-            tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData));
+            tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, 3));
           }
 
         } catch (StatusRuntimeException e) {

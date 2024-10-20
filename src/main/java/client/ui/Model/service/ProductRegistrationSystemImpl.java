@@ -60,8 +60,8 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       // Prompt gRPC to register the ProductData:
       ProductData createdProduct = productStub.registerProduct(data);
 
-      // Convert the TrayData that was read from the DB into an application compatible format:
-      Product product = GrpcProductData_To_Product.convertToProduct(createdProduct);
+      // Convert the ProductData that was read from the DB into an application compatible format:
+      Product product = GrpcProductData_To_Product.convertToProduct(createdProduct, 3);
 
       // Populate Product with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Product and AnimalPart have relations to each other), so must be repopulated:
@@ -86,7 +86,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
           trayData = trayStub.readTray(LongId_ToGrpc_Id.convertToTrayId(transfer.getTray().getTrayId()));
 
           // Convert to java language, and attach to Product Object:
-          product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData));
+          product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData,3));
         }
 
       } catch (StatusRuntimeException e) {
@@ -124,7 +124,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
       ProductData foundProduct = productStub.readProduct(id);
 
       // Convert the TrayData that was read from the DB into an application compatible format:
-      Product product = GrpcProductData_To_Product.convertToProduct(foundProduct);
+      Product product = GrpcProductData_To_Product.convertToProduct(foundProduct, 3);
 
       // Populate Product with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Product and AnimalPart have relations to each other), so must be repopulated:
@@ -150,7 +150,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
           trayData = trayStub.readTray(LongId_ToGrpc_Id.convertToTrayId(transfer.getTray().getTrayId()));
 
           // Convert to java language, and attach to Product Object:
-          product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData));
+          product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData,3));
         }
 
       } catch (StatusRuntimeException e) {
@@ -304,7 +304,7 @@ public class ProductRegistrationSystemImpl extends Client implements ProductRegi
             trayData = trayStub.readTray(LongId_ToGrpc_Id.convertToTrayId(transfer.getTray().getTrayId()));
 
             // Convert to java language, and attach to Product Object:
-            product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData));
+            product.getTraySuppliersList().add(GrpcTrayData_To_Tray.convertToTray(trayData,3));
           }
 
         } catch (StatusRuntimeException e) {

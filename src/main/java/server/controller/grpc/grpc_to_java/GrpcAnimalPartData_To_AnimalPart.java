@@ -21,9 +21,9 @@ public class GrpcAnimalPartData_To_AnimalPart
     long partId = GrpcId_To_LongId.ConvertToLongId(animalPartData.getAnimalPartId());
     BigDecimal weight = animalPartData.getPartWeight().isEmpty() ? BigDecimal.ZERO : new BigDecimal(animalPartData.getPartWeight());
     Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(animalPartData.getAnimal());
-    Tray tray = GrpcTrayData_To_Tray.convertToTray(animalPartData.getTray());
+    Tray tray = GrpcTrayData_To_Tray.convertToTray(animalPartData.getTray(), 3);
     PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(animalPartData.getPartType());
-    Product product = GrpcProductData_To_Product.convertToProduct(animalPartData.getProduct());
+    Product product = GrpcProductData_To_Product.convertToProduct(animalPartData.getProduct(), 3);
 
     // Construct and return a new AnimalPart entity with the above read attributes set:
 

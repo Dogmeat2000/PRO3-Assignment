@@ -2,6 +2,7 @@ package server.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Transient;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,14 @@ public class ProductRegistryService implements ProductRegistryInterface
       data.getTraySuppliersList().addAll(associatedTrays);
 
       Product newProduct = productRepository.save(data);
+
       logger.info("Product added to DB with ID: {}", newProduct.getProductId());
+
+      // Update all the associated AnimalParts:
+      for (AnimalPart animalPart : newProduct.getContentList()){
+        animalPart.setProduct(newProduct);
+        animalPartRepository.save(animalPart);
+      }
 
       // Register the transfers, before registering the Product:
       List<TrayToProductTransfer> transfers = new ArrayList<>();
@@ -101,8 +109,24 @@ public class ProductRegistryService implements ProductRegistryInterface
 
 
       // Resave the Product, with the added TrayToProductTransfer associations:
+      data.setProductId(newProduct.getProductId());
       newProduct = productRepository.save(data);
       logger.info("Product added to DB with ID: {}", newProduct.getProductId());
+
+      // Initialize transient data associated with the created Product:
+      List<Long> animalPartIdList = new ArrayList<>();
+      List<Long> transferIdList = new ArrayList<>();
+      List<Tray> traySuppliersList = new ArrayList<>();
+      for (AnimalPart animalPart : newProduct.getContentList())
+        animalPartIdList.add(animalPart.getPart_id());
+      newProduct.setAnimalPartIdList(animalPartIdList);
+
+      for (TrayToProductTransfer trayToProductTransfer : transfers)
+        transferIdList.add(trayToProductTransfer.getTransferId());
+      newProduct.setTransferIdList(transferIdList);
+
+      for (Long transferId : newProduct.getTransferIdList())
+        traySuppliersList.addAll(trayRepository.findByTransferList_TransferId(transferId).get());
 
       // Attempt to add Product to local cache:
       productCache.put(newProduct.getProductId(), newProduct);
@@ -120,7 +144,6 @@ public class ProductRegistryService implements ProductRegistryInterface
           trayRepository.save(loadedTray);
         }
       }
-
 
       return newProduct;
 

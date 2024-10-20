@@ -82,10 +82,8 @@ public class Station3_CLI
 
     switch (input.toLowerCase()) {
       case "add":
-        //Show a list of valid AnimalParts: //TODO: Refine this functionality!
-        System.out.println("NOT PROPERLY IMPLEMENTED YET");
-        break;
-        /*System.out.println("\nValid AnimalParts are:");
+        //Show a list of valid AnimalParts:
+        System.out.println("\nValid AnimalParts are:");
         validPartIds.clear();
         for (AnimalPart animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
           if(animalPart.getProduct() == null || animalPart.getProduct().getProductId() == 0) {
@@ -132,7 +130,7 @@ public class Station3_CLI
           System.out.println("Product Registration failed, " + e.getMessage());
           break;
         }
-        break;*/
+        break;
 
 
       case "remove":

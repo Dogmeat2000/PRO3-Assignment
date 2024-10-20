@@ -11,10 +11,12 @@ import java.util.List;
 public class GrpcTrayData_To_Tray
 {
     /** Converts database/gRPC compatible TrayData information into an application compatible Tray entity */
-    public static Tray convertToTray(TrayData trayData) {
+    public static Tray convertToTray(TrayData trayData, int maxNestingDepth) {
 
-      if (trayData == null)
+      if (trayData == null || maxNestingDepth < 0)
         return null;
+
+      int currentNestingDepth = maxNestingDepth-1;
 
       // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
       long id = trayData.getTrayId();
@@ -28,7 +30,7 @@ public class GrpcTrayData_To_Tray
 
       // Add remaining values:
       for (TrayToProductTransferData transferData : trayData.getTransfersDataList())
-        tray.getTransferList().add(GrpcTrayToProductTransferData_To_TrayToProductTransfer.convertToTrayToProductTransfer(transferData));
+        tray.getTransferList().add(GrpcTrayToProductTransferData_To_TrayToProductTransfer.convertToTrayToProductTransfer(transferData, currentNestingDepth));
 
       return tray;
     }
@@ -42,7 +44,7 @@ public class GrpcTrayData_To_Tray
       // Convert List of TraysData to a java compatible list by iteration through each entry and running the method previously declared:
       List<Tray> trayList = new ArrayList<>();
       for (TrayData trayData : data.getTraysList())
-        trayList.add(convertToTray(trayData));
+        trayList.add(convertToTray(trayData, 3));
 
       // return a new List of Tray entities:
       return trayList;
