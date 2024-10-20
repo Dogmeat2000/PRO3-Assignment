@@ -26,9 +26,10 @@ It is important for the customer that the stations can work as independently as 
 1. Import/Clone repository
 2. Clean and Install with Maven, ensuring to generate sources and documentation
 3. Run GrpcServer.java to launch the Server.
-4. Run Station1_CLI to launch the debugging CLI with basic commands accessable.
+4. Run Station1_CLI, Station2_CLI, Station3_CLI or RecallMachine_CLI to launch the debugging CLI with basic commands accessable.
 
-![CLI Screenshot](Development%20Documents%20(UML%2C%20etc)/Station1_CLI.png)
+[!CLI ScreenShot1](Development%20Documents%20(UML%2C%20etc)/Station4_CLI.png)
+![CLI Screenshot2](Development%20Documents%20(UML%2C%20etc)/Station1_CLI.png)
 
 
 # Analysis
