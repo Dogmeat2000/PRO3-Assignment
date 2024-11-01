@@ -19,6 +19,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
 
   @Transactional
-  @Override public Animal registerNewAnimal(BigDecimal weightInKilogram) throws CreateFailedException {
+  @Override public Animal registerNewAnimal(BigDecimal weightInKilogram, String origin, Timestamp arrival_date) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -42,16 +43,13 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalServiceGrpc.AnimalServiceBlockingStub animalStub = AnimalServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (AnimalData)
-      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, new ArrayList<>());
+      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, origin, arrival_date, new ArrayList<>());
 
       // Prompt gRPC to register the Animal:
       AnimalData createdAnimal = animalStub.registerAnimal(data);
 
       // Read and return the created Animal to get the latest changes:
       return readAnimal(createdAnimal.getAnimalId());
-
-      // Convert, and return, the AnimalData that was added to the DB into an application compatible format:
-      //return GrpcAnimalData_To_Animal.convertToAnimal(createdAnimal);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register animal with weight '" + weightInKilogram + "' (" + e.getMessage() + ")");

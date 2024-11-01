@@ -1,43 +1,35 @@
 package integrationTests;
 
-import client.RecallMachine_CLI;
-import client.interfaces.AnimalRegistrationSystem;
 import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import client.ui.Model.service.ProductRegistrationSystemImpl;
 import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import server.GrpcServer;
 import server.controller.grpc.grpc_to_java.*;
 import server.controller.grpc.java_to_gRPC.*;
-import server.grpc.*;
 import server.repository.*;
 import shared.model.entities.*;
-import shared.model.exceptions.NotFoundException;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)  // Gives access to extended testing functionality
@@ -50,12 +42,12 @@ import static org.mockito.Mockito.*;
 public class RecallMachineTest
 {
   // Signals that these are "fake" Spring Boot beans.
-  /*@MockBean*/ private AnimalPartRepository animalPartRepository;
-  /*@MockBean*/ private AnimalRepository animalRepository; // Signals that this is a "fake" Spring Boot bean.
-  /*@MockBean*/ private PartTypeRepository partTypeRepository; // Signals that this is a "fake" Spring Boot bean.
-  /*@MockBean*/ private ProductRepository productRepository; // Signals that this is a "fake" Spring Boot bean.
-  /*@MockBean*/ private TrayRepository trayRepository; // Signals that this is a "fake" Spring Boot bean.
-  /*@MockBean*/ private TrayToProductTransferRepository trayToProductTransferRepository; // Signals that this is a "fake" Spring Boot bean.
+  /*private AnimalPartRepository animalPartRepository;
+  private AnimalRepository animalRepository; // Signals that this is a "fake" Spring Boot bean.
+  private PartTypeRepository partTypeRepository; // Signals that this is a "fake" Spring Boot bean.
+  private ProductRepository productRepository; // Signals that this is a "fake" Spring Boot bean.
+  private TrayRepository trayRepository; // Signals that this is a "fake" Spring Boot bean.
+  private TrayToProductTransferRepository trayToProductTransferRepository; // Signals that this is a "fake" Spring Boot bean.*/
 
   private ManagedChannel channel;
   private AnimalPartServiceGrpc.AnimalPartServiceBlockingStub animalPartStub;
@@ -108,14 +100,14 @@ public class RecallMachineTest
   public void testRetrieveRegistrationNumberForAllAnimalsInvolvedInAProduct() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420));
+    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()));
 
-    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400));
+    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()));
 
-    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435));
+    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()));
 
     animal1 = GrpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal1)));
-    System.out.println(animal1);
+    //System.out.println(animal1);
     animal2 = GrpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal2)));
     animal3 = GrpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal3)));
 
@@ -198,11 +190,11 @@ public class RecallMachineTest
   public void testRetrieveAllProductsAGivenAnimalIsInvolvedIn() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420));
+    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()));
 
-    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400));
+    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()));
 
-    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435));
+    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()));
 
     animal1 = GrpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal1)));
     System.out.println(animal1);

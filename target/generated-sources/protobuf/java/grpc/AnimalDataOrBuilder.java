@@ -28,17 +28,41 @@ public interface AnimalDataOrBuilder extends
       getAnimalWeightBytes();
 
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>string origin = 3;</code>
+   * @return The origin.
+   */
+  java.lang.String getOrigin();
+  /**
+   * <code>string origin = 3;</code>
+   * @return The bytes for origin.
+   */
+  com.google.protobuf.ByteString
+      getOriginBytes();
+
+  /**
+   * <code>string arrival_date = 4;</code>
+   * @return The arrivalDate.
+   */
+  java.lang.String getArrivalDate();
+  /**
+   * <code>string arrival_date = 4;</code>
+   * @return The bytes for arrivalDate.
+   */
+  com.google.protobuf.ByteString
+      getArrivalDateBytes();
+
+  /**
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @return A list containing the animalPartIds.
    */
   java.util.List<java.lang.Long> getAnimalPartIdsList();
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @return The count of animalPartIds.
    */
   int getAnimalPartIdsCount();
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @param index The index of the element to return.
    * @return The animalPartIds at the given index.
    */

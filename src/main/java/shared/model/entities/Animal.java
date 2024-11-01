@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,14 @@ public class Animal implements Serializable
 
   @Column (nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
   private BigDecimal weight_kilogram;
+
+
+  @Column
+  private String origin;
+
+
+  @Column
+  private Timestamp arrival_date;
 
 
   // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the AnimalPart entity,
@@ -49,9 +58,11 @@ public class Animal implements Serializable
   }
 
 
-  public Animal(long id, BigDecimal weight_kilogram) {
+  public Animal(long id, BigDecimal weight_kilogram, String origin, Timestamp arrival_date) {
     setWeight_kilogram(weight_kilogram);
     setId(id);
+    setOrigin(origin);
+    setArrival_date(arrival_date);
     partList = new ArrayList<>();
   }
 
@@ -75,6 +86,22 @@ public class Animal implements Serializable
     this.animalId = animal_id;
   }
 
+
+  public String getOrigin() {
+    return origin;
+  }
+
+  public void setOrigin(String origin) {
+    this.origin = origin;
+  }
+
+  public Timestamp getArrival_date() {
+    return arrival_date;
+  }
+
+  public void setArrival_date(Timestamp arrival_date) {
+    this.arrival_date = arrival_date;
+  }
 
   public List<AnimalPart> getPartList() {
     return partList;
@@ -117,20 +144,18 @@ public class Animal implements Serializable
   // Required by Spring Boot JPA:
 
   @Override public boolean equals(Object o) {
-    if (o == null || this.getClass() != o.getClass())
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
       return false;
-
-    return Objects.equals(getWeight_kilogram(), ((Animal) o).getWeight_kilogram())
-        && Objects.equals(getId(), ((Animal) o).getId())
-        && Objects.equals(getPartList(), ((Animal) o).getPartList()); //TODO Confirm that this equals method also performs equals check on contents.
+    Animal animal = (Animal) o;
+    return animalId == animal.animalId && Objects.equals(getWeight_kilogram(), animal.getWeight_kilogram()) && Objects.equals(getOrigin(), animal.getOrigin()) && Objects.equals(getArrival_date(),
+        animal.getArrival_date()) && Objects.equals(getPartList(), animal.getPartList()) && Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList());
   }
 
-
-  // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(animalId, getWeight_kilogram(), getPartList());
+    return Objects.hash(animalId, getWeight_kilogram(), getOrigin(), getArrival_date(), getPartList(), getAnimalPartIdList());
   }
-
 
   @Override public String toString() {
     String returnValue = "animal_id: '"

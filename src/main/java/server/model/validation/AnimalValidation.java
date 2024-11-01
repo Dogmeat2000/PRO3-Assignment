@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import shared.model.entities.Animal;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /** <p>Defines public static accessible methods used for validating the data integrity of Animal entities,
  * especially useful for validation checks before attempting to commit data to the repository/database</p>
@@ -20,6 +21,12 @@ public class AnimalValidation
 
     // Animal weight must be larger than 0:
     validateWeight(animal.getWeight_kilogram());
+
+    // Validate origin:
+    validateOrigin(animal.getOrigin());
+
+    // Validate arrivalDate:
+    validateArrivalDate(animal.getArrival_date());
 
     // Validation passed:
   }
@@ -38,6 +45,24 @@ public class AnimalValidation
     // Animal weight must be larger than 0:
     if(weight.compareTo(BigDecimal.valueOf(0)) <= 0)
       throw new DataIntegrityViolationException("weight_kilogram is invalid (0 or less)");
+
+    // Validation passed:
+  }
+
+
+  public static void validateOrigin(String origin) throws DataIntegrityViolationException {
+    // Origin must not be null, empty or blank:
+    if(origin == null || origin.isEmpty() || origin.isBlank())
+      throw new DataIntegrityViolationException("origin is invalid (null or empty/blank)");
+
+    // Validation passed:
+  }
+
+
+  public static void validateArrivalDate(Timestamp arrival_date) throws DataIntegrityViolationException {
+    // Timestamp must not be null, or before 2024:
+    if(arrival_date == null || arrival_date.before(Timestamp.valueOf("2024-01-01 00:00:00")))
+      throw new DataIntegrityViolationException("arrival_date is invalid, either null or date is before 2024.");
 
     // Validation passed:
   }

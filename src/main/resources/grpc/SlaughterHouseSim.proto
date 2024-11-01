@@ -12,7 +12,9 @@ message EmptyMessage {
 message AnimalData {
   int64 animalId = 1;
   string animalWeight = 2;
-  repeated int64 animalPartIds = 3;
+  string origin = 3;
+  string arrival_date = 4;
+  repeated int64 animalPartIds = 5;
 }
 
 
@@ -35,12 +37,6 @@ message AnimalPartData {
   TrayData tray = 5;
   ProductData product = 6;
 }
-
-
-/*message UpdatedAnimalPartData {
-  AnimalPartData oldData = 1;
-  AnimalPartData newData = 2;
-}*/
 
 
 message AnimalPartId {

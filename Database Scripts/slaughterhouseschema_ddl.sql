@@ -7,6 +7,8 @@ SET SCHEMA 'pro3_slaughterhouse';
 CREATE TABLE Animal (
     animal_id BIGSERIAL UNIQUE,
     weight_kilogram DECIMAL(10, 5),
+    origin VARCHAR(300),
+    arrival_date TIMESTAMP,
     PRIMARY KEY (animal_id));
 
 CREATE TABLE PartType (

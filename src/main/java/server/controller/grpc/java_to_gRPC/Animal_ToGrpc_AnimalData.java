@@ -19,6 +19,8 @@ public class Animal_ToGrpc_AnimalData
     return AnimalData.newBuilder()
         .setAnimalId(animal.getId())
         .setAnimalWeight(animal.getWeight_kilogram().toString())
+        .setOrigin(animal.getOrigin())
+        .setArrivalDate(animal.getArrival_date().toString())
         .addAllAnimalPartIds(animal.getAnimalPartIdList())
         .build();
   }

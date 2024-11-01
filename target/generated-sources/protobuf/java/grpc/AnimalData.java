@@ -32,6 +32,8 @@ private static final long serialVersionUID = 0L;
   }
   private AnimalData() {
     animalWeight_ = "";
+    origin_ = "";
+    arrivalDate_ = "";
     animalPartIds_ = emptyLongList();
   }
 
@@ -98,12 +100,90 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int ANIMALPARTIDS_FIELD_NUMBER = 3;
+  public static final int ORIGIN_FIELD_NUMBER = 3;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object origin_ = "";
+  /**
+   * <code>string origin = 3;</code>
+   * @return The origin.
+   */
+  @java.lang.Override
+  public java.lang.String getOrigin() {
+    java.lang.Object ref = origin_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      origin_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string origin = 3;</code>
+   * @return The bytes for origin.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getOriginBytes() {
+    java.lang.Object ref = origin_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      origin_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ARRIVAL_DATE_FIELD_NUMBER = 4;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object arrivalDate_ = "";
+  /**
+   * <code>string arrival_date = 4;</code>
+   * @return The arrivalDate.
+   */
+  @java.lang.Override
+  public java.lang.String getArrivalDate() {
+    java.lang.Object ref = arrivalDate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      arrivalDate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string arrival_date = 4;</code>
+   * @return The bytes for arrivalDate.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getArrivalDateBytes() {
+    java.lang.Object ref = arrivalDate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      arrivalDate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ANIMALPARTIDS_FIELD_NUMBER = 5;
   @SuppressWarnings("serial")
   private com.google.protobuf.Internal.LongList animalPartIds_ =
       emptyLongList();
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @return A list containing the animalPartIds.
    */
   @java.lang.Override
@@ -112,14 +192,14 @@ private static final long serialVersionUID = 0L;
     return animalPartIds_;
   }
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @return The count of animalPartIds.
    */
   public int getAnimalPartIdsCount() {
     return animalPartIds_.size();
   }
   /**
-   * <code>repeated int64 animalPartIds = 3;</code>
+   * <code>repeated int64 animalPartIds = 5;</code>
    * @param index The index of the element to return.
    * @return The animalPartIds at the given index.
    */
@@ -149,8 +229,14 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(animalWeight_)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 2, animalWeight_);
     }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(origin_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 3, origin_);
+    }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(arrivalDate_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 4, arrivalDate_);
+    }
     if (getAnimalPartIdsList().size() > 0) {
-      output.writeUInt32NoTag(26);
+      output.writeUInt32NoTag(42);
       output.writeUInt32NoTag(animalPartIdsMemoizedSerializedSize);
     }
     for (int i = 0; i < animalPartIds_.size(); i++) {
@@ -171,6 +257,12 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(animalWeight_)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(2, animalWeight_);
+    }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(origin_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(3, origin_);
+    }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(arrivalDate_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(4, arrivalDate_);
     }
     {
       int dataSize = 0;
@@ -205,6 +297,10 @@ private static final long serialVersionUID = 0L;
         != other.getAnimalId()) return false;
     if (!getAnimalWeight()
         .equals(other.getAnimalWeight())) return false;
+    if (!getOrigin()
+        .equals(other.getOrigin())) return false;
+    if (!getArrivalDate()
+        .equals(other.getArrivalDate())) return false;
     if (!getAnimalPartIdsList()
         .equals(other.getAnimalPartIdsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -223,6 +319,10 @@ private static final long serialVersionUID = 0L;
         getAnimalId());
     hash = (37 * hash) + ANIMALWEIGHT_FIELD_NUMBER;
     hash = (53 * hash) + getAnimalWeight().hashCode();
+    hash = (37 * hash) + ORIGIN_FIELD_NUMBER;
+    hash = (53 * hash) + getOrigin().hashCode();
+    hash = (37 * hash) + ARRIVAL_DATE_FIELD_NUMBER;
+    hash = (53 * hash) + getArrivalDate().hashCode();
     if (getAnimalPartIdsCount() > 0) {
       hash = (37 * hash) + ANIMALPARTIDS_FIELD_NUMBER;
       hash = (53 * hash) + getAnimalPartIdsList().hashCode();
@@ -364,6 +464,8 @@ private static final long serialVersionUID = 0L;
       bitField0_ = 0;
       animalId_ = 0L;
       animalWeight_ = "";
+      origin_ = "";
+      arrivalDate_ = "";
       animalPartIds_ = emptyLongList();
       return this;
     }
@@ -405,6 +507,12 @@ private static final long serialVersionUID = 0L;
         result.animalWeight_ = animalWeight_;
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.origin_ = origin_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.arrivalDate_ = arrivalDate_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         animalPartIds_.makeImmutable();
         result.animalPartIds_ = animalPartIds_;
       }
@@ -430,11 +538,21 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000002;
         onChanged();
       }
+      if (!other.getOrigin().isEmpty()) {
+        origin_ = other.origin_;
+        bitField0_ |= 0x00000004;
+        onChanged();
+      }
+      if (!other.getArrivalDate().isEmpty()) {
+        arrivalDate_ = other.arrivalDate_;
+        bitField0_ |= 0x00000008;
+        onChanged();
+      }
       if (!other.animalPartIds_.isEmpty()) {
         if (animalPartIds_.isEmpty()) {
           animalPartIds_ = other.animalPartIds_;
           animalPartIds_.makeImmutable();
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000010;
         } else {
           ensureAnimalPartIdsIsMutable();
           animalPartIds_.addAll(other.animalPartIds_);
@@ -477,13 +595,23 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
-            case 24: {
+            case 26: {
+              origin_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
+            case 34: {
+              arrivalDate_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 34
+            case 40: {
               long v = input.readInt64();
               ensureAnimalPartIdsIsMutable();
               animalPartIds_.addLong(v);
               break;
-            } // case 24
-            case 26: {
+            } // case 40
+            case 42: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               ensureAnimalPartIdsIsMutable();
@@ -492,7 +620,7 @@ private static final long serialVersionUID = 0L;
               }
               input.popLimit(limit);
               break;
-            } // case 26
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -614,15 +742,159 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private java.lang.Object origin_ = "";
+    /**
+     * <code>string origin = 3;</code>
+     * @return The origin.
+     */
+    public java.lang.String getOrigin() {
+      java.lang.Object ref = origin_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        origin_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string origin = 3;</code>
+     * @return The bytes for origin.
+     */
+    public com.google.protobuf.ByteString
+        getOriginBytes() {
+      java.lang.Object ref = origin_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        origin_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string origin = 3;</code>
+     * @param value The origin to set.
+     * @return This builder for chaining.
+     */
+    public Builder setOrigin(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      origin_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string origin = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearOrigin() {
+      origin_ = getDefaultInstance().getOrigin();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string origin = 3;</code>
+     * @param value The bytes for origin to set.
+     * @return This builder for chaining.
+     */
+    public Builder setOriginBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      origin_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object arrivalDate_ = "";
+    /**
+     * <code>string arrival_date = 4;</code>
+     * @return The arrivalDate.
+     */
+    public java.lang.String getArrivalDate() {
+      java.lang.Object ref = arrivalDate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        arrivalDate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string arrival_date = 4;</code>
+     * @return The bytes for arrivalDate.
+     */
+    public com.google.protobuf.ByteString
+        getArrivalDateBytes() {
+      java.lang.Object ref = arrivalDate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        arrivalDate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string arrival_date = 4;</code>
+     * @param value The arrivalDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setArrivalDate(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      arrivalDate_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string arrival_date = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearArrivalDate() {
+      arrivalDate_ = getDefaultInstance().getArrivalDate();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string arrival_date = 4;</code>
+     * @param value The bytes for arrivalDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setArrivalDateBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      arrivalDate_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+
     private com.google.protobuf.Internal.LongList animalPartIds_ = emptyLongList();
     private void ensureAnimalPartIdsIsMutable() {
       if (!animalPartIds_.isModifiable()) {
         animalPartIds_ = makeMutableCopy(animalPartIds_);
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000010;
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @return A list containing the animalPartIds.
      */
     public java.util.List<java.lang.Long>
@@ -631,14 +903,14 @@ private static final long serialVersionUID = 0L;
       return animalPartIds_;
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @return The count of animalPartIds.
      */
     public int getAnimalPartIdsCount() {
       return animalPartIds_.size();
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @param index The index of the element to return.
      * @return The animalPartIds at the given index.
      */
@@ -646,7 +918,7 @@ private static final long serialVersionUID = 0L;
       return animalPartIds_.getLong(index);
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @param index The index to set the value at.
      * @param value The animalPartIds to set.
      * @return This builder for chaining.
@@ -656,12 +928,12 @@ private static final long serialVersionUID = 0L;
 
       ensureAnimalPartIdsIsMutable();
       animalPartIds_.setLong(index, value);
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @param value The animalPartIds to add.
      * @return This builder for chaining.
      */
@@ -669,12 +941,12 @@ private static final long serialVersionUID = 0L;
 
       ensureAnimalPartIdsIsMutable();
       animalPartIds_.addLong(value);
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @param values The animalPartIds to add.
      * @return This builder for chaining.
      */
@@ -683,17 +955,17 @@ private static final long serialVersionUID = 0L;
       ensureAnimalPartIdsIsMutable();
       com.google.protobuf.AbstractMessageLite.Builder.addAll(
           values, animalPartIds_);
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
     /**
-     * <code>repeated int64 animalPartIds = 3;</code>
+     * <code>repeated int64 animalPartIds = 5;</code>
      * @return This builder for chaining.
      */
     public Builder clearAnimalPartIds() {
       animalPartIds_ = emptyLongList();
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000010);
       onChanged();
       return this;
     }

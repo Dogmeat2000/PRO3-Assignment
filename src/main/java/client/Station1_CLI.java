@@ -9,6 +9,8 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -95,16 +97,27 @@ public class Station1_CLI
       case "add":
         System.out.print("Enter animal weight (kg) of animal to ADD: ");
         value = getUserInput();
-        if(!validateBigDecimalInput(value))
+        if(!validateBigDecimalInput(value)) {
+          System.out.println("Invalid input!");
+          break;
+        }
+        BigDecimal newAnimalWeight = new BigDecimal(value);
+
+        System.out.print("Enter name of origin farm: ");
+        value = getUserInput();
+        if(value.isEmpty() ||value.isBlank())
           System.out.println("Invalid input!");
         else
           try {
-            Animal animal = animalRegistrationSystem.registerNewAnimal(new BigDecimal(value));
+            Timestamp now = Timestamp.from(Instant.now()); // UTC Time
+            System.out.println("NOTE Animal will be registered as having arrived at '" + now + "' UTC Time");
+            Animal animal = animalRegistrationSystem.registerNewAnimal(newAnimalWeight, value, now);
             System.out.println("Added [" + animal + "] to Database!");
           } catch (CreateFailedException e) {
             System.out.println("Invalid input!");
           }
         break;
+
 
       case "remove":
         System.out.print("Enter animal_id of animal to REMOVE: ");
@@ -120,15 +133,17 @@ public class Station1_CLI
           }
         break;
 
+
       case "update":
         System.out.print("Enter animal_id: ");
         value = getUserInput();
+        Animal oldAnimal = null;
         if(!validateLongInput(value))
           System.out.println("Invalid input!");
         else {
           try {
-            Animal animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
-            System.out.println("Found [" + animal + "]");
+            oldAnimal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
+            System.out.println("Found [" + oldAnimal + "]");
           }
           catch (NotFoundException e) {
             System.out.println("Invalid input!");
@@ -136,23 +151,33 @@ public class Station1_CLI
           }
         }
         long animalId = Long.parseLong(value);
+
         System.out.print("Enter new weight: ");
         value = getUserInput();
-        if(!validateBigDecimalInput(value))
+        if(!validateBigDecimalInput(value)) {
           System.out.println("Invalid input!");
-        else {
+          break;
+        }
+        BigDecimal newWeight = new BigDecimal(value);
+
+        System.out.print("Enter new name of origin farm: ");
+        value = getUserInput();
+        if(value.isEmpty() ||value.isBlank() || oldAnimal == null)
+          System.out.println("Invalid input!");
+        else
           try {
-            Animal animal = new Animal(animalId, new BigDecimal(value));
-            animalRegistrationSystem.updateAnimal(animal);
-            System.out.println("Updated [" + animal + "]");
-          }
-          catch (UpdateFailedException | NotFoundException e) {
+            Timestamp oldRegistryDate = oldAnimal.getArrival_date(); // UTC Time
+            System.out.println("NOTE original Animal registration date remains as '" + oldRegistryDate + "' UTC Time");
+            Animal newAnimal = new Animal(animalId, newWeight, value, oldRegistryDate);
+            animalRegistrationSystem.updateAnimal(newAnimal);
+            System.out.println("Implemented updated Animal [" + newAnimal + "] in Database!");
+          } catch (UpdateFailedException | NotFoundException e) {
             e.printStackTrace();
             System.out.println("Invalid input!");
             break;
           }
-        }
         break;
+
 
       case "viewone":
         System.out.print("Enter animal_id: ");
@@ -167,6 +192,7 @@ public class Station1_CLI
             System.out.println("No Animals found in Database!");
           }
         break;
+
 
       case "viewall":
         System.out.println("Retrieving all Animals from Database: ");

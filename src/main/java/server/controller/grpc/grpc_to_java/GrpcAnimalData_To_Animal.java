@@ -4,6 +4,7 @@ import grpc.*;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +20,12 @@ public class GrpcAnimalData_To_Animal
     // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
     long id = animalData.getAnimalId();
     BigDecimal weight = animalData.getAnimalWeight().isEmpty() ? BigDecimal.ZERO : new BigDecimal(animalData.getAnimalWeight());
+    String origin = animalData.getOrigin();
+    Timestamp arrivalDate = Timestamp.valueOf(animalData.getArrivalDate());
     List<Long> animalPartIdList = new ArrayList<>(animalData.getAnimalPartIdsList());
 
     // Construct a new Animal entity with the above read attributes set:
-    Animal animal = new Animal(id, weight);
+    Animal animal = new Animal(id, weight, origin, arrivalDate);
     animal.setAnimalPartIdList(animalPartIdList);
 
     return animal;

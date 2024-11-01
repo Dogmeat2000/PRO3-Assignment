@@ -7,6 +7,7 @@ import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.UpdateFailedException;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -17,10 +18,12 @@ public interface AnimalRegistrationSystem
 {
   /** <p>Registers/Creates a new Animal in repository with the given parameters applied.</p>
    * @param weightInKilogram The animals weight in kilogram, decimal units are permitted.
+   * @param origin A String containing a description/identifier to the Farm (or similar) this Animal originated from.
+   * @param arrival_date a Timestamp containing the Time information for when this Animal was registered.
    * @return The created Animal instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
-  Animal registerNewAnimal (BigDecimal weightInKilogram) throws CreateFailedException;
+  Animal registerNewAnimal (BigDecimal weightInKilogram, String origin, Timestamp arrival_date) throws CreateFailedException;
 
 
   /** <p>Looks up any Animal entity with the specified id, in the repository</p>
