@@ -15,6 +15,7 @@ import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.exceptions.persistance.NotFoundException;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -116,6 +117,8 @@ public class AnimalService implements AnimalRegistryInterface
 
       // Modify the database Entity locally:
       animal.setWeight_kilogram(data.getWeight_kilogram());
+      animal.setOrigin(data.getOrigin());
+      animal.setArrivalDate(data.getArrivalDate());
       animal.getPartList().clear();
       for (AnimalPart animalPart : data.getPartList()) {
         try {
@@ -214,6 +217,90 @@ public class AnimalService implements AnimalRegistryInterface
     try {
       // Load all Animals from repository:
       List<Animal> animals = animalRepository.findAll();
+
+      // Populate the id association list:
+      for (Animal animal : animals) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : animal.getPartList())
+          animalPartIds.add(animalPart.getPart_id());
+        animal.setAnimalPartIdList(animalPartIds);
+      }
+
+      // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
+      animalCache.clear();
+      for (Animal animal : animals) {
+        if(animal != null)
+          animalCache.put(animal.getId(), animal);
+      }
+      logger.info("Added all Animals from Database to Local Cache");
+      return animals;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+  @Override public List<Animal> getAllAnimalsByOriginAndDate(String origin, Date arrivalDate) throws PersistenceException {
+    try {
+      // Load all Animals from repository:
+      List<Animal> animals = animalRepository.findAnimalsByOriginAndArrivalDate(origin, arrivalDate).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
+
+      // Populate the id association list:
+      for (Animal animal : animals) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : animal.getPartList())
+          animalPartIds.add(animalPart.getPart_id());
+        animal.setAnimalPartIdList(animalPartIds);
+      }
+
+      // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
+      animalCache.clear();
+      for (Animal animal : animals) {
+        if(animal != null)
+          animalCache.put(animal.getId(), animal);
+      }
+      logger.info("Added all Animals from Database to Local Cache");
+      return animals;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+  @Override public List<Animal> getAllAnimalsByOrigin(String origin) throws PersistenceException {
+    try {
+      // Load all Animals from repository:
+      List<Animal> animals = animalRepository.findAnimalsByOrigin(origin).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
+
+      // Populate the id association list:
+      for (Animal animal : animals) {
+        List<Long> animalPartIds = new ArrayList<>();
+        for (AnimalPart animalPart : animal.getPartList())
+          animalPartIds.add(animalPart.getPart_id());
+        animal.setAnimalPartIdList(animalPartIds);
+      }
+
+      // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
+      animalCache.clear();
+      for (Animal animal : animals) {
+        if(animal != null)
+          animalCache.put(animal.getId(), animal);
+      }
+      logger.info("Added all Animals from Database to Local Cache");
+      return animals;
+
+    } catch (PersistenceException e) {
+      logger.error("Persistence exception occurred: {}", e.getMessage());
+      throw new PersistenceException(e);
+    }
+  }
+
+  @Override public List<Animal> getAllAnimalsByDate(Date arrivalDate) throws PersistenceException {
+    try {
+      // Load all Animals from repository:
+      List<Animal> animals = animalRepository.findAnimalsByArrivalDate(arrivalDate).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
 
       // Populate the id association list:
       for (Animal animal : animals) {

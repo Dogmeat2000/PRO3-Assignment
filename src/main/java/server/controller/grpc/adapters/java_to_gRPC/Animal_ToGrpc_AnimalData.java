@@ -20,7 +20,7 @@ public class Animal_ToGrpc_AnimalData
         .setAnimalId(animal.getId())
         .setAnimalWeight(animal.getWeight_kilogram().toString())
         .setOrigin(animal.getOrigin())
-        .setArrivalDate(animal.getArrival_date().toString())
+        .setArrivalDate(animal.getArrivalDate().toString())
         .addAllAnimalPartIds(animal.getAnimalPartIdList())
         .build();
   }

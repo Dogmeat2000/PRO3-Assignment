@@ -19,7 +19,7 @@ import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
 
   @Transactional
-  @Override public Animal registerNewAnimal(BigDecimal weightInKilogram, String origin, Timestamp arrival_date) throws CreateFailedException {
+  @Override public Animal registerNewAnimal(BigDecimal weightInKilogram, String origin, Date arrivalDate) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -43,7 +43,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalServiceGrpc.AnimalServiceBlockingStub animalStub = AnimalServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (AnimalData)
-      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, origin, arrival_date, new ArrayList<>());
+      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, origin, arrivalDate, new ArrayList<>());
 
       // Prompt gRPC to register the Animal:
       AnimalData createdAnimal = animalStub.registerAnimal(data);

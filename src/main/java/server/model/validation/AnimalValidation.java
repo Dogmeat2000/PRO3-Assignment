@@ -5,6 +5,7 @@ import shared.model.entities.Animal;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 /** <p>Defines public static accessible methods used for validating the data integrity of Animal entities,
  * especially useful for validation checks before attempting to commit data to the repository/database</p>
@@ -26,7 +27,7 @@ public class AnimalValidation
     validateOrigin(animal.getOrigin());
 
     // Validate arrivalDate:
-    validateArrivalDate(animal.getArrival_date());
+    validateArrivalDate(animal.getArrivalDate());
 
     // Validation passed:
   }
@@ -59,9 +60,9 @@ public class AnimalValidation
   }
 
 
-  public static void validateArrivalDate(Timestamp arrival_date) throws DataIntegrityViolationException {
+  public static void validateArrivalDate(Date arrivalDate) throws DataIntegrityViolationException {
     // Timestamp must not be null, or before 2024:
-    if(arrival_date == null || arrival_date.before(Timestamp.valueOf("2024-01-01 00:00:00")))
+    if(arrivalDate == null || arrivalDate.before(Timestamp.valueOf("2024-01-01 00:00:00")))
       throw new DataIntegrityViolationException("arrival_date is invalid, either null or date is before 2024.");
 
     // Validation passed:

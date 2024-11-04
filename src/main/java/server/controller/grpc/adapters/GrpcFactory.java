@@ -5,13 +5,13 @@ import server.controller.grpc.adapters.java_to_gRPC.*;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /** Provides a host of static methods for building gRPC compatible application entities from given method/entity arguments/parameters */
 public class GrpcFactory
 {
-  public static AnimalData buildGrpcAnimal (BigDecimal weight, String origin, Timestamp arrival_date, List<Long> animalPartIdList) {
+  public static AnimalData buildGrpcAnimal (BigDecimal weight, String origin, Date arrival_date, List<Long> animalPartIdList) {
     return AnimalData.newBuilder()
         .setAnimalId(1)
         .setAnimalWeight(weight.toString())

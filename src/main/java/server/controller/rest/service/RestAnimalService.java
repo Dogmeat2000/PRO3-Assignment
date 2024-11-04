@@ -4,6 +4,7 @@ import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import server.controller.rest.adapters.dto_to_java.RestAnimalDto_To_Animal;
 import server.controller.rest.adapters.java_to_dto.Animal_ToRest_AnimalDto;
@@ -13,6 +14,8 @@ import shared.model.entities.Animal;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.rest.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -100,33 +103,27 @@ public class RestAnimalService
       RestInternalServerErrorException {
 
     try {
-      if(date != null && origin != null) {
-        // Both optional query parameters are provided:
-        // Validate both query parameters:
-        // TODO: Missing implementation
+      Date receivedDate = null;
+      if(date != null) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        receivedDate = dateFormat.parse(date);
+      }
 
+      if(receivedDate != null && origin != null) {
         // Retrieve all animals, where both origin and date equals parameter:
-        List<Animal> animals = animalService.getAllAnimals();
+        List<Animal> animals = animalService.getAllAnimalsByOriginAndDate(origin, receivedDate);
         return animalToRestAnimalDtoConverter.convertToAnimalDtoList(animals);
-        // TODO: Update, so a single repository query is made, instead.
-      } else if (date != null) {
-        // Both optional query parameters are provided:
-        // Validate query parameters:
-        // TODO: Missing implementation
 
+      } else if (receivedDate != null) {
         // Retrieve all animals, where date equals parameter:
-        List<Animal> animals = animalService.getAllAnimals();
+        List<Animal> animals = animalService.getAllAnimalsByDate(receivedDate);
         return animalToRestAnimalDtoConverter.convertToAnimalDtoList(animals);
-        // TODO: Update, so a single repository query is made, instead.
-      } else if (origin != null) {
-        // Both optional query parameters are provided:
-        // Validate query parameters:
-        // TODO: Missing implementation
 
+      } else if (origin != null) {
         // Retrieve all animals, where origin equals parameter:
-        List<Animal> animals = animalService.getAllAnimals();
+        List<Animal> animals = animalService.getAllAnimalsByOrigin(origin);
         return animalToRestAnimalDtoConverter.convertToAnimalDtoList(animals);
-        // TODO: Update, so a single repository query is made, instead.
+
       } else {
         List<Animal> animals = animalService.getAllAnimals();
         return animalToRestAnimalDtoConverter.convertToAnimalDtoList(animals);
@@ -172,6 +169,7 @@ public class RestAnimalService
   }
 
 
+  @Transactional
   @DeleteMapping("/{animalId}")
   public void deleteAnimal(@PathVariable("animalId") Long animalId, @RequestBody AnimalDto animalDto) throws DtoValidationException,
       DtoConversionException,

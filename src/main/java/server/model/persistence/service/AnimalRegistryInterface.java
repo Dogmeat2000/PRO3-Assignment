@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import shared.model.entities.Animal;
 import shared.model.exceptions.persistance.NotFoundException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,4 +58,29 @@ public interface AnimalRegistryInterface
    * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
    */
   List<Animal> getAllAnimals() throws PersistenceException;
+
+
+  /** <p>Fetches all Animals from the repository, where the given Origin and Date matches.</p>
+   * @param origin A String containing the origin of the Animal (i.e. which farm it came from)
+   * @param arrivalDate A Timestamp corresponding to the Date the Animal arrived at the Slaughter House.
+   * @return A List containing all Animal entities extracted from the repository, matching given arguments.
+   * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
+   */
+  List<Animal> getAllAnimalsByOriginAndDate(String origin, Date arrivalDate) throws PersistenceException;
+
+
+  /** <p>Fetches all Animals from the repository, where the given Origin matches.</p>
+   * @param origin A String containing the origin of the Animal (i.e. which farm it came from)
+   * @return A List containing all Animal entities extracted from the repository, matching given arguments.
+   * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
+   */
+  List<Animal> getAllAnimalsByOrigin(String origin) throws PersistenceException;
+
+
+  /** <p>Fetches all Animals from the repository, where the given Date matches.</p>
+   * @param arrivalDate A Timestamp corresponding to the Date the Animal arrived at the Slaughter House.
+   * @return A List containing all Animal entities extracted from the repository, matching given arguments.
+   * @throws PersistenceException Thrown if update failed, due to system/persistence issues (i.e. Repository is offline, etc.)
+   */
+  List<Animal> getAllAnimalsByDate(Date arrivalDate) throws PersistenceException;
 }

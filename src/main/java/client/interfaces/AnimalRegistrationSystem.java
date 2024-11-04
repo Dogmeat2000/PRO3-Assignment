@@ -7,7 +7,7 @@ import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 
@@ -23,7 +23,7 @@ public interface AnimalRegistrationSystem
    * @return The created Animal instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
-  Animal registerNewAnimal (BigDecimal weightInKilogram, String origin, Timestamp arrival_date) throws CreateFailedException;
+  Animal registerNewAnimal (BigDecimal weightInKilogram, String origin, Date arrival_date) throws CreateFailedException;
 
 
   /** <p>Looks up any Animal entity with the specified id, in the repository</p>

@@ -9,9 +9,9 @@ import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -109,9 +109,9 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            Timestamp now = Timestamp.from(Instant.now()); // UTC Time
-            System.out.println("NOTE Animal will be registered as having arrived at '" + now + "' UTC Time");
-            Animal animal = animalRegistrationSystem.registerNewAnimal(newAnimalWeight, value, now);
+            Date today = Date.from(Instant.now()); // UTC Time
+            System.out.println("NOTE Animal will be registered as having arrived at '" + today + "' UTC Time");
+            Animal animal = animalRegistrationSystem.registerNewAnimal(newAnimalWeight, value, today);
             System.out.println("Added [" + animal + "] to Database!");
           } catch (CreateFailedException e) {
             System.out.println("Invalid input!");
@@ -166,7 +166,7 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            Timestamp oldRegistryDate = oldAnimal.getArrival_date(); // UTC Time
+            Date oldRegistryDate = oldAnimal.getArrivalDate(); // UTC Time
             System.out.println("NOTE original Animal registration date remains as '" + oldRegistryDate + "' UTC Time");
             Animal newAnimal = new Animal(animalId, newWeight, value, oldRegistryDate);
             animalRegistrationSystem.updateAnimal(newAnimal);

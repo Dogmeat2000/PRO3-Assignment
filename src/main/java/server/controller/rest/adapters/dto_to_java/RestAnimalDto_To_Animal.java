@@ -7,6 +7,7 @@ import server.model.persistence.service.AnimalPartRegistryInterface;
 import shared.model.dto.AnimalDto;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
+import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.rest.DtoConversionException;
 import shared.model.exceptions.rest.DtoValidationException;
 
@@ -40,13 +41,16 @@ public class RestAnimalDto_To_Animal
       animal.setId(animalDto.getAnimalId());
       animal.setWeight_kilogram(animalDto.getWeight_kilogram());
       animal.setOrigin(animalDto.getOrigin());
-      animal.setArrival_date(animalDto.getArrival_date());
+      animal.setArrivalDate(animalDto.getArrival_date());
       animal.setAnimalPartIdList(animalDto.getAnimalPartIdList());
+      animal.setAnimalParts(new ArrayList<>());
 
       // Populate Animal entity with the proper associations:
-      for (AnimalPart animalPart : animalPartService.readAnimalPartsByAnimalId(animalDto.getAnimalId())) {
-        animal.addAnimalPart(animalPart);
-      }
+      try {
+        for (AnimalPart animalPart : animalPartService.readAnimalPartsByAnimalId(animalDto.getAnimalId())) {
+          animal.addAnimalPart(animalPart);
+        }
+      } catch (NotFoundException ignored) {}
 
       return animal;
     } catch (Exception e) {

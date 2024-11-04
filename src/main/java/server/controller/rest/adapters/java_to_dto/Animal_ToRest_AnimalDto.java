@@ -22,7 +22,7 @@ public class Animal_ToRest_AnimalDto
       throw new DtoValidationException("animal is null");
 
     try {
-      return new AnimalDto(animal.getId(), animal.getWeight_kilogram(), animal.getOrigin(), animal.getArrival_date(), animal.getAnimalPartIdList());
+      return new AnimalDto(animal.getId(), animal.getWeight_kilogram(), animal.getOrigin(), animal.getArrivalDate(), animal.getAnimalPartIdList());
     } catch (Exception e) {
       throw new DtoConversionException(e.getMessage());
     }

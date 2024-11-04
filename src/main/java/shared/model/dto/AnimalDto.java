@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,17 +21,17 @@ public class AnimalDto implements Serializable
   private String origin;
 
   @JsonProperty("arrival_date")
-  private Timestamp arrival_date;
+  private Date arrivalDate;
 
   @JsonProperty("animalPartIdList")
   private List<Long> animalPartIdList = new ArrayList<>();
 
-  public AnimalDto(long animalId, BigDecimal weight_kilogram, String origin, Timestamp arrival_date, List<Long> animalPartIdList) {
-    this.animalId = animalId;
-    this.weight_kilogram = weight_kilogram;
-    this.origin = origin;
-    this.arrival_date = arrival_date;
-    this.animalPartIdList = animalPartIdList;
+  public AnimalDto(long animalId, BigDecimal weight_kilogram, String origin, Date arrivalDate, List<Long> animalPartIdList) {
+    setAnimalId(animalId);
+    setWeight_kilogram(weight_kilogram);
+    setOrigin(origin);
+    setArrival_date(arrivalDate);
+    setAnimalPartIdList(animalPartIdList);
   }
 
   public long getAnimalId() {
@@ -58,12 +58,12 @@ public class AnimalDto implements Serializable
     this.origin = origin;
   }
 
-  public Timestamp getArrival_date() {
-    return arrival_date;
+  public Date getArrival_date() {
+    return arrivalDate;
   }
 
-  public void setArrival_date(Timestamp arrival_date) {
-    this.arrival_date = arrival_date;
+  public void setArrival_date(Date arrivalDate) {
+    this.arrivalDate = arrivalDate;
   }
 
   public List<Long> getAnimalPartIdList() {
@@ -89,7 +89,7 @@ public class AnimalDto implements Serializable
   }
 
   @Override public String toString() {
-    return "AnimalDto{" + "animalId=" + animalId + ", weight_kilogram=" + weight_kilogram + ", origin='" + origin + '\'' + ", arrival_date=" + arrival_date + ", animalPartIdList=" + animalPartIdList
+    return "AnimalDto{" + "animalId=" + animalId + ", weight_kilogram=" + weight_kilogram + ", origin='" + origin + '\'' + ", arrival_date=" + arrivalDate + ", animalPartIdList=" + animalPartIdList
         + '}';
   }
 }

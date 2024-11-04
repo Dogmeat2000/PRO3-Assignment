@@ -6,6 +6,7 @@ import shared.model.entities.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /** Responsible for converting a gRPC connection data entries into application compatible entities */
@@ -21,7 +22,7 @@ public class GrpcAnimalData_To_Animal
     long id = animalData.getAnimalId();
     BigDecimal weight = animalData.getAnimalWeight().isEmpty() ? BigDecimal.ZERO : new BigDecimal(animalData.getAnimalWeight());
     String origin = animalData.getOrigin();
-    Timestamp arrivalDate = Timestamp.valueOf(animalData.getArrivalDate());
+    Date arrivalDate = Timestamp.valueOf(animalData.getArrivalDate());
     List<Long> animalPartIdList = new ArrayList<>(animalData.getAnimalPartIdsList());
 
     // Construct a new Animal entity with the above read attributes set:

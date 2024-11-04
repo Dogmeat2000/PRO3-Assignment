@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class Animal implements Serializable
 
 
   @Column
-  private Timestamp arrival_date;
+  private Date arrivalDate;
 
 
   // @OneToMany Tells Spring Boot, that this database entity has a OneToMany relationship with the AnimalPart entity,
@@ -58,11 +58,11 @@ public class Animal implements Serializable
   }
 
 
-  public Animal(long id, BigDecimal weight_kilogram, String origin, Timestamp arrival_date) {
+  public Animal(long id, BigDecimal weight_kilogram, String origin, Date arrivalDate) {
     setWeight_kilogram(weight_kilogram);
     setId(id);
     setOrigin(origin);
-    setArrival_date(arrival_date);
+    setArrivalDate(arrivalDate);
     partList = new ArrayList<>();
   }
 
@@ -95,12 +95,12 @@ public class Animal implements Serializable
     this.origin = origin;
   }
 
-  public Timestamp getArrival_date() {
-    return arrival_date;
+  public Date getArrivalDate() {
+    return arrivalDate;
   }
 
-  public void setArrival_date(Timestamp arrival_date) {
-    this.arrival_date = arrival_date;
+  public void setArrivalDate(Date arrival_date) {
+    this.arrivalDate = arrival_date;
   }
 
   public List<AnimalPart> getPartList() {
@@ -152,13 +152,13 @@ public class Animal implements Serializable
     return animalId == animal.animalId
         && Objects.equals(getWeight_kilogram(), animal.getWeight_kilogram())
         && Objects.equals(getOrigin(), animal.getOrigin())
-        && Objects.equals(getArrival_date(), animal.getArrival_date())
+        && Objects.equals(getArrivalDate(), animal.getArrivalDate())
         && Objects.equals(getPartList(), animal.getPartList())
         && Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList());
   }
 
   @Override public int hashCode() {
-    return Objects.hash(animalId, getWeight_kilogram(), getOrigin(), getArrival_date(), getPartList(), getAnimalPartIdList());
+    return Objects.hash(animalId, getWeight_kilogram(), getOrigin(), getArrivalDate(), getPartList(), getAnimalPartIdList());
   }
 
   @Override public String toString() {
@@ -169,7 +169,7 @@ public class Animal implements Serializable
         + "kg', origin: '"
         + getOrigin()
         + "', arrival_date: '"
-        + getArrival_date()
+        + getArrivalDate()
         +  "', animalPart_ids cut from this animal: [";
 
     for (int i = 0; i < getPartList().size(); i++) {

@@ -4,6 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import shared.model.entities.Animal;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
  * This interface replaces the old AnimalRepository implementation, and instead utilizes the flexibility of
  * JPA (Java Persistence API) with Spring Boot, instead of the old manual implementation through JDBC.<br>
@@ -19,4 +23,7 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> // <-- Pri
 {
   // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.
   // If additional functionality is required, it can be added below.
+  Optional<List<Animal>> findAnimalsByOriginAndArrivalDate(String origin, Date arrival_date);
+  Optional<List<Animal>> findAnimalsByOrigin(String origin);
+  Optional<List<Animal>> findAnimalsByArrivalDate(Date arrival_date);
 }
