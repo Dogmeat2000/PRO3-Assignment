@@ -5,22 +5,18 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
-import server.service.AnimalPartRegistryInterface;
-import server.service.ProductRegistryInterface;
-import server.service.TrayRegistryInterface;
-import shared.model.entities.AnimalPart;
+import server.model.persistence.service.AnimalPartRegistryInterface;
+import server.model.persistence.service.ProductRegistryInterface;
+import server.model.persistence.service.TrayRegistryInterface;
 import shared.model.entities.Product;
-import shared.model.entities.Tray;
 import shared.model.exceptions.CreateFailedException;
 import shared.model.exceptions.DeleteFailedException;
 import shared.model.exceptions.NotFoundException;
 import shared.model.exceptions.UpdateFailedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @GrpcService
