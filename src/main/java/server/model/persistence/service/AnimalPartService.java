@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalPartValidation;
 import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.AnimalRepository;
-import server.repository.*;
 import shared.model.entities.*;
 import shared.model.exceptions.NotFoundException;
 
