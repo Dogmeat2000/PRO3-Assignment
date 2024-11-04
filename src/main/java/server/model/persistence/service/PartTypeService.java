@@ -13,7 +13,7 @@ import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.PartTypeRepository;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
-import shared.model.exceptions.NotFoundException;
+import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;

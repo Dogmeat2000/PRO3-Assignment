@@ -16,9 +16,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import server.GrpcServer;
-import server.controller.grpc.grpc_to_java.*;
-import server.controller.grpc.java_to_gRPC.*;
+import server.ServerApplication;
+import server.controller.grpc.adapters.grpc_to_java.*;
+import server.controller.grpc.adapters.java_to_gRPC.*;
 import shared.model.entities.*;
 
 import java.math.BigDecimal;
@@ -34,20 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)  // Gives access to extended testing functionality
 @SpringBootTest(
     classes = {
-        GrpcServer.class,
+        ServerApplication.class,
         TestDataSourceConfig.class}) // Signals to Spring Boot that this is a Spring Boot Test and defines which spring configs to use!
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // Ensures that Mocks are reset after each test, to avoid tests modifying data in shared mocks, that could cause tests to influence each other.
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Establishes an InMemory database instead of using the actual Postgresql database, so tests do not disrupt the production database.
 public class RecallMachineTest
 {
-  // Signals that these are "fake" Spring Boot beans.
-  /*private AnimalPartRepository animalPartRepository;
-  private AnimalRepository animalRepository; // Signals that this is a "fake" Spring Boot bean.
-  private PartTypeRepository partTypeRepository; // Signals that this is a "fake" Spring Boot bean.
-  private ProductRepository productRepository; // Signals that this is a "fake" Spring Boot bean.
-  private TrayRepository trayRepository; // Signals that this is a "fake" Spring Boot bean.
-  private TrayToProductTransferRepository trayToProductTransferRepository; // Signals that this is a "fake" Spring Boot bean.*/
-
   private ManagedChannel channel;
   private AnimalPartServiceGrpc.AnimalPartServiceBlockingStub animalPartStub;
   private AnimalServiceGrpc.AnimalServiceBlockingStub animalStub;

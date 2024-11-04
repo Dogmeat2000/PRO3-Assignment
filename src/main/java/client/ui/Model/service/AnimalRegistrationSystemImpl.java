@@ -3,20 +3,20 @@ package client.ui.Model.service;
 import client.interfaces.AnimalRegistrationSystem;
 import grpc.*;
 import org.springframework.transaction.annotation.Transactional;
-import server.controller.grpc.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
-import server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
-import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
+import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
+import server.controller.grpc.adapters.java_to_gRPC.Animal_ToGrpc_AnimalData;
+import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
 import shared.model.entities.AnimalPart;
-import shared.model.exceptions.NotFoundException;
+import shared.model.exceptions.persistance.NotFoundException;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
-import server.controller.grpc.grpc_to_java.GrpcAnimalData_To_Animal;
-import server.controller.grpc.GrpcFactory;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
+import server.controller.grpc.adapters.GrpcFactory;
 import shared.model.entities.Animal;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.DeleteFailedException;
+import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -60,7 +60,6 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
   }
 
 
-  @Transactional
   @Override public Animal readAnimal(long animalId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
@@ -184,7 +183,6 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
   }
 
 
-  @Transactional
   @Override public List<Animal> getAllAnimals() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();

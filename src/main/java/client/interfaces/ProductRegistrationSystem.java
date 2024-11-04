@@ -3,10 +3,10 @@ package client.interfaces;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.Product;
 import shared.model.entities.Tray;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.NotFoundException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.DeleteFailedException;
+import shared.model.exceptions.persistance.NotFoundException;
+import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.util.List;
 

@@ -149,8 +149,12 @@ public class Animal implements Serializable
     if (o == null || getClass() != o.getClass())
       return false;
     Animal animal = (Animal) o;
-    return animalId == animal.animalId && Objects.equals(getWeight_kilogram(), animal.getWeight_kilogram()) && Objects.equals(getOrigin(), animal.getOrigin()) && Objects.equals(getArrival_date(),
-        animal.getArrival_date()) && Objects.equals(getPartList(), animal.getPartList()) && Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList());
+    return animalId == animal.animalId
+        && Objects.equals(getWeight_kilogram(), animal.getWeight_kilogram())
+        && Objects.equals(getOrigin(), animal.getOrigin())
+        && Objects.equals(getArrival_date(), animal.getArrival_date())
+        && Objects.equals(getPartList(), animal.getPartList())
+        && Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList());
   }
 
   @Override public int hashCode() {
@@ -162,7 +166,11 @@ public class Animal implements Serializable
         + getId()
         + "', weight: '"
         + getWeight_kilogram()
-        +  "kg', animalPart_ids cut from this animal: [";
+        + "kg', origin: '"
+        + getOrigin()
+        + "', arrival_date: '"
+        + getArrival_date()
+        +  "', animalPart_ids cut from this animal: [";
 
     for (int i = 0; i < getPartList().size(); i++) {
       returnValue += getPartList().get(i).getPart_id();

@@ -1,10 +1,10 @@
 package client.interfaces;
 
 import shared.model.entities.Animal;
-import shared.model.exceptions.NotFoundException;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.NotFoundException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.DeleteFailedException;
+import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

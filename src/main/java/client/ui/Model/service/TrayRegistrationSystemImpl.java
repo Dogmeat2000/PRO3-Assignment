@@ -5,19 +5,19 @@ import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
-import server.controller.grpc.GrpcFactory;
-import server.controller.grpc.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
-import server.controller.grpc.grpc_to_java.GrpcProductData_To_Product;
-import server.controller.grpc.grpc_to_java.GrpcTrayData_To_Tray;
-import server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
-import server.controller.grpc.java_to_gRPC.Product_ToGrpc_ProductData;
-import server.controller.grpc.java_to_gRPC.Tray_ToGrpc_TrayData;
+import server.controller.grpc.adapters.GrpcFactory;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
+import server.controller.grpc.adapters.grpc_to_java.GrpcProductData_To_Product;
+import server.controller.grpc.adapters.grpc_to_java.GrpcTrayData_To_Tray;
+import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
+import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import server.controller.grpc.adapters.java_to_gRPC.Product_ToGrpc_ProductData;
+import server.controller.grpc.adapters.java_to_gRPC.Tray_ToGrpc_TrayData;
 import shared.model.entities.*;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.NotFoundException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.DeleteFailedException;
+import shared.model.exceptions.persistance.NotFoundException;
+import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -61,7 +61,6 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
   }
 
 
-  @Transactional
   @Override
   public Tray readTray(long trayId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
@@ -218,7 +217,6 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
   }
 
 
-  @Transactional
   @Override
   public List<Tray> getAllTrays() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:

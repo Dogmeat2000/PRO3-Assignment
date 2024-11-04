@@ -5,19 +5,18 @@ import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
-import server.controller.grpc.GrpcFactory;
-import server.controller.grpc.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
-import server.controller.grpc.grpc_to_java.GrpcPartTypeData_To_PartType;
-import server.controller.grpc.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.java_to_gRPC.Animal_ToGrpc_AnimalData;
-import server.controller.grpc.java_to_gRPC.LongId_ToGrpc_Id;
-import server.controller.grpc.java_to_gRPC.PartType_ToGrpc_PartTypeData;
+import server.controller.grpc.adapters.GrpcFactory;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
+import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
+import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
+import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import server.controller.grpc.adapters.java_to_gRPC.PartType_ToGrpc_PartTypeData;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.PartType;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.NotFoundException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.DeleteFailedException;
+import shared.model.exceptions.persistance.NotFoundException;
+import shared.model.exceptions.persistance.UpdateFailedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
   }
 
 
-  @Transactional
   @Override public PartType readPartType(long typeId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
@@ -185,7 +183,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
   }
 
 
-  @Transactional
   @Override public List<PartType> getAllPartTypes() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();

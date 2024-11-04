@@ -13,7 +13,7 @@ import server.model.validation.AnimalPartValidation;
 import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.AnimalRepository;
 import shared.model.entities.*;
-import shared.model.exceptions.NotFoundException;
+import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.*;
 

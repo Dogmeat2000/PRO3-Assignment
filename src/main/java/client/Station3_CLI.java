@@ -3,10 +3,8 @@ package client;
 import client.interfaces.*;
 import client.ui.Model.service.*;
 import shared.model.entities.*;
-import shared.model.exceptions.CreateFailedException;
-import shared.model.exceptions.DeleteFailedException;
-import shared.model.exceptions.NotFoundException;
-import shared.model.exceptions.UpdateFailedException;
+import shared.model.exceptions.persistance.CreateFailedException;
+import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;

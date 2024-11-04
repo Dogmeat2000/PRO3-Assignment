@@ -5,7 +5,7 @@ import client.ui.Model.service.*;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.Product;
-import shared.model.exceptions.NotFoundException;
+import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;

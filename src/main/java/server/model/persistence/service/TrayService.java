@@ -15,7 +15,7 @@ import server.model.persistence.repository.TrayToProductTransferRepository;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.Tray;
 import shared.model.entities.TrayToProductTransfer;
-import shared.model.exceptions.NotFoundException;
+import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
