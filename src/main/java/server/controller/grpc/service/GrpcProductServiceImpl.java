@@ -5,7 +5,9 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
+import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.adapters.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.adapters.java_to_gRPC.Product_ToGrpc_ProductData;
 import server.model.persistence.service.AnimalPartRegistryInterface;
@@ -25,13 +27,21 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   private final ProductRegistryInterface productService;
   private final TrayRegistryInterface trayService;
   private final AnimalPartRegistryInterface animalPartService;
+  private final GrpcProductData_To_Product grpcProductDataConverter = new GrpcProductData_To_Product();
+  private final int maxNestingDepth;
 
   @Autowired
-  public GrpcProductServiceImpl(ProductRegistryInterface productService, TrayRegistryInterface trayService, AnimalPartRegistryInterface animalPartService) {
+  public GrpcProductServiceImpl(ProductRegistryInterface productService,
+      TrayRegistryInterface trayService,
+      AnimalPartRegistryInterface animalPartService/*,
+      GrpcProductData_To_Product grpcProductDataConverter*/,
+      @Value("${maxNestingDepth}") int maxNestingDepth) {
     super();
     this.productService = productService;
     this.trayService = trayService;
     this.animalPartService = animalPartService;
+    //this.grpcProductDataConverter = grpcProductDataConverter;
+    this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -39,7 +49,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      Product productReceived = GrpcProductData_To_Product.convertToProduct(request, 3);
+      Product productReceived = grpcProductDataConverter.convertToProduct(request, maxNestingDepth);
 
       // Add/Query for the data lost during gRPC transmission:
       // Read associated AnimalPart and Tray Data:
@@ -84,7 +94,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
       }*/
 
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, 3));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, maxNestingDepth));
       responseObserver.onCompleted();
     } catch (Exception e) {
       e.printStackTrace();
@@ -105,7 +115,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new NotFoundException("Product not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, 3));
+      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, maxNestingDepth));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product with id " + request.getProductId() + " not found in DB").withCause(e).asRuntimeException());
@@ -119,7 +129,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      Product productReceived = GrpcProductData_To_Product.convertToProduct(request,3);
+      Product productReceived = grpcProductDataConverter.convertToProduct(request,maxNestingDepth);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
       // AnimalPart associations:
@@ -154,7 +164,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Product with the provided ID:
-      if(!productService.removeProduct(GrpcProductData_To_Product.convertToProduct(request,3))) {
+      if(!productService.removeProduct(grpcProductDataConverter.convertToProduct(request,maxNestingDepth))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting Product with id='" + request.getProductId() + "'");
       }

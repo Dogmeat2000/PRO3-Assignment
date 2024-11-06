@@ -15,7 +15,6 @@ import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.exceptions.persistance.NotFoundException;
 
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 

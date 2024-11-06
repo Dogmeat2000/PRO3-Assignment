@@ -2,8 +2,10 @@ package client.ui.Model.service;
 
 import client.interfaces.AnimalRegistrationSystem;
 import grpc.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
 import server.controller.grpc.adapters.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
@@ -28,8 +30,12 @@ import static io.grpc.Status.NOT_FOUND;
 
 public class AnimalRegistrationSystemImpl extends Client implements AnimalRegistrationSystem
 {
-  public AnimalRegistrationSystemImpl(String host, int port) {
+  private final GrpcAnimalData_To_Animal grpcAnimalDataConverter = new GrpcAnimalData_To_Animal();
+  private final int maxNestingDepth;
+
+  public AnimalRegistrationSystemImpl(String host, int port, int maxNestingDepth) {
     super(host, port);
+    this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -76,25 +82,25 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalData foundAnimal = animalStub.readAnimal(id);
 
       // Convert the AnimalData that was read from the DB into an application compatible format:
-      Animal animal = GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
+      Animal animal = grpcAnimalDataConverter.convertToAnimal(foundAnimal, maxNestingDepth);
 
       // Populate Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      try {
+      /*try {
         // Read all animalParts associated with this Animal:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByAnimalId(LongId_ToGrpc_Id.convertToAnimalId(animal.getId()));
 
         // Convert to java language, and attach to Animal Object:
-        animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
+        animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData, maxNestingDepth));
       } catch (StatusRuntimeException e) {
         if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           // No AnimalParts found assigned to this Animal:
           throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with Animal_id '" + animal.getId() + "' (" + e.getMessage() + ")");
-      }
+      }*/
 
       // Return:
-      return GrpcAnimalData_To_Animal.convertToAnimal(foundAnimal);
+      return animal;
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No animal found with id '" + animalId + "' (" + e.getMessage() + ")");
@@ -196,24 +202,24 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalsData animalsData = animalStub.getAllAnimals(GrpcFactory.buildGrpcEmptyMessage());
 
       // Convert received data to java language:
-      List<Animal> animals = GrpcAnimalData_To_Animal.convertToAnimalList(animalsData);
+      List<Animal> animals = grpcAnimalDataConverter.convertToAnimalList(animalsData, maxNestingDepth);
 
       // Populate each Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      for (Animal animal : animals) {
+      /*for (Animal animal : animals) {
         try {
           // Read all animalParts associated with this Animal:
           AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByAnimalId(LongId_ToGrpc_Id.convertToAnimalId(animal.getId()));
 
           // Convert to java language, and attach to Animal Object:
-          animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
+          animal.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData, maxNestingDepth));
         } catch (StatusRuntimeException e) {
           if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
             // No AnimalParts found assigned to this Animal:
             throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with Animal_id '" + animal.getId() + "' (" + e.getMessage() + ")");
         }
-      }
+      }*/
 
       // Return data
       return animals;

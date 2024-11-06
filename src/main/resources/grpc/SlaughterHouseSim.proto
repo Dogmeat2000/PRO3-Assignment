@@ -15,6 +15,7 @@ message AnimalData {
   string origin = 3;
   string arrival_date = 4;
   repeated int64 animalPartIds = 5;
+  repeated AnimalPartData animalPartList = 6;
 }
 
 
@@ -54,9 +55,12 @@ message TrayData {
   int64 trayId = 1;
   string maxWeight_kilogram = 2;
   string weight_kilogram = 3;
-  repeated int64 animalPartIds = 4;
-  repeated int64 transferIds = 5;
-  repeated TrayToProductTransferData transfersData = 6;
+  PartTypeData trayType = 4;
+  repeated int64 animalPartIds = 5;
+  repeated int64 transferIds = 6;
+  repeated TrayToProductTransferData transfersData = 7;
+  repeated AnimalPartData animalPartList = 8;
+  repeated ProductData productList = 9;
 }
 
 
@@ -75,6 +79,7 @@ message PartTypeData {
   int64 partTypeId = 1;
   string partDesc = 2;
   repeated int64 animalPartIds = 3;
+  repeated AnimalPartData animalPartList = 4;
 }
 
 
@@ -94,6 +99,8 @@ message ProductData {
   repeated int64 animalPartIds = 2;
   repeated int64 transferIds = 3;
   repeated TrayToProductTransferData transfersData = 4;
+  repeated TrayData trayDataList = 5;
+  repeated AnimalPartData animalPartList = 6;
 }
 
 

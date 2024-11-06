@@ -5,7 +5,12 @@ import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import server.controller.grpc.adapters.GrpcFactory;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
@@ -26,8 +31,12 @@ import static io.grpc.Status.NOT_FOUND;
 
 public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRegistrationSystem
 {
-  public PartTypeRegistrationSystemImpl(String host, int port) {
+  private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartType();
+  private final int maxNestingDepth;
+
+  public PartTypeRegistrationSystemImpl(String host, int port, int maxNestingDepth) {
     super(host, port);
+    this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -75,12 +84,12 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData foundPartType = partTypeStub.readPartType(id);
 
       // Convert the PartTypeData that was read from the DB into java compatible format:
-      PartType partType = GrpcPartTypeData_To_PartType.convertToPartType(foundPartType);
+      PartType partType = grpcPartTypeDataConverter.convertToPartType(foundPartType, maxNestingDepth);
 
       // Populate PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      try {
+      /*try {
         // Read all animalParts associated with this PartType:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(partType.getTypeId()));
 
@@ -90,7 +99,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
         if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           // No AnimalParts found with this PartType:
           throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
-      }
+      }*/
 
       // Return:
       return partType;
@@ -196,12 +205,12 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypesData partTypesData = partTypeStub.getAllPartTypes(GrpcFactory.buildGrpcEmptyMessage());
 
       // Convert received data to java language:
-      List<PartType> partTypes = GrpcPartTypeData_To_PartType.convertToPartTypeList(partTypesData);
+      List<PartType> partTypes = grpcPartTypeDataConverter.convertToPartTypeList(partTypesData, maxNestingDepth);
 
       // Populate each PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      for (PartType partType : partTypes) {
+      /*for (PartType partType : partTypes) {
         try {
           // Read all animalParts associated with this PartType:
           AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(partType.getTypeId()));
@@ -213,7 +222,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
             // No AnimalParts found with this PartType:
             throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
         }
-      }
+      }*/
 
       // Return data
       return partTypes;

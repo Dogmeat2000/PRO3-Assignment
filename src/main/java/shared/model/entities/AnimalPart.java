@@ -21,21 +21,6 @@ public class AnimalPart implements Serializable
   private long part_id;
 
 
-  //@Id // Tells Spring Boot, that this value is part of the primary key.
-  //@Column(name = "animal_id", nullable = false)
-  //private long animal_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
-
-
-  //@Id // Tells Spring Boot, that this value is part of the primary key.
-  //@Column(name = "type_id", nullable = false)
-  //private long type_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
-
-
-  //@Id // Tells Spring Boot, that this value is part of the primary key.
-  //@Column(name = "tray_id", nullable = false)
-  //private long tray_id; // Primitive type primary keys must be explicitly stated as defined in the @IdClass, when dealing with Entities with Composite Keys!
-
-
   @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
   private BigDecimal weight_kilogram;
 
@@ -116,7 +101,6 @@ public class AnimalPart implements Serializable
 
   public void setAnimal(Animal animal) {
     this.animal = animal;
-    //setAnimal_id(animal.getId());
   }
 
 
@@ -127,7 +111,6 @@ public class AnimalPart implements Serializable
 
   public void setTray(Tray tray) {
     this.tray = tray;
-    //setTray_id(tray.getTray_id());
   }
 
 
@@ -146,13 +129,11 @@ public class AnimalPart implements Serializable
 
   public void setType(PartType partType) {
     this.type = partType;
-    //setType_id(partType.getTypeId());
   }
 
 
   // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
-
   @Override public boolean equals(Object o) {
     if (this == o)
       return true;

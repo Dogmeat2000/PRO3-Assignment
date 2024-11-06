@@ -1,7 +1,9 @@
 package client;
 
 import client.interfaces.*;
-import client.ui.Model.service.*;
+import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
+import client.ui.Model.service.AnimalRegistrationSystemImpl;
+import client.ui.Model.service.ProductRegistrationSystemImpl;
 import shared.model.entities.Animal;
 import shared.model.entities.AnimalPart;
 import shared.model.entities.Product;
@@ -11,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class RecallMachine_CLI
+
+public class RecallMachine_CLI /*implements CommandLineRunner*/
 {
-  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
-  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
-  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
+  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090, 3);
+  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090, 3);
+  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090, 3);
+
 
   public static void main(String[] args) {
     System.out.println("\nSTATION 4: Information Catalogue (Command Line Interface)\nThis CLI is for debugging purposes!");

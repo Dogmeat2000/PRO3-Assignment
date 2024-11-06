@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
 import server.model.persistence.service.AnimalRegistryInterface;
+import server.model.persistence.service.AnimalService;
 import shared.model.dto.AnimalDto;
 import shared.model.entities.Animal;
 
@@ -45,7 +46,7 @@ public class RestfulWebServicesEndPointsTest
   private TestRestTemplate restTemplate;
 
   @Autowired
-  private AnimalRegistryInterface animalRegistryService;
+  private AnimalService animalRegistryService;
 
   @Autowired
   private ObjectMapper objectMapper; // JSON serializer

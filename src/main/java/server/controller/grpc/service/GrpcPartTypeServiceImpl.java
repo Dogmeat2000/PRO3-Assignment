@@ -8,7 +8,9 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
 import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.adapters.java_to_gRPC.PartType_ToGrpc_PartTypeData;
@@ -27,12 +29,19 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
 {
   private final PartTypeRegistryInterface partTypeService;
   private final AnimalPartRegistryInterface animalPartService;
+  private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartType();
+  private final int maxNestingDepth;
 
   @Autowired
-  public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService, AnimalPartRegistryInterface animalPartService) {
+  public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService,
+      AnimalPartRegistryInterface animalPartService/*,
+      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter*/,
+      @Value("${maxNestingDepth}") int maxNestingDepth) {
     super();
     this.partTypeService = partTypeService;
     this.animalPartService = animalPartService;
+    this.maxNestingDepth = maxNestingDepth;
+    //this.grpcPartTypeDataConverter = grpcPartTypeDataConverter;
   }
 
 
@@ -42,7 +51,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the PartType:
-      PartType createdPartType = partTypeService.registerPartType(GrpcPartTypeData_To_PartType.convertToPartType(request));
+      PartType createdPartType = partTypeService.registerPartType(grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth));
 
       // If partType creation fails
       if (createdPartType == null)
@@ -85,7 +94,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   public void updatePartType(PartTypeData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      PartType partTypeReceived = GrpcPartTypeData_To_PartType.convertToPartType(request);
+      PartType partTypeReceived = grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
       partTypeReceived.getPartList().clear();
@@ -115,7 +124,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the PartType with the provided ID:
-      if(!partTypeService.removePartType(GrpcPartTypeData_To_PartType.convertToPartType(request))) {
+      if(!partTypeService.removePartType(grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth))) {
         // If PartType deletion failed:
         throw new DeleteFailedException("Error occurred while deleting partType with id='" + request.getPartTypeId() + "'");
       }

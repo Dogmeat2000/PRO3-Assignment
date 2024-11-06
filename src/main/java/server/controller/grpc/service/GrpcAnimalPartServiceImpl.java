@@ -5,6 +5,7 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
@@ -25,15 +26,25 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   private final TrayRegistryInterface trayService;
   private final AnimalRegistryInterface animalService;
   private final PartTypeRegistryInterface partTypeService;
+  private final GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter = new GrpcAnimalPartData_To_AnimalPart();
+  private final int maxNestingDepth;
 
   @Autowired
-  public GrpcAnimalPartServiceImpl(AnimalPartRegistryInterface animalPartService, AnimalRegistryInterface animalService, PartTypeRegistryInterface partTypeService, TrayRegistryInterface trayService, ProductRegistryInterface productService) {
+  public GrpcAnimalPartServiceImpl(AnimalPartRegistryInterface animalPartService,
+      AnimalRegistryInterface animalService,
+      PartTypeRegistryInterface partTypeService,
+      TrayRegistryInterface trayService,
+      ProductRegistryInterface productService/*,
+      GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter*/,
+      @Value("${maxNestingDepth}") int maxNestingDepth) {
     super();
     this.animalPartService = animalPartService;
     this.animalService = animalService;
     this.partTypeService = partTypeService;
     this.trayService = trayService;
     this.productService = productService;
+    //this.grpcAnimalPartDataConverter = grpcAnimalPartDataConverter;
+    this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -41,7 +52,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void registerAnimalPart(AnimalPartData request, StreamObserver<AnimalPartData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      AnimalPart animalPartReceived = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request);
+      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
 
       // Query database for the data lost during gRPC transmission:
       // Read associated Tray Data:
@@ -220,7 +231,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
 
       // Translate received gRPC information from the client, into Java compatible types:
-      AnimalPart modifiedAnimalPart = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request);
+      AnimalPart modifiedAnimalPart = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
 
       // Query database for the data lost during gRPC transmission:
       // Read associated Tray Data:
@@ -264,7 +275,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void removeAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types,
-      AnimalPart animalPartReceived = GrpcAnimalPartData_To_AnimalPart.convertToAnimalPart(request);
+      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
 
       // Query database for the data lost during gRPC transmission:
       // Read associated Tray Data:

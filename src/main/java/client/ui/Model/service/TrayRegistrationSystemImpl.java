@@ -5,6 +5,9 @@ import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import server.controller.grpc.adapters.GrpcFactory;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.adapters.grpc_to_java.GrpcProductData_To_Product;
@@ -28,8 +31,12 @@ import static io.grpc.Status.INTERNAL;
 
 public class TrayRegistrationSystemImpl extends Client implements TrayRegistrationSystem
 {
-  public TrayRegistrationSystemImpl(String host, int port){
+  private final int maxNestingDepth;
+  private final GrpcTrayData_To_Tray grpcTrayDataConverter = new GrpcTrayData_To_Tray();
+
+  public TrayRegistrationSystemImpl(String host, int port, int maxNestingDepth) {
     super(host, port);
+    this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -50,7 +57,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData createdTray = trayStub.registerTray(data);
 
       // Convert, and return, the Tray that was added to the DB into an application compatible format:
-      return GrpcTrayData_To_Tray.convertToTray(createdTray,3);
+      return grpcTrayDataConverter.convertToTray(createdTray,maxNestingDepth);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register Tray with maxWeight '" + maxWeight_kilogram + "kg' and currentWeight '" + currentWeight_kilogram + "kg'. (" + e.getMessage() + ")");
@@ -79,12 +86,12 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayData foundTrayData = trayStub.readTray(id);
 
       // Convert the TrayData that was read from the DB into an application compatible format:
-      Tray tray = GrpcTrayData_To_Tray.convertToTray(foundTrayData,3);
+      Tray tray = grpcTrayDataConverter.convertToTray(foundTrayData,maxNestingDepth);
 
       // Populate Tray with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Tray and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      try {
+      /*try {
         // Read all Products associated with this Tray:
         AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByTrayId(LongId_ToGrpc_Id.convertToTrayId(tray.getTrayId()));
 
@@ -105,13 +112,13 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
           productData = productStub.readProduct(LongId_ToGrpc_Id.convertToProductId(transfer.getProduct().getProductId()));
 
           // Convert to java language, and attach to Tray Object:
-          tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, 3));
+          tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, maxNestingDepth));
         }
 
       } catch (StatusRuntimeException e) {
         if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
           throw new RuntimeException("Critical Error encountered. Failed to Query for all Products associated with Tray_id '" + tray.getTrayId() + "' (" + e.getMessage() + ")");
-      }
+      }*/
 
       // Return:
       return tray;
@@ -136,7 +143,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TrayServiceGrpc.TrayServiceBlockingStub trayStub = TrayServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data,3);
+      TrayData tray = Tray_ToGrpc_TrayData.convertToTrayData(data,maxNestingDepth);
 
       // Prompt gRPC to update the Tray:
       EmptyMessage updated = trayStub.updateTray(tray);
@@ -173,7 +180,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       Tray tray = readTray(trayId);
 
       // Create a gRPC compatible version of Tray (Convert Tray to TrayData)
-      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray,3);
+      TrayData trayData = Tray_ToGrpc_TrayData.convertToTrayData(tray,maxNestingDepth);
 
       // Prompt gRPC to delete the Tray:
       EmptyMessage deleted = trayStub.removeTray(trayData);
@@ -196,7 +203,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       if(!tray.getTransferList().isEmpty()) {
         // Prompt gRPC to delete the Product:
         for (Product product : tray.getProductList()) {
-          deleted = productStub.removeProduct(Product_ToGrpc_ProductData.convertToProductData(product, 3));
+          deleted = productStub.removeProduct(Product_ToGrpc_ProductData.convertToProductData(product, maxNestingDepth));
 
           if(deleted == null && product != null)
             throw new DeleteFailedException("Failed to delete Product with id '" + product.getProductId() + "' associated with Tray_id '" + trayId + "'");
@@ -232,12 +239,12 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
       TraysData traysData = trayStub.getAllTrays(GrpcFactory.buildGrpcEmptyMessage());
 
       // Convert received data to java language:
-      List<Tray> trays = GrpcTrayData_To_Tray.convertToTrayList(traysData);
+      List<Tray> trays = grpcTrayDataConverter.convertToTrayList(traysData, maxNestingDepth);
 
       // Populate each Tray with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Tray and AnimalPart have relations to each other), so must be repopulated:
       // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      for (Tray tray : trays) {
+      /*for (Tray tray : trays) {
         try {
           // Read all AnimalParts associated with this Tray:
           AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByTrayId(LongId_ToGrpc_Id.convertToTrayId(tray.getTrayId()));
@@ -259,7 +266,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
             productData = productStub.readProduct(LongId_ToGrpc_Id.convertToProductId(transfer.getProduct().getProductId()));
 
             // Convert to java language, and attach to Tray Object:
-            tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, 3));
+            tray.getProductList().add(GrpcProductData_To_Product.convertToProduct(productData, maxNestingDepth));
           }
 
         } catch (StatusRuntimeException e) {
@@ -267,7 +274,7 @@ public class TrayRegistrationSystemImpl extends Client implements TrayRegistrati
             // No Products found assigned to this Tray:
             throw new RuntimeException("Critical Error encountered. Failed to Query for all Products associated with Tray_id '" + tray.getTrayId() + "' (" + e.getMessage() + ")");
         }
-      }
+      }*/
 
       // Return data
       return trays;

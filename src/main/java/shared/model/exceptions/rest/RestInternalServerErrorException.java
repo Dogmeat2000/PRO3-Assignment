@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class RestInternalServerErrorException extends RuntimeException
 {
   public RestInternalServerErrorException(String message) {
-    super(message);
+    // Avoid exposing Internal Server Information to the user. Just return a generic error.
+    super("An internal error occurred");
   }
 }
