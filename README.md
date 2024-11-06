@@ -23,9 +23,58 @@ If it is later discovered, that there is some kind of trouble with a slaughtered
 It is important for the customer that the stations can work as independently as possible. In particular, Work shouldn’t stop at a station just because the network is down.
 
 # How to run
+
+## Using an external HTTP messaging application (Postman, HTTPie, etc.):
+1. Import/Clone repository
+2. Clean and install with maven, ensuring to generate sources and documentation
+3. Run ServerApplication.java to launch the Server.
+4. Use Postman, HTTPie, etc. to send HTTP messages to the Web Server. See pictures below for examples of messages using HTTPie:
+
+
+### Post (Create) a new Animal:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_postNewAnimalQuery.jpg)
+
+
+### Get (Read) a single Animal:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_getSingleAnimalById.jpg)
+
+
+### Get (Read) all Animals:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_getAllAnimalsQuery.jpg)
+
+
+### Get (Read) all Animals, from a specific Farm (origin):
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_getAllAnimalsFromSpecifiedFarmQuery.jpg)
+
+
+### Get (Read) all Animals, registered on a specific date:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_getAllAnimalsFromSpecifiedDateQuery.jpg)
+
+
+### Get (Read) all Animals, registered on a specific date and from a specific farm:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_getAllAnimalsFromSpecifiedFarmAtSpecifiedDateQuery.jpg)
+
+
+### Put (Update) an Animal:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_putUpdatedAnimalQuery.jpg)
+
+
+### Delete an Animal:
+
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/http_deleteAnimalQuery.jpg)
+
+
+## Using built-in CLI operating through gRPC connection:
 1. Import/Clone repository
 2. Clean and Install with Maven, ensuring to generate sources and documentation
-3. Run GrpcServer.java to launch the Server.
+3. Run ServerApplication.java to launch the Server.
 4. Run Station1_CLI, Station2_CLI, Station3_CLI or RecallMachine_CLI to launch the debugging CLI with basic commands accessable.
 
 ![CLI ScreenShot1](Development%20Documents%20(UML%2C%20etc)/Station4_CLI.png)
