@@ -5,12 +5,10 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import server.controller.grpc.adapters.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
-import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.AnimalRegistryInterface;
 import server.model.persistence.entities.Animal;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -24,20 +22,14 @@ import java.util.List;
 public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBase
 {
   private final AnimalRegistryInterface animalService;
-  //private final AnimalPartRegistryInterface animalPartService;
   private final GrpcAnimalData_To_Animal grpcAnimalDataConverter;
   private final Animal_ToGrpc_AnimalData animalConverter = new Animal_ToGrpc_AnimalData();
-  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcAnimalServiceImpl(AnimalRegistryInterface animalService,
-      /*AnimalPartRegistryInterface animalPartService,*/
-      GrpcAnimalData_To_Animal grpcAnimalDataConverter/*,
-      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
+      GrpcAnimalData_To_Animal grpcAnimalDataConverter) {
     super();
     this.animalService = animalService;
-    //this.animalPartService = animalPartService;
-    //this.maxNestingDepth = maxNestingDepth;
     this.grpcAnimalDataConverter = grpcAnimalDataConverter;
   }
 
@@ -91,12 +83,6 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
       Animal animalReceived = grpcAnimalDataConverter.convertToAnimal(request);
-
-      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      // TODO: Shouldn't be needed with the new adjusted converters.
-      /*animalReceived.getPartList().clear();
-      for (Long animalPartId : animalReceived.getAnimalPartIdList())
-        animalReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));*/
 
       // Attempt to update the Animal:
       if (!animalService.updateAnimal(animalReceived)) {

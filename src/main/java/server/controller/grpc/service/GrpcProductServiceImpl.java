@@ -5,13 +5,10 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.adapters.java_to_gRPC.Product_ToGrpc_ProductData;
-import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.ProductRegistryInterface;
-import server.model.persistence.service.TrayRegistryInterface;
 import server.model.persistence.entities.Product;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -24,24 +21,15 @@ import java.util.List;
 public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase
 {
   private final ProductRegistryInterface productService;
-  /*private final TrayRegistryInterface trayService;
-  private final AnimalPartRegistryInterface animalPartService;*/
   private final GrpcProductData_To_Product grpcProductDataConverter;
   private final Product_ToGrpc_ProductData productConverter = new Product_ToGrpc_ProductData();
-  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcProductServiceImpl(ProductRegistryInterface productService,
-      /*TrayRegistryInterface trayService,
-      AnimalPartRegistryInterface animalPartService,*/
-      GrpcProductData_To_Product grpcProductDataConverter/*,
-      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
+      GrpcProductData_To_Product grpcProductDataConverter) {
     super();
     this.productService = productService;
-    /*this.trayService = trayService;
-    this.animalPartService = animalPartService;*/
     this.grpcProductDataConverter = grpcProductDataConverter;
-    //this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -49,29 +37,19 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      System.out.println("\n\n[GrpcProductServiceImpl] Line 1");
-      System.out.println("Product is: " + request);
-
       Product productReceived = grpcProductDataConverter.convertToProduct(request);
-      System.out.println("\n\n[GrpcProductServiceImpl] Line 2");
-      System.out.println("Product is: " + productReceived);
 
       // Register the Product:
       Product createdProduct = productService.registerProduct(productReceived);
-      System.out.println("\n\n[GrpcProductServiceImpl] Line 3");
-      System.out.println("Product is: " + createdProduct);
 
       // If animal creation fails
       if (createdProduct == null)
         throw new CreateFailedException("Product could not be created");
 
-      System.out.println("\n\n[GrpcProductServiceImpl] Line 4");
-
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
       responseObserver.onNext(productConverter.convertToProductData(createdProduct));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      e.printStackTrace(); // TODO: DELETE LINE
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }

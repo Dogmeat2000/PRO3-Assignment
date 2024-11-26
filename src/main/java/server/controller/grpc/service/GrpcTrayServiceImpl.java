@@ -5,13 +5,10 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcTrayData_To_Tray;
 import server.controller.grpc.adapters.java_to_gRPC.Tray_ToGrpc_TrayData;
-import server.model.persistence.service.AnimalPartRegistryInterface;
-import server.model.persistence.service.ProductRegistryInterface;
 import server.model.persistence.service.TrayRegistryInterface;
 import server.model.persistence.entities.Tray;
 import shared.model.exceptions.persistance.CreateFailedException;
@@ -25,24 +22,15 @@ import java.util.List;
 public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
 {
   private final TrayRegistryInterface trayService;
-  private final ProductRegistryInterface productService;
-  private final AnimalPartRegistryInterface animalPartService;
   private final GrpcTrayData_To_Tray grpcTrayDataConverter;
   private final Tray_ToGrpc_TrayData trayConverter = new Tray_ToGrpc_TrayData();
-  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcTrayServiceImpl(TrayRegistryInterface trayService,
-      ProductRegistryInterface productService,
-      AnimalPartRegistryInterface animalPartService,
-      GrpcTrayData_To_Tray grpcTrayDataConverter/*,
-      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
+      GrpcTrayData_To_Tray grpcTrayDataConverter) {
     super();
     this.trayService = trayService;
-    this.productService = productService;
-    this.animalPartService = animalPartService;
     this.grpcTrayDataConverter = grpcTrayDataConverter;
-    //this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -62,7 +50,6 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
       responseObserver.onNext(trayConverter.convertToTrayData(createdTray));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      e.printStackTrace(); // TODO: DELETE LINE
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering tray, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -96,17 +83,6 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
       Tray trayReceived = grpcTrayDataConverter.convertToTray(request);
-
-      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      // AnimalPart associations: // TODO: Shouldn't be needed with the new adjusted converters.
-      /*trayReceived.getContents().clear();
-      for (Long animalPartId : trayReceived.getAnimalPartIdList())
-        trayReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
-
-      // Product associations:
-      trayReceived.getProductList().clear();
-      for (Long transferId : trayReceived.getTransferIdList())
-        trayReceived.getProductList().addAll(productService.readProductsByTransferId(transferId));*/
 
       // Attempt to update the Tray:
       if (!trayService.updateTray(trayReceived)) {

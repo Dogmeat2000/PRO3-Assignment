@@ -8,12 +8,10 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.adapters.java_to_gRPC.PartType_ToGrpc_PartTypeData;
-import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.PartTypeRegistryInterface;
 import server.model.persistence.entities.PartType;
 import shared.model.exceptions.persistance.CreateFailedException;
@@ -27,20 +25,14 @@ import java.util.List;
 public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeServiceImplBase
 {
   private final PartTypeRegistryInterface partTypeService;
-  private final AnimalPartRegistryInterface animalPartService;
   private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter;
   private final PartType_ToGrpc_PartTypeData partTypeConverter = new PartType_ToGrpc_PartTypeData();
-  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService,
-      AnimalPartRegistryInterface animalPartService,
-      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter/*,
-      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
+      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter) {
     super();
     this.partTypeService = partTypeService;
-    this.animalPartService = animalPartService;
-    //this.maxNestingDepth = maxNestingDepth;
     this.grpcPartTypeDataConverter = grpcPartTypeDataConverter;
   }
 
@@ -95,12 +87,6 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
       PartType partTypeReceived = grpcPartTypeDataConverter.convertToPartType(request);
-
-      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      // TODO: Shouldn't be needed with the new adjusted converters.
-      /*partTypeReceived.getPartList().clear();
-      for (Long animalPartId : partTypeReceived.getAnimalPartIdList())
-        partTypeReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));*/
 
       // Attempt to update the PartType:
       if (!partTypeService.updatePartType(partTypeReceived)) {
