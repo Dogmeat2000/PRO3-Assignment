@@ -229,6 +229,16 @@ public class Tray implements Serializable
     return false;
   }
 
+  public boolean addAllProducts(List<Product> products) {
+    if(products != null) {
+      for (Product product : products) {
+        if(!addProduct(product))
+          return false;
+      }
+    }
+    return true;
+  }
+
   public boolean removeProduct(Product productToRemove) {
     if(productToRemove != null) {
       for (Product product : new ArrayList<>(productList)) {
@@ -239,6 +249,12 @@ public class Tray implements Serializable
       }
     }
     return false;
+  }
+
+  public void clearProductList() {
+    for (Product product : new ArrayList<>(productList)) {
+      removeProduct(product);
+    }
   }
 
   public PartType getTrayType() {

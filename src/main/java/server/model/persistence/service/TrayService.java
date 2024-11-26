@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.persistence.entities.Product;
+import server.model.persistence.repository.ProductRepository;
 import server.model.validation.TrayValidation;
 import server.model.persistence.repository.TrayRepository;
 import server.model.persistence.repository.TrayToProductTransferRepository;
@@ -20,16 +22,15 @@ import java.util.*;
 public class TrayService implements TrayRegistryInterface
 {
   private final TrayRepository trayRepository;
-  //private final Map<Long, Tray> trayCache = new HashMap<>();
+  private final ProductRepository productRepository;
   private static final Logger logger = LoggerFactory.getLogger(TrayService.class);
   private final TrayToProductTransferRepository trayToProductTransferRepository;
-  //private final AnimalPartRepository animalPartRepository;
 
   @Autowired
-  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository/*, AnimalPartRepository animalPartRepository*/) {
+  public TrayService(TrayRepository trayRepository, TrayToProductTransferRepository trayToProductTransferRepository, ProductRepository productRepository) {
     this.trayRepository = trayRepository;
     this.trayToProductTransferRepository = trayToProductTransferRepository;
-    //this.animalPartRepository = animalPartRepository;
+    this.productRepository = productRepository;
   }
 
 
@@ -49,12 +50,6 @@ public class TrayService implements TrayRegistryInterface
 
       // Ensure that all TrayToProductTransfer transfers are registered and/or updated:
       trayToProductTransferRepository.saveAll(data.getTransferList());
-      /*System.out.println("\n\n\n: Tray registered with maxSize: " + newTray.getMaxWeight_kilogram());
-      System.out.println("\n\n\n: Tray registered with curSize: " + newTray.getWeight_kilogram());*/
-
-      // Attempt to add Tray to local cache:
-      /*trayCache.put(newTray.getTrayId(), newTray);
-      logger.info("Tray saved to local cache with ID: {}", newTray.getTrayId());*/
 
       return readTray(newTray.getTrayId());
 
@@ -74,113 +69,20 @@ public class TrayService implements TrayRegistryInterface
     // Validate received id, before passing to repository/database:
     TrayValidation.validateId(trayId);
 
-    // Attempt to read Tray from local cache first:
-    /*if(trayCache.containsKey(trayId)) {
-      logger.info("Tray read from local cache with ID: {}", trayId);
-      return trayCache.get(trayId);
-    }*/
-
-    // Tray not found in local cache. Attempt to read from DB:
+    // Attempt to read from DB:
     try {
       logger.info("Looking up Tray with ID: {} in database...", trayId);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
       Tray tray = trayRepository.findById(trayId).orElseThrow(() -> new NotFoundException("No Tray found in database with matching id=" + trayId));
-
-      //System.out.println("\n\nRead this Tray from DB: " + tray + "\n\n");
-
       logger.info("Tray read from database with ID: {}", trayId);
 
-      /*System.out.println("\n\n\n: Tray loaded with maxSize: " + tray.getMaxWeight_kilogram());
-      System.out.println("\n\n\n: Tray loaded with curSize: " + tray.getWeight_kilogram());
-      System.out.println("\n\n\n: Tray loaded with contents: " + tray.getAnimalPartList());*/
+      // Ensure the transient Products are read into the loaded Tray, for proper ORM behavior:
+      this.populateTransientProductList(tray);
 
-      // Load all associated AnimalParts: //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*List<AnimalPart> animalParts = new ArrayList<>();
-      try {
-        animalParts = animalPartRepository.findAnimalPartsByType_typeId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching tray_id=" + tray.getTrayId()));
-      } catch (NotFoundException ignored) {}
-
-      if(!animalParts.isEmpty())
-        tray.addAllAnimalParts(animalParts);*/
-
-      // Populate the id association list:
-      /*List<Long> animalPartIds = new ArrayList<>();
-      for (AnimalPart animalPart : tray.getAnimalPartList())
-        animalPartIds.add(animalPart.getPart_id());
-      tray.setAnimalPartIdList(animalPartIds);*/
-
-
-      // Load all associated Transfers: //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*List<TrayToProductTransfer> transfers = new ArrayList<>();
-      try {
-        transfers = trayToProductTransferRepository.findTrayToProductTransferByTray_TrayId(tray.getTrayId()).orElseThrow(() -> new NotFoundException("No associated Transfer found in database matching tray_id=" + tray.getTrayId()));
-      } catch (NotFoundException ignored) {}
-
-      if(!transfers.isEmpty())
-        tray.setTransferList(transfers);*/
-
-      // Populate the id association list:
-      /*List<Long> transferIds = new ArrayList<>();
-      for (TrayToProductTransfer transfer : tray.getTransferList())
-        transferIds.add(transfer.getTransferId());
-      tray.setTransferIdList(transferIds);*/
-
-      // Populate the transient TrayType:
-      /*if(!tray.getAnimalPartList().isEmpty())
-        tray.setTrayType(tray.getAnimalPartList().get(0).getType());*/
-
-
-      // Add found Tray to local cache, to improve performance next time Tray is requested.
-      /*trayCache.put(tray.getTrayId(), tray);
-      logger.info("Tray added to local cache with ID: {}", tray.getTrayId());*/
       return tray;
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering Tray with ID {}: {}", trayId, e.getMessage());
-      throw new PersistenceException(e);
-    }
-  }
-
-
-  @Transactional
-  @Override public List<Tray> readTraysByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
-    try {
-      List<Tray> trays = trayRepository.findByTransferList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Trays found in database associated with transferId=" + transferId));
-
-      // TODO: Add methods to get lists of Products and Transfers (Transient data)
-
-      // Populate the transient id association list:
-      /*for (Tray tray : trays) {
-        List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : tray.getAnimalPartList())
-          animalPartIds.add(animalPart.getPart_id());
-        tray.setAnimalPartIdList(animalPartIds);
-      }*/
-
-      // Populate the transient id association list:
-      /*for (Tray tray : trays) {
-        List<Long> transferIds = new ArrayList<>();
-        for (TrayToProductTransfer transfer : tray.getTransferList())
-          transferIds.add(transfer.getTransferId());
-        tray.setTransferIdList(transferIds);
-      }*/
-
-      // Populate the transient TrayType:
-      /*for (Tray tray : trays) {
-        if(!tray.getAnimalPartList().isEmpty())
-          tray.setTrayType(tray.getAnimalPartList().get(0).getType());
-      }*/
-
-      // Add all the found Trays to local cache, to improve performance next time a Tray is requested.
-      /*for (Tray tray : trays) {
-        if(tray != null)
-          trayCache.put(tray.getTrayId(), tray);
-      }
-      logger.info("Added all Trays associated with transferId '{}' from Database to Local Cache", transferId);*/
-      return trays;
-
-    } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -213,7 +115,7 @@ public class TrayService implements TrayRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override public boolean removeTray(Tray data) throws PersistenceException, DataIntegrityViolationException {
     // Validate received data, before passing to repository/database:
     TrayValidation.validateTray(data);
@@ -248,11 +150,33 @@ public class TrayService implements TrayRegistryInterface
   @Transactional (readOnly = true)
   @Override public List<Tray> getAllTrays() throws PersistenceException {
     try {
-      return trayRepository.findAll();
+      List<Tray> trays = trayRepository.findAll();
+
+      // Ensure the transient Products are read into the loaded Tray, for proper ORM behavior:
+      for(Tray tray : trays)
+        this.populateTransientProductList(tray);
+
+      return trays;
 
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
     }
+  }
+
+  private void populateTransientProductList(Tray tray) {
+    // Populate the transient productlist:
+    List<Product> productsList = new ArrayList<>();
+    for (Long transferId : tray.getTransferIdList()){
+      List<Product> localProductList = new ArrayList<>();
+
+      try {
+        localProductList = productRepository.findByTraySupplyJoinList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Products found in database associated with transferId=" + transferId));
+      } catch (NotFoundException ignored) {}
+
+      productsList.addAll(localProductList);
+    }
+    tray.clearProductList();
+    tray.addAllProducts(productsList);
   }
 }

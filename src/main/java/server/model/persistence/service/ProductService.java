@@ -290,7 +290,7 @@ public class ProductService implements ProductRegistryInterface
       List<Tray> supplierList = new ArrayList<>();
 
       try {
-        supplierList = trayRepository.findByTransferList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Products found in database associated with transferId=" + transferId));
+        supplierList = trayRepository.findByTransferList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Trays found in database associated with transferId=" + transferId));
       } catch (NotFoundException ignored) {}
 
       traySupplierList.addAll(supplierList);

@@ -31,10 +31,6 @@ public interface TrayRegistryInterface
     Tray readTray (long trayId) throws NotFoundException, DataIntegrityViolationException, PersistenceException;
 
 
-    // TODO: add javaDocs
-    List<Tray> readTraysByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException;
-
-
     /** <p>Updates the given Tray in the repository. Unique id is extracted from the Tray entity
      * and is used to uniquely identify which Tray entity in the repository to apply the updated information to.</p>
      * @param data A Tray Entity, with proper id, weight, etc. applied to.
