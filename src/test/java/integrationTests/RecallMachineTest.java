@@ -23,8 +23,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
-import server.model.persistence.entities.*;
-import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
 import shared.model.dto.*;
 
 import java.math.BigDecimal;

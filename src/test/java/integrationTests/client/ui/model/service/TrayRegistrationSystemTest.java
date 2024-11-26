@@ -17,17 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
-import server.model.persistence.entities.Animal;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.PartType;
-import server.model.persistence.entities.Tray;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.PartTypeDto;
@@ -59,6 +54,7 @@ public class TrayRegistrationSystemTest
   private AnimalRegistrationSystem animalRegistrationSystem;
   private PartTypeRegistrationSystem partTypeRegistrationSystem;
   private AnimalPartRegistrationSystem animalPartRegistrationSystem;
+  private AutoCloseable closeable;
 
   @BeforeEach
   public void setUp() {
@@ -73,7 +69,7 @@ public class TrayRegistrationSystemTest
     animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
 
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
   }
 
   @AfterEach
@@ -85,6 +81,11 @@ public class TrayRegistrationSystemTest
     animalRegistrationSystem = null;
     partTypeRegistrationSystem = null;
     animalPartRegistrationSystem = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
   @Test
@@ -133,7 +134,6 @@ public class TrayRegistrationSystemTest
     assertNotNull(readTray);
     assertEquals(createdTray.getTrayId(), readTray.getTrayId());
     assertEquals(createdTray.getMaxWeight_kilogram(), readTray.getMaxWeight_kilogram());
-    System.out.println("BigDecimal.Zero == " + BigDecimal.ZERO);
     assertEquals(createdTray.getWeight_kilogram(), readTray.getWeight_kilogram());
     assertEquals(createdTray.getTrayTypeId(), readTray.getTrayTypeId());
     assertEquals(createdTray.getAnimalPartIdList(), readTray.getAnimalPartIdList());
@@ -192,7 +192,6 @@ public class TrayRegistrationSystemTest
     // Arrange:
     // Original Tray:
     BigDecimal maxWeight = new BigDecimal("25.00");
-    BigDecimal curWeight = BigDecimal.ZERO;
     TrayDto createdTray = null;
 
     try {
@@ -208,7 +207,6 @@ public class TrayRegistrationSystemTest
     try {
       deletedTray = trayRegistrationSystem.removeTray(createdTray.getTrayId());
     } catch (Exception e) {
-      e.printStackTrace(); // TODO: Delete Line
       fail("Unexpected exception thrown while testing. " + e.getMessage());
     }
 

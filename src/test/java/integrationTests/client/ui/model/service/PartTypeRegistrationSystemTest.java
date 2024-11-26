@@ -11,15 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.PartType;
 import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.NotFoundException;
 
@@ -42,6 +39,7 @@ public class PartTypeRegistrationSystemTest
 {
   private ManagedChannel channel;
   private PartTypeRegistrationSystem partTypeRegistrationSystem;
+  private AutoCloseable closeable;
 
   @BeforeEach
   public void setUp() {
@@ -53,7 +51,8 @@ public class PartTypeRegistrationSystemTest
     partTypeRegistrationSystem = new PartTypeRegistrationSystemImpl("localhost", 9090);
 
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
+
   }
 
   @AfterEach
@@ -63,6 +62,12 @@ public class PartTypeRegistrationSystemTest
     channel = null;
 
     partTypeRegistrationSystem = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
+
   }
 
   @Test

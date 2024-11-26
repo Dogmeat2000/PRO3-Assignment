@@ -45,6 +45,7 @@ public class AnimalPartRegistrationSystemTest
   private static AnimalRegistrationSystem animalRegistrationSystem;
   private static TrayRegistrationSystem trayRegistrationSystem;
   private static PartTypeRegistrationSystem partTypeRegistrationSystem;
+  private AutoCloseable closeable;
 
   // Registered data in test DB, prior to any AnimalParts being added:
   private AnimalDto animal1 = null;
@@ -71,7 +72,7 @@ public class AnimalPartRegistrationSystemTest
   @BeforeEach
   public void setUp() {
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
 
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
@@ -89,10 +90,7 @@ public class AnimalPartRegistrationSystemTest
 
     // Trays
     BigDecimal maxCapacityTray1 = new BigDecimal("25.00");
-    BigDecimal curCapacityTray1 = new BigDecimal("0.00");
-
     BigDecimal maxCapacityTray2 = new BigDecimal("25.00");
-    BigDecimal curCapacityTray2 = new BigDecimal("0.00");
 
     // Register the data:
     try {
@@ -104,7 +102,6 @@ public class AnimalPartRegistrationSystemTest
       tray2 = trayRegistrationSystem.registerNewTray(maxCapacityTray2);
 
     } catch (Exception e) {
-      e.printStackTrace();
       fail("Unexpected exception thrown while testing. " + e.getMessage());
     }
 
@@ -118,6 +115,11 @@ public class AnimalPartRegistrationSystemTest
     partType2 = null;
     tray1 = null;
     tray2 = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
   @AfterAll

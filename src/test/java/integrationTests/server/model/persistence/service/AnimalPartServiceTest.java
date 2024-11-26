@@ -44,8 +44,7 @@ public class AnimalPartServiceTest
   private final PartTypeRegistryInterface partTypeService;
   private final TrayRegistryInterface trayService;
   private final ProductRegistryInterface productService;
-
-  @Value("${maxNestingDepth}") private int maxNestingDepth;
+  private AutoCloseable closeable;
 
   // Registered data in test DB, prior to any AnimalParts being added:
   private Animal animal1 = null;
@@ -72,7 +71,7 @@ public class AnimalPartServiceTest
   @BeforeEach
   public void setUp() {
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
 
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
@@ -90,10 +89,7 @@ public class AnimalPartServiceTest
 
     // Trays
     BigDecimal maxCapacityTray1 = new BigDecimal("25.00");
-    BigDecimal curCapacityTray1 = new BigDecimal("0.00");
-
     BigDecimal maxCapacityTray2 = new BigDecimal("25.00");
-    BigDecimal curCapacityTray2 = new BigDecimal("0.00");
 
     // Register the data:
     try {
@@ -118,6 +114,11 @@ public class AnimalPartServiceTest
     partType2 = null;
     tray1 = null;
     tray2 = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
 

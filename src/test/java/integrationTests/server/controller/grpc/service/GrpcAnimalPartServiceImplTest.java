@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -50,23 +49,14 @@ public class GrpcAnimalPartServiceImplTest
   private PartTypeServiceGrpc.PartTypeServiceBlockingStub partTypeStub;
   private ProductServiceGrpc.ProductServiceBlockingStub productStub;
   private TrayServiceGrpc.TrayServiceBlockingStub trayStub;
-  /*private ProductRegistrationSystem productRegistrationSystem;
-  private AnimalPartRegistrationSystem animalPartRegistrationSystem;
-  private AnimalRegistrationSystem animalRegistrationSystem;
-  private TrayRegistrationSystem trayRegistrationSystem;
-  private PartTypeRegistrationSystem partTypeRegistrationSystem;*/
   private final GrpcAnimalData_To_AnimalDto grpcAnimalData_To_AnimalDto = new GrpcAnimalData_To_AnimalDto();
   private final GrpcAnimalPartData_To_AnimalPartDto grpcAnimalPartData_To_AnimalPartDto = new GrpcAnimalPartData_To_AnimalPartDto();
   private final GrpcProductData_To_ProductDto grpcProductData_To_ProductDto = new GrpcProductData_To_ProductDto();
   private final GrpcPartTypeData_To_PartTypeDto grpcPartTypeData_To_PartTypeDto = new GrpcPartTypeData_To_PartTypeDto();
   private final GrpcTrayData_To_TrayDto grpcTrayData_To_TrayDto = new GrpcTrayData_To_TrayDto();
-  /*private final AnimalDto_ToGrpc_AnimalData animal_To_AnimalData = new AnimalDto_ToGrpc_AnimalData();
-  private final AnimalPartDto_ToGrpc_AnimalPartData animalPart_To_AnimalPartData = new AnimalPartDto_ToGrpc_AnimalPartData();*/
   private final ProductDto_ToGrpc_ProductData product_To_ProductData = new ProductDto_ToGrpc_ProductData();
   private final PartTypeDto_ToGrpc_PartTypeData partType_To_PartTypeData = new PartTypeDto_ToGrpc_PartTypeData();
-  //private final TrayDto_ToGrpc_TrayData tray_To_TrayData = new TrayDto_ToGrpc_TrayData();
-
-  //@Value("${maxNestingDepth}") private int maxNestingDepth;
+  private AutoCloseable closeable;
 
   // Registered data in test DB, prior to any AnimalParts being added:
   private AnimalDto animal1 = null;
@@ -83,12 +73,6 @@ public class GrpcAnimalPartServiceImplTest
         .usePlaintext()
         .build();
 
-    /*animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
-    productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
-    animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
-    trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
-    partTypeRegistrationSystem = new PartTypeRegistrationSystemImpl("localhost", 9090);*/
-
     animalPartStub = AnimalPartServiceGrpc.newBlockingStub(channel);
     animalStub = AnimalServiceGrpc.newBlockingStub(channel);
     partTypeStub = PartTypeServiceGrpc.newBlockingStub(channel);
@@ -96,7 +80,7 @@ public class GrpcAnimalPartServiceImplTest
     trayStub = TrayServiceGrpc.newBlockingStub(channel);
 
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
 
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
@@ -145,9 +129,6 @@ public class GrpcAnimalPartServiceImplTest
     partTypeStub = null;
     productStub = null;
     trayStub = null;
-    /*productRegistrationSystem = null;
-    animalPartRegistrationSystem = null;
-    animalRegistrationSystem = null;*/
 
     animal1 = null;
     animal2 = null;
@@ -155,6 +136,11 @@ public class GrpcAnimalPartServiceImplTest
     partType2 = null;
     tray1 = null;
     tray2 = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
 
@@ -172,7 +158,6 @@ public class GrpcAnimalPartServiceImplTest
       AnimalPartData animalPartData = animalPartStub.registerAnimalPart(GrpcFactory.buildGrpcAnimalPartData(1, parentAnimal, parentPartType, parentTray, weight));
       createdAnimalPart = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartData);
     } catch (Exception e) {
-      e.printStackTrace(); // TODO: DELETE LINE
       fail("Unexpected exception thrown while testing. " + e.getMessage());
     }
 
@@ -224,7 +209,6 @@ public class GrpcAnimalPartServiceImplTest
       parentPartType = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.readPartType(LongId_ToGrpc_Id.convertToPartTypeId(parentPartType.getTypeId())));
 
     } catch (Exception e) {
-      e.printStackTrace(); // TODO: DELETE LINE
       fail("Unexpected exception thrown while testing. " + e.getMessage());
     }
 

@@ -43,6 +43,7 @@ public class AnimalRegistrationSystemTest
 {
   private ManagedChannel channel;
   private AnimalRegistrationSystem animalRegistrationSystem;
+  private AutoCloseable closeable;
 
   @BeforeEach
   public void setUp() {
@@ -54,7 +55,7 @@ public class AnimalRegistrationSystemTest
     animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
 
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
   }
 
   @AfterEach
@@ -63,6 +64,11 @@ public class AnimalRegistrationSystemTest
     channel.shutdownNow();
     channel = null;
     animalRegistrationSystem = null;
+
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
   @Test
@@ -146,7 +152,7 @@ public class AnimalRegistrationSystemTest
     // Act:
     try {
       animalRegistrationSystem.updateAnimal(createdAnimal);
-      Thread.sleep(10); // Give it time to update
+      Thread.sleep(50); // Give it time to update
       updatedAnimal = animalRegistrationSystem.readAnimal(createdAnimal.getAnimalId());
     } catch (Exception e) {
       fail("Unexpected exception thrown while testing. " + e.getMessage());

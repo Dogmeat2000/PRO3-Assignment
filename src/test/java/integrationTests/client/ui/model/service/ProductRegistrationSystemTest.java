@@ -46,6 +46,7 @@ public class ProductRegistrationSystemTest
   private static AnimalRegistrationSystem animalRegistrationSystem;
   private static TrayRegistrationSystem trayRegistrationSystem;
   private static PartTypeRegistrationSystem partTypeRegistrationSystem;
+  private AutoCloseable closeable;
 
   // Registered data in test DB, prior to any AnimalParts being added:
   private AnimalDto animal1 = null;
@@ -75,7 +76,7 @@ public class ProductRegistrationSystemTest
   @BeforeEach
   public void setUp() {
     // Initialize all the @Mock and @InjectMock fields, allowing Spring Boot time to perform its Dependency Injection.
-    MockitoAnnotations.openMocks(this);
+    closeable = MockitoAnnotations.openMocks(this);
 
     // Create some basic entities in the database, to test Products against:
     // Animals
@@ -128,7 +129,10 @@ public class ProductRegistrationSystemTest
 
   @AfterEach
   public void tearDown() {
-    //Empty
+    // Close the Mockito Injections:
+    try {
+      closeable.close();
+    } catch (Exception ignored) {}
   }
 
   @AfterAll
@@ -308,7 +312,6 @@ public class ProductRegistrationSystemTest
 
     try {
       createdProduct1 = productRegistrationSystem.registerNewProduct(animalParts1, trays1);
-      System.out.println("\n\n[ProductRegistrationSystemTest] SUCCESS!!!");
       createdProduct2 = productRegistrationSystem.registerNewProduct(animalParts2, trays2);
     } catch (Exception e) {
       fail("Unexpected exception thrown while testing. " + e.getMessage());
