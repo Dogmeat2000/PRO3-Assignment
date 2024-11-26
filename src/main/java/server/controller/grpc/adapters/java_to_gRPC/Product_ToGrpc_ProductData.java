@@ -1,52 +1,48 @@
 package server.controller.grpc.adapters.java_to_gRPC;
 
 import grpc.*;
-import shared.model.entities.Product;
-import shared.model.entities.TrayToProductTransfer;
+import server.model.persistence.entities.Product;
+import server.model.persistence.entities.Tray;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
+/** <p>Responsible for converting a application entities into a gRPC compatible formats</p> */
 public class Product_ToGrpc_ProductData
 {
-  /** <p>Converts a Product entity into a database/gRPC compatible ProductData format</p>
+  /** <p>Converts a Product entity into a gRPC compatible ProductData format</p>
    * @param product The Product entity to convert
    * @return a gRPC compatible ProductData data type.
    * */
-  public static ProductData convertToProductData(Product product, int maxNestingDepth) {
+  public ProductData convertToProductData(Product product) {
 
     if (product == null)
       return null;
 
-    if(maxNestingDepth < 0)
-      return ProductData.newBuilder().build();
-
-    int currentNestingDepth = maxNestingDepth-1;
-
-    // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
+    // Convert the java data fields:
     ProductData.Builder builder = ProductData.newBuilder();
-    builder.setProductId(product.getProductId());
+    builder.setProductId(LongId_ToGrpc_Id.convertToProductId(product.getProductId()));
 
-    if(product.getTraySupplyJoinList() != null && !product.getTraySupplyJoinList().isEmpty()) {
-      for (TrayToProductTransfer transfer : product.getTraySupplyJoinList())
-        builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, currentNestingDepth));
-    }
+    // Convert AnimalPartIds:
+    for (long id : product.getAnimalPartIdList())
+      builder.addAnimalPartIds(LongId_ToGrpc_Id.convertToAnimalPartId(id));
 
-    if(product.getTransferIdList() != null && !product.getTransferIdList().isEmpty())
-      builder.addAllTransferIds(product.getTransferIdList());
+    // Convert TransferIds:
+    for (long id : product.getTransferIdList())
+      builder.addTransferIds(LongId_ToGrpc_Id.convertToTrayToProductTransferId(id));
 
-    if(product.getAnimalPartIdList() != null && !product.getAnimalPartIdList().isEmpty())
-      builder.addAllAnimalPartIds(product.getAnimalPartIdList());
+    // Convert TrayIds:
+    for (Tray tray : product.getTraySuppliersList())
+      builder.addTrayIds(LongId_ToGrpc_Id.convertToTrayId(tray.getTrayId()));
 
     return builder.build();
   }
 
-
   /** <p>Converts a List of Products into the gRPC compatible ProductsData format</p>
    * @param products A list containing all the Product entities to convert.
    * @return A gRPC compatible ProductsData data type, containing all the converted entities.*/
-  public static ProductsData convertToProductsDataList(List<Product> products) {
+  public ProductsData convertToProductsDataList(List<Product> products) {
     // Return an empty list, if received list is null or empty.
     if(products == null || products.isEmpty())
       return ProductsData.newBuilder().addAllProducts(new ArrayList<>()).build();
@@ -54,7 +50,7 @@ public class Product_ToGrpc_ProductData
     // Convert List of Products to a gRPC compatible list by iteration through each entry and running the method previously declared:
     List<ProductData> productDataList = new ArrayList<>();
     for (Product product : products)
-      productDataList.add(convertToProductData(product, 3));
+      productDataList.add(convertToProductData(product));
 
     // Construct and return a new List of ProductData entities:
     return ProductsData.newBuilder().addAllProducts(productDataList).build();

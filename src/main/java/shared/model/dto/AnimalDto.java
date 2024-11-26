@@ -30,7 +30,7 @@ public class AnimalDto implements Serializable
     setAnimalId(animalId);
     setWeight_kilogram(weight_kilogram);
     setOrigin(origin);
-    setArrival_date(arrivalDate);
+    setArrivalDate(arrivalDate);
     setAnimalPartIdList(animalPartIdList);
   }
 
@@ -58,11 +58,11 @@ public class AnimalDto implements Serializable
     this.origin = origin;
   }
 
-  public Date getArrival_date() {
+  public Date getArrivalDate() {
     return arrivalDate;
   }
 
-  public void setArrival_date(Date arrivalDate) {
+  public void setArrivalDate(Date arrivalDate) {
     this.arrivalDate = arrivalDate;
   }
 
@@ -81,15 +81,23 @@ public class AnimalDto implements Serializable
       return false;
     AnimalDto animalDto = (AnimalDto) o;
     return getAnimalId() == animalDto.getAnimalId() && Objects.equals(getWeight_kilogram(), animalDto.getWeight_kilogram()) && Objects.equals(getOrigin(), animalDto.getOrigin()) && Objects.equals(
-        getArrival_date(), animalDto.getArrival_date()) && Objects.equals(getAnimalPartIdList(), animalDto.getAnimalPartIdList());
+        getArrivalDate(), animalDto.getArrivalDate()) && Objects.equals(getAnimalPartIdList(), animalDto.getAnimalPartIdList());
   }
 
   @Override public int hashCode() {
-    return Objects.hash(getAnimalId(), getWeight_kilogram(), getOrigin(), getArrival_date(), getAnimalPartIdList());
+    return Objects.hash(getAnimalId(), getWeight_kilogram(), getOrigin(), getArrivalDate(), getAnimalPartIdList());
   }
 
   @Override public String toString() {
     return "AnimalDto{" + "animalId=" + animalId + ", weight_kilogram=" + weight_kilogram + ", origin='" + origin + '\'' + ", arrival_date=" + arrivalDate + ", animalPartIdList=" + animalPartIdList
         + '}';
+  }
+
+  public AnimalDto copy(){
+    return new AnimalDto(getAnimalId(),
+        getWeight_kilogram(),
+        getOrigin(),
+        getArrivalDate(),
+        getAnimalPartIdList());
   }
 }

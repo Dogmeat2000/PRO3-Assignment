@@ -3,6 +3,8 @@ package integrationTests;
 import client.interfaces.AnimalPartRegistrationSystem;
 import client.interfaces.AnimalRegistrationSystem;
 import client.interfaces.ProductRegistrationSystem;
+import client.ui.Model.adapters.gRPC_to_java.*;
+import client.ui.Model.adapters.java_to_gRPC.*;
 import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import client.ui.Model.service.ProductRegistrationSystemImpl;
@@ -15,16 +17,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
-import server.controller.grpc.adapters.grpc_to_java.*;
-import server.controller.grpc.adapters.java_to_gRPC.*;
-import shared.model.entities.*;
+import server.model.persistence.entities.*;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import shared.model.dto.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -36,14 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)  // Gives access to extended testing functionality
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest(
     classes = {
-        ServerApplication.class, /*RecallMachineApplication.class,*/
-        TestDataSourceConfig.class}) // Signals to Spring Boot that this is a Spring Boot Test and defines which spring configs to use!
+        ServerApplication.class,
+        TestDataSourceConfig.class})
 @ComponentScan(basePackages = "client")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // Ensures that Mocks are reset after each test, to avoid tests modifying data in shared mocks, that could cause tests to influence each other.
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Establishes an InMemory database instead of using the actual Postgresql database, so tests do not disrupt the production database.
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class RecallMachineTest
 {
   private ManagedChannel channel;
@@ -55,13 +56,16 @@ public class RecallMachineTest
   private ProductRegistrationSystem productRegistrationSystem;
   private AnimalPartRegistrationSystem animalPartRegistrationSystem;
   private AnimalRegistrationSystem animalRegistrationSystem;
-  private final GrpcAnimalData_To_Animal grpcAnimalData_To_Animal = new GrpcAnimalData_To_Animal();
-  private final GrpcAnimalPartData_To_AnimalPart grpcAnimalPartData_To_Animal = new GrpcAnimalPartData_To_AnimalPart();
-  private final GrpcProductData_To_Product grpcProductData_To_Product = new GrpcProductData_To_Product();
-  private final GrpcPartTypeData_To_PartType grpcPartTypeData_To_PartType = new GrpcPartTypeData_To_PartType();
-  private final GrpcTrayData_To_Tray grpcTrayData_To_Tray = new GrpcTrayData_To_Tray();
-  @Value("${maxNestingDepth}") private int maxNestingDepth;
-
+  private final GrpcAnimalData_To_AnimalDto grpcAnimalData_To_AnimalDto = new GrpcAnimalData_To_AnimalDto();
+  private final GrpcAnimalPartData_To_AnimalPartDto grpcAnimalPartData_To_AnimalPartDto = new GrpcAnimalPartData_To_AnimalPartDto();
+  private final GrpcProductData_To_ProductDto grpcProductData_To_ProductDto = new GrpcProductData_To_ProductDto();
+  private final GrpcPartTypeData_To_PartTypeDto grpcPartTypeData_To_PartTypeDto = new GrpcPartTypeData_To_PartTypeDto();
+  private final GrpcTrayData_To_TrayDto grpcTrayData_To_TrayDto = new GrpcTrayData_To_TrayDto();
+  private final AnimalDto_ToGrpc_AnimalData animalDto_To_AnimalData = new AnimalDto_ToGrpc_AnimalData();
+  private final AnimalPartDto_ToGrpc_AnimalPartData animalPartDto_To_AnimalPartData = new AnimalPartDto_ToGrpc_AnimalPartData();
+  private final ProductDto_ToGrpc_ProductData productDto_To_ProductData = new ProductDto_ToGrpc_ProductData();
+  private final PartTypeDto_ToGrpc_PartTypeData partTypeDto_To_PartTypeData = new PartTypeDto_ToGrpc_PartTypeData();
+  private final TrayDto_ToGrpc_TrayData trayDto_To_TrayData = new TrayDto_ToGrpc_TrayData();
 
   @BeforeEach
   public void setUp() {
@@ -70,9 +74,9 @@ public class RecallMachineTest
         .usePlaintext()
         .build();
 
-    animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090, maxNestingDepth);
-    productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090, maxNestingDepth);
-    animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090, maxNestingDepth);
+    animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
+    productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
+    animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
 
     animalPartStub = AnimalPartServiceGrpc.newBlockingStub(channel);
     animalStub = AnimalServiceGrpc.newBlockingStub(channel);
@@ -104,80 +108,67 @@ public class RecallMachineTest
   public void testRetrieveRegistrationNumberForAllAnimalsInvolvedInAProduct() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()));
+    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()), null);
+    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()), null);
+    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()), null);
 
-    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()));
-
-    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()));
-
-    animal1 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal1)), maxNestingDepth);
-    //System.out.println(animal1);
-    animal2 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal2)), maxNestingDepth);
-    animal3 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal3)), maxNestingDepth);
+    animal1 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal1)));
+    animal2 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal2)));
+    animal3 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal3)));
 
     // Create PartTypes:
-    PartType partType1 = new PartType(1L, "type1");
-    PartType partType2 = new PartType(1L, "type2");
+    PartTypeDto partType1 = new PartTypeDto(1L, "type1");
+    PartTypeDto partType2 = new PartTypeDto(1L, "type2");
 
-    partType1 = grpcPartTypeData_To_PartType.convertToPartType(partTypeStub.registerPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType1)), maxNestingDepth);
-    partType2 = grpcPartTypeData_To_PartType.convertToPartType(partTypeStub.registerPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType2)), maxNestingDepth);
+    partType1 = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.registerPartType(partTypeDto_To_PartTypeData.convertToPartTypeData(partType1)));
+    partType2 = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.registerPartType(partTypeDto_To_PartTypeData.convertToPartTypeData(partType2)));
 
     // Create Trays:
-    Tray tray1 = new Tray(1L, BigDecimal.valueOf(25), BigDecimal.valueOf(0), new ArrayList<>(), new ArrayList<>());
-    Tray tray2 = new Tray(1L, BigDecimal.valueOf(25), BigDecimal.valueOf(0), new ArrayList<>(), new ArrayList<>());
+    TrayDto tray1 = new TrayDto(1L, BigDecimal.valueOf(25), BigDecimal.ZERO, 0, null);
+    TrayDto tray2 = new TrayDto(1L, BigDecimal.valueOf(25), BigDecimal.ZERO, 0, null);
 
-    tray1 = grpcTrayData_To_Tray.convertToTray(trayStub.registerTray(Tray_ToGrpc_TrayData.convertToTrayData(tray1, maxNestingDepth)),maxNestingDepth);
-    tray2 = grpcTrayData_To_Tray.convertToTray(trayStub.registerTray(Tray_ToGrpc_TrayData.convertToTrayData(tray2, maxNestingDepth)),maxNestingDepth);
+    tray1 = grpcTrayData_To_TrayDto.convertToTrayDto(trayStub.registerTray(trayDto_To_TrayData.convertToTrayData(tray1)));
+    tray2 = grpcTrayData_To_TrayDto.convertToTrayDto(trayStub.registerTray(trayDto_To_TrayData.convertToTrayData(tray2)));
 
     // Create AnimalParts:
-    AnimalPart animalPart1 = new AnimalPart(1L, BigDecimal.valueOf(3.4), partType1, animal1, tray1, null);
-    AnimalPart animalPart2 = new AnimalPart(1L, BigDecimal.valueOf(2.7), partType2, animal2, tray2, null);
-    AnimalPart animalPart3 = new AnimalPart(1L, BigDecimal.valueOf(5.12), partType1, animal1, tray1, null);
+    AnimalPartDto animalPart1 = new AnimalPartDto(1L, BigDecimal.valueOf(3.4), partType1.getTypeId(), animal1.getAnimalId(), tray1.getTrayId(), 0);
+    AnimalPartDto animalPart2 = new AnimalPartDto(1L, BigDecimal.valueOf(2.7), partType2.getTypeId(), animal2.getAnimalId(), tray2.getTrayId(), 0);
+    AnimalPartDto animalPart3 = new AnimalPartDto(1L, BigDecimal.valueOf(5.12), partType1.getTypeId(), animal1.getAnimalId(), tray1.getTrayId(), 0);
 
-    animalPart1 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart1)), maxNestingDepth);
-    animalPart2 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart2)), maxNestingDepth);
-    animalPart3 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart3)), maxNestingDepth);
+    animalPart1 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart1)));
+    animalPart2 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart2)));
+    animalPart3 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart3)));
 
     // Create Products:
-    List<Long> contentIdList = new ArrayList<>();
-    contentIdList.add(animalPart1.getPart_id());
-    List<Long> trayIdList = new ArrayList<>();
-    trayIdList.add(tray1.getTrayId());
-    Product product1 = new Product(1L, contentIdList, trayIdList);
-    product1 = grpcProductData_To_Product.convertToProduct(productStub.registerProduct(Product_ToGrpc_ProductData.convertToProductData(product1, maxNestingDepth)),maxNestingDepth);
+    List<Long> contentList = new ArrayList<>();
+    contentList.add(animalPart1.getPartId());
+    List<Long> trayList = new ArrayList<>();
+    trayList.add(tray1.getTrayId());
+    ProductDto product1 = new ProductDto(1L, contentList, trayList, null);
+    product1 = grpcProductData_To_ProductDto.convertToProductDto(productStub.registerProduct(productDto_To_ProductData.convertToProductData(product1)));
 
-    for (Long animalPartId : product1.getAnimalPartIdList())
-      product1.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
-
-    contentIdList.clear();
-    contentIdList.add(animalPart2.getPart_id());
-    trayIdList.clear();
-    trayIdList.add(tray2.getTrayId());
-    Product product2 = new Product(1L, contentIdList, trayIdList);
-    product2 = grpcProductData_To_Product.convertToProduct(productStub.registerProduct(Product_ToGrpc_ProductData.convertToProductData(product2, maxNestingDepth)),maxNestingDepth);
-
-    for (Long animalPartId : product2.getAnimalPartIdList())
-      product2.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
-
+    contentList = new ArrayList<>();
+    contentList.add(animalPart2.getPartId());
+    trayList = new ArrayList<>();
+    trayList.add(tray2.getTrayId());
+    ProductDto product2 = new ProductDto(1L, contentList, trayList, null);
+    product2 = grpcProductData_To_ProductDto.convertToProductDto(productStub.registerProduct(productDto_To_ProductData.convertToProductData(product2)));
 
     // Act: Simulate the process that is performed when this command is selected from main:
     // Simulate user prompt to select a Product_id to get info for:
     long productId = product1.getProductId();
 
-    Product productReceived;
+    ProductDto productReceived;
     productReceived = productRegistrationSystem.readProduct(productId);
 
-    for (Long animalPartId : productReceived.getAnimalPartIdList())
-      productReceived.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
-
     // Retrieve a List of all AnimalPart_ids involved in this Product:
-    List<AnimalPart> animalParts = animalPartRegistrationSystem.readAnimalPartsByProductId(productId);
+    List<AnimalPartDto> animalParts = animalPartRegistrationSystem.readAnimalPartsByProductId(productId);
 
     // Retrieve a List of all Animals involved in each AnimalPart:
     List<Long> animalIdsInvolved = new ArrayList<>();
-    for (AnimalPart animalPart : animalParts)
-      if(animalPart.getAnimal().getId() > 0)
-        animalIdsInvolved.add(animalPart.getAnimal().getId());
+    for (AnimalPartDto animalPart : animalParts)
+      if(animalPart.getAnimalId() > 0)
+        animalIdsInvolved.add(animalPart.getAnimalId());
 
 
     // Assert:
@@ -194,87 +185,75 @@ public class RecallMachineTest
   public void testRetrieveAllProductsAGivenAnimalIsInvolvedIn() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    Animal animal1 = new Animal(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()));
+    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()), null);
+    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()), null);
+    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()), null);
 
-    Animal animal2 = new Animal(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()));
-
-    Animal animal3 = new Animal(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()));
-
-    animal1 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal1)), maxNestingDepth);
-    System.out.println(animal1);
-    animal2 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal2)), maxNestingDepth);
-    animal3 = grpcAnimalData_To_Animal.convertToAnimal(animalStub.registerAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animal3)), maxNestingDepth);
+    animal1 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal1)));
+    animal2 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal2)));
+    animal3 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal3)));
 
     // Create PartTypes:
-    PartType partType1 = new PartType(1L, "type1");
-    PartType partType2 = new PartType(1L, "type2");
+    PartTypeDto partType1 = new PartTypeDto(1L, "type1");
+    PartTypeDto partType2 = new PartTypeDto(1L, "type2");
 
-    partType1 = grpcPartTypeData_To_PartType.convertToPartType(partTypeStub.registerPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType1)), maxNestingDepth);
-    partType2 = grpcPartTypeData_To_PartType.convertToPartType(partTypeStub.registerPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType2)), maxNestingDepth);
+    partType1 = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.registerPartType(partTypeDto_To_PartTypeData.convertToPartTypeData(partType1)));
+    partType2 = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.registerPartType(partTypeDto_To_PartTypeData.convertToPartTypeData(partType2)));
 
     // Create Trays:
-    Tray tray1 = new Tray(1L, BigDecimal.valueOf(25), BigDecimal.valueOf(0), new ArrayList<>(), new ArrayList<>());
-    Tray tray2 = new Tray(1L, BigDecimal.valueOf(25), BigDecimal.valueOf(0), new ArrayList<>(), new ArrayList<>());
+    TrayDto tray1 = new TrayDto(1L, BigDecimal.valueOf(25), BigDecimal.ZERO, 0, null);
+    TrayDto tray2 = new TrayDto(1L, BigDecimal.valueOf(25), BigDecimal.ZERO, 0, null);
 
-    tray1 = grpcTrayData_To_Tray.convertToTray(trayStub.registerTray(Tray_ToGrpc_TrayData.convertToTrayData(tray1, maxNestingDepth)),maxNestingDepth);
-    tray2 = grpcTrayData_To_Tray.convertToTray(trayStub.registerTray(Tray_ToGrpc_TrayData.convertToTrayData(tray2, maxNestingDepth)),maxNestingDepth);
+    tray1 = grpcTrayData_To_TrayDto.convertToTrayDto(trayStub.registerTray(trayDto_To_TrayData.convertToTrayData(tray1)));
+    tray2 = grpcTrayData_To_TrayDto.convertToTrayDto(trayStub.registerTray(trayDto_To_TrayData.convertToTrayData(tray2)));
 
     // Create AnimalParts:
-    AnimalPart animalPart1 = new AnimalPart(1L, BigDecimal.valueOf(3.4), partType1, animal1, tray1, null);
-    AnimalPart animalPart2 = new AnimalPart(1L, BigDecimal.valueOf(2.7), partType2, animal2, tray2, null);
-    AnimalPart animalPart3 = new AnimalPart(1L, BigDecimal.valueOf(5.12), partType1, animal1, tray1, null);
+    AnimalPartDto animalPart1 = new AnimalPartDto(1L, BigDecimal.valueOf(3.4), partType1.getTypeId(), animal1.getAnimalId(), tray1.getTrayId(), 0);
+    AnimalPartDto animalPart2 = new AnimalPartDto(1L, BigDecimal.valueOf(2.7), partType2.getTypeId(), animal2.getAnimalId(), tray2.getTrayId(), 0);
+    AnimalPartDto animalPart3 = new AnimalPartDto(1L, BigDecimal.valueOf(5.12), partType1.getTypeId(), animal1.getAnimalId(), tray1.getTrayId(), 0);
 
-    animalPart1 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart1)), maxNestingDepth);
-    animalPart2 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart2)), maxNestingDepth);
-    animalPart3 = grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.registerAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart3)), maxNestingDepth);
+    animalPart1 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart1)));
+    animalPart2 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart2)));
+    animalPart3 = grpcAnimalPartData_To_AnimalPartDto.convertToAnimalPartDto(animalPartStub.registerAnimalPart(animalPartDto_To_AnimalPartData.convertToAnimalPartData(animalPart3)));
 
     // Create Products:
-    List<Long> contentIdList = new ArrayList<>();
-    contentIdList.add(animalPart1.getPart_id());
-    List<Long> trayIdList = new ArrayList<>();
-    trayIdList.add(tray1.getTrayId());
-    Product product1 = new Product(1L, contentIdList, trayIdList);
-    product1 = grpcProductData_To_Product.convertToProduct(productStub.registerProduct(Product_ToGrpc_ProductData.convertToProductData(product1, maxNestingDepth)),maxNestingDepth);
+    List<Long> contentList = new ArrayList<>();
+    contentList.add(animalPart1.getPartId());
+    List<Long> trayList = new ArrayList<>();
+    trayList.add(tray1.getTrayId());
+    ProductDto product1 = new ProductDto(1L, contentList, trayList, null);
+    product1 = grpcProductData_To_ProductDto.convertToProductDto(productStub.registerProduct(productDto_To_ProductData.convertToProductData(product1)));
 
-    for (Long animalPartId : product1.getAnimalPartIdList())
-      product1.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
-
-    contentIdList.clear();
-    contentIdList.add(animalPart2.getPart_id());
-    trayIdList.clear();
-    trayIdList.add(tray2.getTrayId());
-    Product product2 = new Product(1L, contentIdList, trayIdList);
-    product2 = grpcProductData_To_Product.convertToProduct(productStub.registerProduct(Product_ToGrpc_ProductData.convertToProductData(product2, maxNestingDepth)),maxNestingDepth);
-
-    for (Long animalPartId : product2.getAnimalPartIdList())
-      product2.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
+    contentList = new ArrayList<>();
+    contentList.add(animalPart2.getPartId());
+    trayList = new ArrayList<>();
+    trayList.add(tray2.getTrayId());
+    ProductDto product2 = new ProductDto(1L, contentList, trayList, null);
+    product2 = grpcProductData_To_ProductDto.convertToProductDto(productStub.registerProduct(productDto_To_ProductData.convertToProductData(product2)));
 
 
     // Act: Simulate the process that is performed when this command is selected from main:
     // Simulate user prompt to select a Product_id to get info for:
-    long animalId = animal1.getId();
+    long animalId = animal1.getAnimalId();
 
-    Animal animalReceived;
+    AnimalDto animalReceived;
     animalReceived = animalRegistrationSystem.readAnimal(animalId);
 
-    for (Long animalPartId : animalReceived.getAnimalPartIdList())
-      animalReceived.addAnimalPart(grpcAnimalPartData_To_Animal.convertToAnimalPart(animalPartStub.readAnimalPart(LongId_ToGrpc_Id.convertToAnimalPartId(animalPartId)), maxNestingDepth));
-
     // Retrieve a List of all AnimalPart_ids involved in this Animal:
-    List<AnimalPart> animalParts = animalPartRegistrationSystem.readAnimalPartsByAnimalId(animalId);
+    List<AnimalPartDto> animalParts = animalPartRegistrationSystem.readAnimalPartsByAnimalId(animalId);
 
     // Retrieve a List of all Products involved in each AnimalPart:
     List<Long> productIdsInvolved = new ArrayList<>();
-    for (AnimalPart animalPart : animalParts)
-      if(animalPart.getProduct().getProductId() > 0)
-        productIdsInvolved.add(animalPart.getAnimal().getId());
+    for (AnimalPartDto animalPart : animalParts)
+      if(animalPart.getProductId() > 0)
+        productIdsInvolved.add(animalPart.getProductId());
 
 
     // Assert:
     // Verify if gRPC response is correct and if the database is updated:
     assertNotNull(animalReceived); // Ensure that the Product looked up, actually exists in DB
     assertNotNull(animalParts); // Ensure that the received AnimalPart list is not null
-    assertEquals(1L, animalReceived.getId());
+    assertEquals(1L, animalReceived.getAnimalId());
     assertEquals(1L, productIdsInvolved.get(0));
     assertEquals(1, productIdsInvolved.size());
   }

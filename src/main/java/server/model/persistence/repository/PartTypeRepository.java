@@ -2,7 +2,7 @@ package server.model.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import shared.model.entities.PartType;
+import server.model.persistence.entities.PartType;
 
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
  * This @Repository interface extends JpaRepository and provides access to paging, sorting and CRUD operations on the database.

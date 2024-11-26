@@ -2,7 +2,7 @@ package server.model.persistence.service;
 
 import jakarta.persistence.PersistenceException;
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.Tray;
+import server.model.persistence.entities.Tray;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.List;

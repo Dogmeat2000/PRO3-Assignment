@@ -2,7 +2,8 @@ package client;
 
 import client.interfaces.AnimalRegistrationSystem;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
+import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -17,7 +18,7 @@ import java.util.Scanner;
 
 public class Station1_CLI
 {
-  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090, 3);
+  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
 
 
   public static void main(String[] args) {
@@ -111,7 +112,7 @@ public class Station1_CLI
           try {
             Date today = Date.from(Instant.now()); // UTC Time
             System.out.println("NOTE Animal will be registered as having arrived at '" + today + "' UTC Time");
-            Animal animal = animalRegistrationSystem.registerNewAnimal(newAnimalWeight, value, today);
+            AnimalDto animal = animalRegistrationSystem.registerNewAnimal(newAnimalWeight, value, today);
             System.out.println("Added [" + animal + "] to Database!");
           } catch (CreateFailedException e) {
             System.out.println("Invalid input!");
@@ -137,7 +138,7 @@ public class Station1_CLI
       case "update":
         System.out.print("Enter animal_id: ");
         value = getUserInput();
-        Animal oldAnimal = null;
+        AnimalDto oldAnimal = null;
         if(!validateLongInput(value))
           System.out.println("Invalid input!");
         else {
@@ -168,11 +169,11 @@ public class Station1_CLI
           try {
             Date oldRegistryDate = oldAnimal.getArrivalDate(); // UTC Time
             System.out.println("NOTE original Animal registration date remains as '" + oldRegistryDate + "' UTC Time");
-            Animal newAnimal = new Animal(animalId, newWeight, value, oldRegistryDate);
+            AnimalDto newAnimal = new AnimalDto(animalId, newWeight, value, oldRegistryDate, oldAnimal.getAnimalPartIdList());
             animalRegistrationSystem.updateAnimal(newAnimal);
             System.out.println("Implemented updated Animal [" + newAnimal + "] in Database!");
           } catch (UpdateFailedException | NotFoundException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO: DELETE LINE
             System.out.println("Invalid input!");
             break;
           }
@@ -186,7 +187,7 @@ public class Station1_CLI
           System.out.println("Invalid input!");
         else
           try {
-            Animal animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
+            AnimalDto animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
             System.out.println("Found [" + animal + "]");
           } catch (NotFoundException e) {
             System.out.println("No Animals found in Database!");
@@ -197,12 +198,12 @@ public class Station1_CLI
       case "viewall":
         System.out.println("Retrieving all Animals from Database: ");
         try {
-          List<Animal> animals = animalRegistrationSystem.getAllAnimals();
+          List<AnimalDto> animals = animalRegistrationSystem.getAllAnimals();
 
           if(animals.isEmpty())
             throw new NotFoundException("");
 
-          for (Animal a : animals)
+          for (AnimalDto a : animals)
             System.out.println("[" + a + "]");
 
         } catch (NotFoundException e) {

@@ -1,8 +1,8 @@
 package client.interfaces;
 
-import shared.model.entities.AnimalPart;
-import shared.model.entities.Product;
-import shared.model.entities.Tray;
+import shared.model.dto.AnimalPartDto;
+import shared.model.dto.ProductDto;
+import shared.model.dto.TrayDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -15,13 +15,14 @@ import java.util.List;
  */
 public interface ProductRegistrationSystem
 {
+    // TODO: Update javaDoc
     /** <p>Registers/Creates a new Product in repository with the given parameters applied.</p>
-     * @param animalPartContentList A List of AnimalParts to register to this Product.
-     * @param receivedPartsFromTrayList A List of references to the Trays from which this Product received animalParts.
+     * @param animalPartDtoContentList A List of AnimalParts to register to this Product.
+     * @param receivedPartsFromTrayDtoList A List of references to the Trays from which this Product received animalParts.
      * @return The created Product instance.
      * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
      */
-    Product registerNewProduct (List<AnimalPart> animalPartContentList, List<Tray> receivedPartsFromTrayList) throws CreateFailedException;
+    ProductDto registerNewProduct (List<AnimalPartDto> animalPartDtoContentList, List<TrayDto> receivedPartsFromTrayDtoList) throws CreateFailedException;
 
 
     /** <p>Looks up any Product entity with the specified id, in the repository</p>
@@ -29,7 +30,7 @@ public interface ProductRegistrationSystem
      * @return The identified Product instance.
      * @throws NotFoundException Thrown if Product is not be found.
      */
-    Product readProduct (long productId) throws NotFoundException;
+    ProductDto readProduct (long productId) throws NotFoundException;
 
 
     /** <p>Updates the given Product in the repository. Unique id is extracted from the Product entity
@@ -38,7 +39,7 @@ public interface ProductRegistrationSystem
      * @throws NotFoundException Thrown if no matching Product could be found in the repository.
      * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified Product entity.
      */
-    void updateProduct (Product data) throws UpdateFailedException, NotFoundException;
+    void updateProduct (ProductDto data) throws UpdateFailedException, NotFoundException;
 
 
     /** <p>Deletes the given Product from the repository. Unique id is extracted from the Product entity
@@ -55,5 +56,5 @@ public interface ProductRegistrationSystem
      * @return A List containing all Product entities extracted from the repository.
      * @throws NotFoundException Thrown if no Products could be found in the repository.
      */
-    List<Product> getAllProducts() throws NotFoundException;
+    List<ProductDto> getAllProducts() throws NotFoundException;
 }

@@ -6,14 +6,13 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
-import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcProductData_To_Product;
 import server.controller.grpc.adapters.java_to_gRPC.Product_ToGrpc_ProductData;
 import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.ProductRegistryInterface;
 import server.model.persistence.service.TrayRegistryInterface;
-import shared.model.entities.Product;
+import server.model.persistence.entities.Product;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -25,23 +24,24 @@ import java.util.List;
 public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImplBase
 {
   private final ProductRegistryInterface productService;
-  private final TrayRegistryInterface trayService;
-  private final AnimalPartRegistryInterface animalPartService;
-  private final GrpcProductData_To_Product grpcProductDataConverter = new GrpcProductData_To_Product();
-  private final int maxNestingDepth;
+  /*private final TrayRegistryInterface trayService;
+  private final AnimalPartRegistryInterface animalPartService;*/
+  private final GrpcProductData_To_Product grpcProductDataConverter;
+  private final Product_ToGrpc_ProductData productConverter = new Product_ToGrpc_ProductData();
+  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcProductServiceImpl(ProductRegistryInterface productService,
-      TrayRegistryInterface trayService,
-      AnimalPartRegistryInterface animalPartService/*,
-      GrpcProductData_To_Product grpcProductDataConverter*/,
-      @Value("${maxNestingDepth}") int maxNestingDepth) {
+      /*TrayRegistryInterface trayService,
+      AnimalPartRegistryInterface animalPartService,*/
+      GrpcProductData_To_Product grpcProductDataConverter/*,
+      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
     super();
     this.productService = productService;
-    this.trayService = trayService;
-    this.animalPartService = animalPartService;
-    //this.grpcProductDataConverter = grpcProductDataConverter;
-    this.maxNestingDepth = maxNestingDepth;
+    /*this.trayService = trayService;
+    this.animalPartService = animalPartService;*/
+    this.grpcProductDataConverter = grpcProductDataConverter;
+    //this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -49,55 +49,26 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void registerProduct(ProductData request, StreamObserver<ProductData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      Product productReceived = grpcProductDataConverter.convertToProduct(request, maxNestingDepth);
+      System.out.println("\n\n[GrpcProductServiceImpl] Line 1");
 
-      // Add/Query for the data lost during gRPC transmission:
-      // Read associated AnimalPart and Tray Data:
-      /*List<AnimalPart> associatedAnimalParts = new ArrayList<>();
-      List<Tray> associatedTrays = new ArrayList<>();
-
-      for (Long animalPartId : productReceived.getAnimalPartIdList()) {
-        AnimalPart animalPart = animalPartService.readAnimalPart(animalPartId);
-        Tray tray = trayService.readTray(animalPart.getTray().getTrayId());
-        associatedAnimalParts.add(animalPart);
-
-        // Check for duplicate AnimalPart entries and reassign, so that only 1 representation of each database entity persists:
-        for (int i = 0; i < tray.getContents().size(); i++) {
-          if(tray.getContents().get(i).getPart_id() == animalPart.getPart_id()) {
-            tray.removeAnimalPart(tray.getContents().get(i));
-            tray.addAnimalPart(animalPart);
-          }
-        }
-        associatedTrays.add(tray);
-      }
-      productReceived.getContentList().addAll(associatedAnimalParts);
-      productReceived.getTraySuppliersList().addAll(associatedTrays);*/
+      Product productReceived = grpcProductDataConverter.convertToProduct(request);
+      System.out.println("\n\n[GrpcProductServiceImpl] Line 2");
 
       // Register the Product:
       Product createdProduct = productService.registerProduct(productReceived);
+      System.out.println("\n\n[GrpcProductServiceImpl] Line 3");
 
       // If animal creation fails
       if (createdProduct == null)
         throw new CreateFailedException("Product could not be created");
 
-      // Update associated Entities:
-      /*for (AnimalPart animalPart : associatedAnimalParts) {
-        animalPart.setProduct(createdProduct);
-        animalPartService.updateAnimalPart(animalPart);
-      }
-
-      for (Tray tray : associatedTrays) {
-        if(!tray.getProductList().contains(createdProduct)) {
-          tray.getProductList().add(createdProduct);
-          trayService.updateTray(tray);
-        }
-      }*/
+      System.out.println("\n\n[GrpcProductServiceImpl] Line 4");
 
       // Translate the created Product into gRPC a compatible type, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(createdProduct, maxNestingDepth));
+      responseObserver.onNext(productConverter.convertToProductData(createdProduct));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      e.printStackTrace();
+      e.printStackTrace(); // TODO: DELETE LINE
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -115,7 +86,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
         throw new NotFoundException("Product not found");
 
       // Translate the found Tray into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductData(product, maxNestingDepth));
+      responseObserver.onNext(productConverter.convertToProductData(product));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Product with id " + request.getProductId() + " not found in DB").withCause(e).asRuntimeException());
@@ -129,18 +100,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
   public void updateProduct(ProductData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      Product productReceived = grpcProductDataConverter.convertToProduct(request,maxNestingDepth);
-
-      // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      // AnimalPart associations:
-      productReceived.getContentList().clear();
-      for (Long animalPartId : productReceived.getAnimalPartIdList())
-        productReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
-
-      // Tray associations:
-      productReceived.getTraySuppliersList().clear();
-      for (Long transferId : productReceived.getTransferIdList())
-        productReceived.getTraySuppliersList().addAll(trayService.readTraysByTransferId(transferId));
+      Product productReceived = grpcProductDataConverter.convertToProduct(request);
 
       // Attempt to update the Product:
       if (!productService.updateProduct(productReceived)) {
@@ -164,7 +124,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Product with the provided ID:
-      if(!productService.removeProduct(grpcProductDataConverter.convertToProduct(request,maxNestingDepth))) {
+      if(!productService.removeProduct(grpcProductDataConverter.convertToProduct(request))) {
         // If Tray deletion failed:
         throw new DeleteFailedException("Error occurred while deleting Product with id='" + request.getProductId() + "'");
       }
@@ -191,7 +151,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
           throw new NotFoundException("Products not found");
 
         // Translate the found Product into gRPC compatible types, before transmitting back to client:
-        responseObserver.onNext(Product_ToGrpc_ProductData.convertToProductsDataList(products));
+        responseObserver.onNext(productConverter.convertToProductsDataList(products));
         responseObserver.onCompleted();
       } catch (NotFoundException e) {
         responseObserver.onError(Status.NOT_FOUND.withDescription("No Products found").withCause(e).asRuntimeException());

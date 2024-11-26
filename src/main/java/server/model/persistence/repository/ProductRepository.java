@@ -2,7 +2,7 @@ package server.model.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import shared.model.entities.Product;
+import server.model.persistence.entities.Product;
 
 import java.util.List;
 import java.util.Optional;

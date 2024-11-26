@@ -11,18 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.AnimalValidation;
 import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.AnimalRepository;
-import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
+import server.model.persistence.entities.Animal;
+import server.model.persistence.entities.AnimalPart;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class AnimalService implements AnimalRegistryInterface
 {
   private final AnimalRepository animalRepository;
-  private final Map<Long, Animal> animalCache = new HashMap<>();
+  //private final Map<Long, Animal> animalCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalService.class);
   private final AnimalPartRepository animalPartRepository;
 
@@ -49,10 +48,10 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal added to DB with ID: {}", newAnimal.getId());
 
       // Attempt to add Animal to local cache:
-      animalCache.put(newAnimal.getId(), newAnimal);
-      logger.info("Animal saved to local cache with ID: {}", newAnimal.getId());
+      /*animalCache.put(newAnimal.getId(), newAnimal);
+      logger.info("Animal saved to local cache with ID: {}", newAnimal.getId());*/
 
-      return newAnimal;
+      return readAnimal(newAnimal.getId());
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
       logger.error("Unable to register Animal in DB with weight: {}, Reason: {}", data.getWeight_kilogram(), e.getMessage());
@@ -71,15 +70,9 @@ public class AnimalService implements AnimalRegistryInterface
     // Validate received id, before passing to repository/database:
     AnimalValidation.validateId(animalId);
 
-    // Attempt to read Animal from local cache first:
-    /*if(animalCache.containsKey(animalId)) {
-      logger.info("Animal read from local cache with ID: {}", animalId);
-      return animalCache.get(animalId);
-    }*/
-
     // Animal not found in local cache. Attempt to read from DB:
     try {
-      logger.info("Animal not found in local cache with ID: {}. Looking up in database...", animalId);
+      logger.info("Looking up animal with ID: {} in database...", animalId);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
       Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new NotFoundException("No Animal found in database with matching id=" + animalId));
@@ -87,14 +80,14 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal read from database with ID: {}", animalId);
 
       // Populate the id association list:
-      List<Long> animalPartIds = new ArrayList<>();
-      for (AnimalPart animalPart : animal.getPartList())
+      /*List<Long> animalPartIds = new ArrayList<>();
+      for (AnimalPart animalPart : animal.getAnimalPartList())
         animalPartIds.add(animalPart.getPart_id());
-      animal.setAnimalPartIdList(animalPartIds);
+      animal.setAnimalPartIdList(animalPartIds);*/
 
       // Add found Animal to local cache, to improve performance next time Animal is requested.
-      animalCache.put(animal.getId(), animal);
-      logger.info("Animal added to local cache with ID: {}", animal.getId());
+      //animalCache.put(animal.getId(), animal);
+      //logger.info("Animal added to local cache with ID: {}", animal.getId());
       return animal;
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering Animal with ID {}: {}", animalId, e.getMessage());
@@ -118,10 +111,10 @@ public class AnimalService implements AnimalRegistryInterface
       animal.setWeight_kilogram(data.getWeight_kilogram());
       animal.setOrigin(data.getOrigin());
       animal.setArrivalDate(data.getArrivalDate());
-      animal.getPartList().clear();
-      for (AnimalPart animalPart : data.getPartList()) {
+      animal.clearAnimalPartList();
+      for (AnimalPart animalPart : data.getAnimalPartList()) {
         try {
-          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPart_id()).orElseThrow(() -> new NotFoundException(""));
+          AnimalPart animalPartToAdd = animalPartRepository.findById(animalPart.getPartId()).orElseThrow(() -> new NotFoundException(""));
           animal.addAnimalPart(animalPartToAdd);
         } catch (NotFoundException ignored) {}
       }
@@ -131,12 +124,13 @@ public class AnimalService implements AnimalRegistryInterface
       logger.info("Animal updated in database with ID: {}", animal.getId());
 
       // Attempt to add updated Animal to local cache:
-      Animal updatedAnimal = readAnimal(animal.getId());
+      /*Animal updatedAnimal = readAnimal(animal.getId());
       animalCache.put(updatedAnimal.getId(), updatedAnimal);
-      logger.info("Animal saved to local cache with ID: {}", animal.getId());
+      logger.info("Animal saved to local cache with ID: {}", animal.getId());*/
 
       // Get a list of AnimalParts that are no longer associated with this Animal:
-      List<AnimalPart> listOfAnimalPartsNotInUpdatedAnimal = new ArrayList<>(data.getPartList());
+      // TODO: Should not be necessary since Cascade.All is set in entity.
+      /*List<AnimalPart> listOfAnimalPartsNotInUpdatedAnimal = new ArrayList<>(data.getPartList());
 
       for (AnimalPart oldAnimalPart : data.getPartList()) {
         for (AnimalPart newAnimalPart : animal.getPartList()) {
@@ -155,7 +149,7 @@ public class AnimalService implements AnimalRegistryInterface
 
       // Delete any AnimalPart objects that are no longer associated with any Animal entity:
       for (AnimalPart voidAnimalPart : listOfAnimalPartsNotInUpdatedAnimal)
-        animalPartRepository.findById(voidAnimalPart.getPart_id()).ifPresent(animalPartRepository::delete);
+        animalPartRepository.findById(voidAnimalPart.getPart_id()).ifPresent(animalPartRepository::delete);*/
 
       return true;
 
@@ -191,11 +185,12 @@ public class AnimalService implements AnimalRegistryInterface
 
       logger.info("Animal deleted from database with ID: {}", data.getId());
       // Animal was removed from database. Now ensure that is it also removed from the local cache:
-      animalCache.remove(data.getId());
-      logger.info("Animal deleted from local cache with ID: {}", data.getId());
+      /*animalCache.remove(data.getId());
+      logger.info("Animal deleted from local cache with ID: {}", data.getId());*/
 
       // Attempt to delete all associated AnimalPart entities:
-      animalPartRepository.deleteAll(data.getPartList());
+      // TODO: Should not be necessary due to JPA Cascade.All set.
+      //animalPartRepository.deleteAll(data.getAnimalPartList());
 
       return true;
 
@@ -218,20 +213,20 @@ public class AnimalService implements AnimalRegistryInterface
       List<Animal> animals = animalRepository.findAll();
 
       // Populate the id association list:
-      for (Animal animal : animals) {
+      /*for (Animal animal : animals) {
         List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : animal.getPartList())
+        for (AnimalPart animalPart : animal.getAnimalPartList())
           animalPartIds.add(animalPart.getPart_id());
         animal.setAnimalPartIdList(animalPartIds);
-      }
+      }*/
 
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
-      animalCache.clear();
+      /*animalCache.clear();
       for (Animal animal : animals) {
         if(animal != null)
           animalCache.put(animal.getId(), animal);
       }
-      logger.info("Added all Animals from Database to Local Cache");
+      logger.info("Added all Animals from Database to Local Cache");*/
       return animals;
 
     } catch (PersistenceException e) {
@@ -246,20 +241,20 @@ public class AnimalService implements AnimalRegistryInterface
       List<Animal> animals = animalRepository.findAnimalsByOriginAndArrivalDate(origin, arrivalDate).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
 
       // Populate the id association list:
-      for (Animal animal : animals) {
+      /*for (Animal animal : animals) {
         List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : animal.getPartList())
+        for (AnimalPart animalPart : animal.getAnimalPartList())
           animalPartIds.add(animalPart.getPart_id());
         animal.setAnimalPartIdList(animalPartIds);
-      }
+      }*/
 
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
-      animalCache.clear();
+      /*animalCache.clear();
       for (Animal animal : animals) {
         if(animal != null)
           animalCache.put(animal.getId(), animal);
       }
-      logger.info("Added all Animals from Database to Local Cache");
+      logger.info("Added all Animals from Database to Local Cache");*/
       return animals;
 
     } catch (PersistenceException e) {
@@ -274,20 +269,20 @@ public class AnimalService implements AnimalRegistryInterface
       List<Animal> animals = animalRepository.findAnimalsByOrigin(origin).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
 
       // Populate the id association list:
-      for (Animal animal : animals) {
+      /*for (Animal animal : animals) {
         List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : animal.getPartList())
+        for (AnimalPart animalPart : animal.getAnimalPartList())
           animalPartIds.add(animalPart.getPart_id());
         animal.setAnimalPartIdList(animalPartIds);
-      }
+      }*/
 
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
-      animalCache.clear();
+      /*animalCache.clear();
       for (Animal animal : animals) {
         if(animal != null)
           animalCache.put(animal.getId(), animal);
       }
-      logger.info("Added all Animals from Database to Local Cache");
+      logger.info("Added all Animals from Database to Local Cache");*/
       return animals;
 
     } catch (PersistenceException e) {
@@ -302,20 +297,20 @@ public class AnimalService implements AnimalRegistryInterface
       List<Animal> animals = animalRepository.findAnimalsByArrivalDate(arrivalDate).orElseThrow(() -> new NotFoundException("No matching animals found in repository."));
 
       // Populate the id association list:
-      for (Animal animal : animals) {
+      /*for (Animal animal : animals) {
         List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : animal.getPartList())
+        for (AnimalPart animalPart : animal.getAnimalPartList())
           animalPartIds.add(animalPart.getPart_id());
         animal.setAnimalPartIdList(animalPartIds);
-      }
+      }*/
 
       // Add all the found Animals to local cache, to improve performance next time an Animal is requested.
-      animalCache.clear();
+      /*animalCache.clear();
       for (Animal animal : animals) {
         if(animal != null)
           animalCache.put(animal.getId(), animal);
       }
-      logger.info("Added all Animals from Database to Local Cache");
+      logger.info("Added all Animals from Database to Local Cache");*/
       return animals;
 
     } catch (PersistenceException e) {

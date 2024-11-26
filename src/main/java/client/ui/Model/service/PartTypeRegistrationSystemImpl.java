@@ -1,23 +1,19 @@
 package client.ui.Model.service;
 
 import client.interfaces.PartTypeRegistrationSystem;
+import client.ui.Model.adapters.gRPC_to_java.GrpcPartTypeData_To_PartTypeDto;
+import client.ui.Model.adapters.java_to_gRPC.AnimalPartDto_ToGrpc_AnimalPartData;
+import client.ui.Model.adapters.java_to_gRPC.PartTypeDto_ToGrpc_PartTypeData;
 import grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import server.controller.grpc.adapters.GrpcFactory;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
-import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
-import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
-import server.controller.grpc.adapters.java_to_gRPC.PartType_ToGrpc_PartTypeData;
-import shared.model.entities.AnimalPart;
-import shared.model.entities.PartType;
+import client.ui.Model.adapters.GrpcFactory;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import server.model.persistence.entities.AnimalPart;
+import server.model.persistence.entities.PartType;
+import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -31,17 +27,17 @@ import static io.grpc.Status.NOT_FOUND;
 
 public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRegistrationSystem
 {
-  private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartType();
-  private final int maxNestingDepth;
+  private final GrpcPartTypeData_To_PartTypeDto grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartTypeDto();
+  private final PartTypeDto_ToGrpc_PartTypeData partTypeDtoConverter = new PartTypeDto_ToGrpc_PartTypeData();
+  private final AnimalPartDto_ToGrpc_AnimalPartData animalPartDtoConverter = new AnimalPartDto_ToGrpc_AnimalPartData();
 
-  public PartTypeRegistrationSystemImpl(String host, int port, int maxNestingDepth) {
+  public PartTypeRegistrationSystemImpl(String host, int port) {
     super(host, port);
-    this.maxNestingDepth = maxNestingDepth;
   }
 
 
   @Transactional
-  @Override public PartType registerNewPartType(String desc) throws CreateFailedException {
+  @Override public PartTypeDto registerNewPartType(String desc) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -50,13 +46,13 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeServiceGrpc.PartTypeServiceBlockingStub stub = PartTypeServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of PartType (PartTypeData)
-      PartTypeData data = GrpcFactory.buildGrpcPartTypeData(desc, new ArrayList<>());
+      PartTypeData data = GrpcFactory.buildGrpcPartTypeData(1L, desc, new ArrayList<>());
 
       // Prompt gRPC to register the PartType:
       PartTypeData createdPartType = stub.registerPartType(data);
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
-      return readPartType(createdPartType.getPartTypeId());
+      return readPartType(GrpcId_To_LongId.ConvertToLongId(createdPartType.getPartTypeId()));
       //return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
 
     } catch (StatusRuntimeException e) {
@@ -68,7 +64,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
   }
 
 
-  @Override public PartType readPartType(long typeId) throws NotFoundException {
+  @Override public PartTypeDto readPartType(long typeId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -84,7 +80,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeData foundPartType = partTypeStub.readPartType(id);
 
       // Convert the PartTypeData that was read from the DB into java compatible format:
-      PartType partType = grpcPartTypeDataConverter.convertToPartType(foundPartType, maxNestingDepth);
+      return grpcPartTypeDataConverter.convertToPartTypeDto(foundPartType);
 
       // Populate PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
@@ -102,7 +98,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       }*/
 
       // Return:
-      return partType;
+      //return partType;
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No PartType found with id '" + typeId + "' (" + e.getMessage() + ")");
@@ -114,7 +110,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
 
   @Transactional
-  @Override public void updatePartType(PartType data) throws UpdateFailedException, NotFoundException {
+  @Override public void updatePartType(PartTypeDto data) throws UpdateFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -123,7 +119,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypeServiceGrpc.PartTypeServiceBlockingStub partTypeStub = PartTypeServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partType = PartType_ToGrpc_PartTypeData.convertToPartTypeData(data);
+      PartTypeData partType = partTypeDtoConverter.convertToPartTypeData(data);
 
       // Prompt gRPC to update the Animal:
       EmptyMessage updated = partTypeStub.updatePartType(partType);
@@ -156,10 +152,10 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       AnimalPartServiceGrpc.AnimalPartServiceBlockingStub animalPartStub = AnimalPartServiceGrpc.newBlockingStub(channel);
 
       // Attempt to find an PartType with the given typeId:
-      PartType partType = readPartType(typeId);
+      PartTypeDto partType = readPartType(typeId);
 
       // Create a gRPC compatible version of PartType (Convert PartType to PartTypeData)
-      PartTypeData partTypeData = PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType);
+      PartTypeData partTypeData = partTypeDtoConverter.convertToPartTypeData(partType);
 
       // Prompt gRPC to delete the PartType:
       EmptyMessage deleted = partTypeStub.removePartType(partTypeData);
@@ -168,15 +164,16 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
         throw new DeleteFailedException("Failed to delete PartType with id '" + typeId);
 
       // Check if there are any remaining AnimalParts associated with this PartType, if so delete these too:
-      if(!partType.getAnimalPartIdList().isEmpty()) {
+      // TODO: Shouldn't be needed with JPA.
+      /*if(!partType.getAnimalPartIdList().isEmpty()) {
         // Prompt gRPC to delete the AnimalPart:
-        for (AnimalPart animalPart : partType.getPartList()) {
-          deleted = animalPartStub.removeAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart));
+        for (AnimalPart animalPart : partType.getAnimalPartList()) {
+          deleted = animalPartStub.removeAnimalPart(animalPartDtoConverter.convertToAnimalPartData(animalPart, maxNestingDepth));
 
           if(deleted == null && animalPart != null)
-            throw new DeleteFailedException("Failed to delete AnimalPart with id '" + animalPart.getPart_id() + "' associated with PartType_id '" + typeId + "'");
+            throw new DeleteFailedException("Failed to delete AnimalPart with id '" + animalPart.getPartId() + "' associated with PartType_id '" + typeId + "'");
         }
-      }
+      }*/
 
       return true;
     } catch (StatusRuntimeException e) {
@@ -192,7 +189,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
   }
 
 
-  @Override public List<PartType> getAllPartTypes() throws NotFoundException {
+  @Override public List<PartTypeDto> getAllPartTypes() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -205,7 +202,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       PartTypesData partTypesData = partTypeStub.getAllPartTypes(GrpcFactory.buildGrpcEmptyMessage());
 
       // Convert received data to java language:
-      List<PartType> partTypes = grpcPartTypeDataConverter.convertToPartTypeList(partTypesData, maxNestingDepth);
+      return grpcPartTypeDataConverter.convertToPartTypeDtoList(partTypesData);
 
       // Populate each PartType with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
@@ -225,7 +222,7 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       }*/
 
       // Return data
-      return partTypes;
+      //return partTypes;
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))

@@ -55,7 +55,7 @@ public class TestDataSourceConfig
 
     return builder
         .dataSource(testdbDataSource)
-        .packages("shared.model.entities")
+        .packages("server.model.persistence.entities")
         .persistenceUnit("testdbDataSource")
         .properties(testdbJpaProperties)
         .build();

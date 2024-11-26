@@ -14,8 +14,7 @@ message AnimalData {
   string animalWeight = 2;
   string origin = 3;
   string arrival_date = 4;
-  repeated int64 animalPartIds = 5;
-  repeated AnimalPartData animalPartList = 6;
+  repeated AnimalPartId animalPartIds = 5;
 }
 
 
@@ -32,11 +31,11 @@ message AnimalsData {
 // AnimalPart entity:
 message AnimalPartData {
   AnimalPartId animalPartId = 1;
-  PartTypeData partType = 2;
-  string partWeight = 3;
-  AnimalData animal = 4;
-  TrayData tray = 5;
-  ProductData product = 6;
+  string partWeight = 2;
+  PartTypeId partTypeId = 3;
+  AnimalId animalId = 4;
+  TrayId trayId = 5;
+  ProductId productId = 6;
 }
 
 
@@ -52,15 +51,13 @@ message AnimalPartsData {
 
 // Tray entity:
 message TrayData {
-  int64 trayId = 1;
+  TrayId trayId = 1;
   string maxWeight_kilogram = 2;
   string weight_kilogram = 3;
-  PartTypeData trayType = 4;
-  repeated int64 animalPartIds = 5;
-  repeated int64 transferIds = 6;
-  repeated TrayToProductTransferData transfersData = 7;
-  repeated AnimalPartData animalPartList = 8;
-  repeated ProductData productList = 9;
+  PartTypeId trayTypeId = 4;
+  repeated TrayToProductTransferId transferIds = 5;
+  repeated AnimalPartId animalPartIds = 6;
+  repeated ProductId productids = 7;
 }
 
 
@@ -76,10 +73,9 @@ message TraysData {
 
 // PartType entity:
 message PartTypeData {
-  int64 partTypeId = 1;
+  PartTypeId partTypeId = 1;
   string partDesc = 2;
-  repeated int64 animalPartIds = 3;
-  repeated AnimalPartData animalPartList = 4;
+  repeated AnimalPartId animalPartIds = 3;
 }
 
 
@@ -95,12 +91,10 @@ message PartTypesData {
 
 // Product entity:
 message ProductData {
-  int64 productId = 1;
-  repeated int64 animalPartIds = 2;
-  repeated int64 transferIds = 3;
-  repeated TrayToProductTransferData transfersData = 4;
-  repeated TrayData trayDataList = 5;
-  repeated AnimalPartData animalPartList = 6;
+  ProductId productId = 1;
+  repeated TrayToProductTransferId transferIds = 2;
+  repeated TrayId trayIds = 3;
+  repeated AnimalPartId animalPartIds = 4;
 }
 
 
@@ -116,9 +110,14 @@ message ProductsData {
 
 // TrayToProductTransfer entity:
 message TrayToProductTransferData {
+  TrayToProductTransferId transferId = 1;
+  TrayId trayId = 2;
+  ProductId productId = 3;
+}
+
+
+message TrayToProductTransferId {
   int64 transferId = 1;
-  TrayData tray = 2;
-  ProductData product = 3;
 }
 
 

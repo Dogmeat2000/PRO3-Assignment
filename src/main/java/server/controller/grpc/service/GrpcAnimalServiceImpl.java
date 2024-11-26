@@ -7,13 +7,12 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
 import server.controller.grpc.adapters.java_to_gRPC.Animal_ToGrpc_AnimalData;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
-import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.AnimalRegistryInterface;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -25,20 +24,21 @@ import java.util.List;
 public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBase
 {
   private final AnimalRegistryInterface animalService;
-  private final AnimalPartRegistryInterface animalPartService;
-  private final GrpcAnimalData_To_Animal grpcAnimalDataConverter = new GrpcAnimalData_To_Animal();
-  private final int maxNestingDepth;
+  //private final AnimalPartRegistryInterface animalPartService;
+  private final GrpcAnimalData_To_Animal grpcAnimalDataConverter;
+  private final Animal_ToGrpc_AnimalData animalConverter = new Animal_ToGrpc_AnimalData();
+  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcAnimalServiceImpl(AnimalRegistryInterface animalService,
-      AnimalPartRegistryInterface animalPartService/*,
-      GrpcAnimalData_To_Animal grpcAnimalDataConverter*/,
-      @Value("${maxNestingDepth}") int maxNestingDepth) {
+      /*AnimalPartRegistryInterface animalPartService,*/
+      GrpcAnimalData_To_Animal grpcAnimalDataConverter/*,
+      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
     super();
     this.animalService = animalService;
-    this.animalPartService = animalPartService;
-    this.maxNestingDepth = maxNestingDepth;
-    //this.grpcAnimalDataConverter = grpcAnimalDataConverter;
+    //this.animalPartService = animalPartService;
+    //this.maxNestingDepth = maxNestingDepth;
+    this.grpcAnimalDataConverter = grpcAnimalDataConverter;
   }
 
 
@@ -48,14 +48,14 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the Animal:
-      Animal createdAnimal = animalService.registerAnimal(grpcAnimalDataConverter.convertToAnimal(request, maxNestingDepth));
+      Animal createdAnimal = animalService.registerAnimal(grpcAnimalDataConverter.convertToAnimal(request));
 
       // If animal creation fails
       if (createdAnimal == null)
         throw new CreateFailedException("Animal could not be created");
 
       // Translate the created Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(createdAnimal));
+      responseObserver.onNext(animalConverter.convertToAnimalData(createdAnimal));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering animal, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -67,7 +67,6 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   public void readAnimal(AnimalId request, StreamObserver<AnimalData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible type,
-
       // and attempt to read the Animal with the provided ID:
       Animal animal = animalService.readAnimal(GrpcId_To_LongId.ConvertToLongId(request));
 
@@ -76,7 +75,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
         throw new NotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalData(animal));
+      responseObserver.onNext(animalConverter.convertToAnimalData(animal));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("Animal with id " + request.getAnimalId() + " not found in DB").withCause(e).asRuntimeException());
@@ -91,12 +90,13 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
   public void updateAnimal(AnimalData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      Animal animalReceived = grpcAnimalDataConverter.convertToAnimal(request, maxNestingDepth);
+      Animal animalReceived = grpcAnimalDataConverter.convertToAnimal(request);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      animalReceived.getPartList().clear();
+      // TODO: Shouldn't be needed with the new adjusted converters.
+      /*animalReceived.getPartList().clear();
       for (Long animalPartId : animalReceived.getAnimalPartIdList())
-        animalReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+        animalReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));*/
 
       // Attempt to update the Animal:
       if (!animalService.updateAnimal(animalReceived)) {
@@ -121,7 +121,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the Animal with the provided ID:
-      if(!animalService.removeAnimal(grpcAnimalDataConverter.convertToAnimal(request, maxNestingDepth))) {
+      if(!animalService.removeAnimal(grpcAnimalDataConverter.convertToAnimal(request))) {
         // If Animal deletion failed:
         throw new DeleteFailedException("Error occurred while deleting animal with id='" + request.getAnimalId() + "'");
       }
@@ -148,7 +148,7 @@ public class GrpcAnimalServiceImpl extends AnimalServiceGrpc.AnimalServiceImplBa
         throw new NotFoundException("Animal not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(Animal_ToGrpc_AnimalData.convertToAnimalsDataList(animals));
+      responseObserver.onNext(animalConverter.convertToAnimalsDataList(animals));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No Animals found").withCause(e).asRuntimeException());

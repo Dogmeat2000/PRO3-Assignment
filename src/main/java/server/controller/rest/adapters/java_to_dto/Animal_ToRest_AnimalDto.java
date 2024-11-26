@@ -3,7 +3,7 @@ package server.controller.rest.adapters.java_to_dto;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import shared.model.dto.AnimalDto;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
 import shared.model.exceptions.rest.DtoConversionException;
 import shared.model.exceptions.rest.DtoValidationException;
 

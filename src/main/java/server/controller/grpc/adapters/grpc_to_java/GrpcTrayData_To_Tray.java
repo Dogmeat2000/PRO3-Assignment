@@ -1,82 +1,83 @@
 package server.controller.grpc.adapters.grpc_to_java;
 
 import grpc.*;
-import org.springframework.context.annotation.Scope;
+import jakarta.persistence.PersistenceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-import shared.model.entities.*;
+import server.model.persistence.entities.*;
+import server.model.persistence.service.AnimalPartService;
+import server.model.persistence.service.PartTypeService;
+import server.model.persistence.service.ProductService;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Responsible for converting a gRPC connection data entries into application compatible entities */
+/** <p>Responsible for converting a gRPC connection data entries into application compatible entities</p> */
 @Component
-@Scope("singleton")
 public class GrpcTrayData_To_Tray
 {
-  private GrpcAnimalPartData_To_AnimalPart animalPartConverter = null;
-  private GrpcPartTypeData_To_PartType trayTypeConverter = null;
-  private GrpcTrayToProductTransferData_To_TrayToProductTransfer trayToProductTransfer = null;
-  private GrpcProductData_To_Product productConverter = null;
+  private final AnimalPartService animalPartService;
+  private final PartTypeService partTypeService;
+  private final ProductService productService;
 
-  /** Converts database/gRPC compatible TrayData information into an application compatible Tray entity */
-  public Tray convertToTray(TrayData trayData, int maxNestingDepth) {
+  @Autowired
+  public GrpcTrayData_To_Tray(AnimalPartService animalPartService, PartTypeService partTypeService, ProductService productService){
+    this.animalPartService = animalPartService;
+    this.partTypeService = partTypeService;
+    this.productService = productService;
+  }
 
-    if (trayData == null || maxNestingDepth < 0)
+  /** <p>Converts gRPC compatible TrayData information into an application compatible Tray entity</p> */
+  public Tray convertToTray(TrayData trayData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
+
+    if (trayData == null)
       return null;
 
-    int currentNestingDepth = maxNestingDepth-1;
-
-    // Lazy instantiate the required converters as needed:
-    if(animalPartConverter == null)
-      animalPartConverter = new GrpcAnimalPartData_To_AnimalPart();
-    if(trayToProductTransfer == null)
-      trayToProductTransfer = new GrpcTrayToProductTransferData_To_TrayToProductTransfer();
-    if(trayTypeConverter == null)
-      trayTypeConverter = new GrpcPartTypeData_To_PartType();
-    if(productConverter == null)
-      productConverter = new GrpcProductData_To_Product();
-
-    // Convert the gRPC data fields, excluding any lists of other entities. These need to be queried separately by the calling gRPC service layer:
-    long id = trayData.getTrayId();
+    // Convert the gRPC data fields, excluding any lists of other entities. These are queried from the repository based on the provided ids:
+    long id = GrpcId_To_LongId.ConvertToLongId(trayData.getTrayId());
     BigDecimal maxWeight_kilogram = trayData.getMaxWeightKilogram().isEmpty() ? BigDecimal.ZERO : new BigDecimal(trayData.getMaxWeightKilogram());
-    BigDecimal weight_kilogram = trayData.getWeightKilogram().isEmpty() ? BigDecimal.ZERO : new BigDecimal(trayData.getWeightKilogram());
-    List<Long> animalPartIdList = new ArrayList<>(trayData.getAnimalPartIdsList());
-    List<Long> transferIdList = new ArrayList<>(trayData.getTransferIdsList());
-    PartType trayType = trayTypeConverter.convertToPartType(trayData.getTrayType(), currentNestingDepth);
+
+    // Query database for the referenced PartType entities, for proper Object Relational Model (ORM) behavior:
+    /*PartType trayType = null;
+    try {
+      trayType = partTypeService.readPartType(GrpcId_To_LongId.ConvertToLongId(trayData.getTrayTypeId()));
+    } catch (NotFoundException ignored) {}*/
+
+    // Query database for the referenced AnimalPart entities, for proper Object Relational Model (ORM) behavior:
+    List<AnimalPart> animalParts = new ArrayList<>();
+    for (AnimalPartId animalPartId : trayData.getAnimalPartIdsList())
+      animalParts.add(animalPartService.readAnimalPart(GrpcId_To_LongId.ConvertToLongId(animalPartId)));
+
+    // Query database for the referenced Product and Transfer entities, for proper Object Relational Model (ORM) behavior:
+    List<Product> products = new ArrayList<>();
+    List<TrayToProductTransfer> transfers = new ArrayList<>();
+    try {
+      for (ProductId productId : trayData.getProductidsList()){
+        Product product = productService.readProduct(GrpcId_To_LongId.ConvertToLongId(productId));
+        products.add(product);
+        transfers.addAll(product.getTraySupplyJoinList());
+      }
+    } catch (NotFoundException ignored) {}
 
     // Construct new Tray entity:
-    Tray tray = new Tray(id, maxWeight_kilogram, weight_kilogram, animalPartIdList, transferIdList);
-    tray.setTrayType(trayType);
+    // Note: The tray weight is initially set to zero, since each execution of the addAnimalPart() method adds to the current weight.
+    Tray tray = new Tray(id, maxWeight_kilogram);
+    tray.addAllAnimalParts(animalParts);
+    for (Product product : products)
+      tray.addProduct(product);
 
-    // Add remaining values:
-    for (TrayToProductTransferData transferData : trayData.getTransfersDataList())
-      tray.getTransferList().add(trayToProductTransfer.convertToTrayToProductTransfer(transferData, currentNestingDepth));
-
-    // Convert the attached AnimalParts, for proper Object Relational Model (ORM) behavior:
-    try {
-      for (AnimalPartData animalPartData : trayData.getAnimalPartListList()) {
-        tray.addAnimalPart(animalPartConverter.convertToAnimalPart(animalPartData, currentNestingDepth));
-      }
-    } catch (NotFoundException e) {
-      tray.clearAnimalPartContents();
-    }
-
-    // Convert the attached Products, for proper Object Relational Model (ORM) behavior:
-    try {
-      for (ProductData productData : trayData.getProductListList()) {
-        tray.getProductList().add(productConverter.convertToProduct(productData, currentNestingDepth));
-      }
-    } catch (NotFoundException e) {
-      tray.setProductList(new ArrayList<>());
-    }
+    for (TrayToProductTransfer transfer: transfers)
+      tray.addTransfer(transfer);
 
     return tray;
   }
 
 
-  public List<Tray> convertToTrayList(TraysData data, int maxNestingDepth) {
+  public List<Tray> convertToTrayList(TraysData data) {
     // Return an empty list, if received list is null or empty.
     if(data == null || data.getTraysList().isEmpty())
       return new ArrayList<>();
@@ -84,7 +85,7 @@ public class GrpcTrayData_To_Tray
     // Convert List of TraysData to a java compatible list by iteration through each entry and running the method previously declared:
     List<Tray> trayList = new ArrayList<>();
     for (TrayData trayData : data.getTraysList())
-      trayList.add(convertToTray(trayData, maxNestingDepth));
+      trayList.add(convertToTray(trayData));
 
     // return a new List of Tray entities:
     return trayList;

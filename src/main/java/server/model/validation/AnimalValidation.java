@@ -1,7 +1,7 @@
 package server.model.validation;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

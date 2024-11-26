@@ -2,7 +2,7 @@ package server.model.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import shared.model.entities.*;
+import server.model.persistence.entities.AnimalPart;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +24,5 @@ public interface AnimalPartRepository extends JpaRepository<AnimalPart, Long>
   Optional<List<AnimalPart>> findAnimalPartsByProduct_productId(Long product_id);
   Optional<List<AnimalPart>> findAnimalPartsByTray_trayId(Long trayId);
   Optional<List<AnimalPart>> findAnimalPartsByType_typeId(Long partType_id);
+  void deleteAnimalPartByPartId(Long part_id);
 }

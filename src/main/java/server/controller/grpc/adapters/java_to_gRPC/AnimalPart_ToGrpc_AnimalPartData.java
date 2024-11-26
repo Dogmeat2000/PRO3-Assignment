@@ -1,51 +1,37 @@
 package server.controller.grpc.adapters.java_to_gRPC;
 
 import grpc.*;
-import shared.model.entities.AnimalPart;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import server.model.persistence.entities.AnimalPart;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** Responsible for converting a application entities into a database/gRPC compatible formats */
+/** <p>Responsible for converting a application entities into a gRPC compatible formats</p> */
 public class AnimalPart_ToGrpc_AnimalPartData
 {
-  /** Converts a AnimalPart entity into a database/gRPC compatible AnimalPartData format */
-  public static AnimalPartData convertToAnimalPartData(AnimalPart animalPart) {
+  /** <p>Converts a AnimalPart entity into a gRPC compatible AnimalPartData format</p> */
+  public AnimalPartData convertToAnimalPartData(AnimalPart animalPart) {
 
     if (animalPart == null)
       return null;
 
-    // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
+    // Convert the java data fields:
     AnimalPartData.Builder animalbuilder = AnimalPartData.newBuilder();
-    animalbuilder.setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPart.getPart_id()));
-    animalbuilder.setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPart.getPart_id()));
+    animalbuilder.setAnimalPartId(LongId_ToGrpc_Id.convertToAnimalPartId(animalPart.getPartId()));
     animalbuilder.setPartWeight(animalPart.getWeight_kilogram().toString());
-    animalbuilder.setAnimal(Animal_ToGrpc_AnimalData.convertToAnimalData(animalPart.getAnimal()));
-    animalbuilder.setPartType(PartType_ToGrpc_PartTypeData.convertToPartTypeData(animalPart.getType()));
-    animalbuilder.setTray(Tray_ToGrpc_TrayData.convertToTrayData(animalPart.getTray(),3));
-
-    // Only set a Product, if the value is not null. AnimalParts do not necessarily have a Product associated with them:
+    animalbuilder.setPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(animalPart.getType().getTypeId()));
+    animalbuilder.setAnimalId(LongId_ToGrpc_Id.convertToAnimalId(animalPart.getAnimal().getId()));
+    animalbuilder.setTrayId(LongId_ToGrpc_Id.convertToTrayId(animalPart.getTray().getTrayId()));
     if(animalPart.getProduct() != null)
-      animalbuilder.setProduct(Product_ToGrpc_ProductData.convertToProductData(animalPart.getProduct(), 3));
+      animalbuilder.setProductId(LongId_ToGrpc_Id.convertToProductId(animalPart.getProduct().getProductId()));
 
     return animalbuilder.build();
   }
 
 
-  /*public static UpdatedAnimalPartData covertToUpdatedAnimalPartData(AnimalPart oldData, AnimalPart newData) {
-    if (oldData == null || newData == null)
-      return null;
-
-    UpdatedAnimalPartData.Builder updatedAnimalPartBuilder = UpdatedAnimalPartData.newBuilder()
-        .setOldData(convertToAnimalPartData(oldData))
-        .setNewData(convertToAnimalPartData(newData));
-
-    return updatedAnimalPartBuilder.build();
-  }*/
-
-
-  /** Converts a List of AnimalParts into the gRPC compatible AnimalPartsData format */
-  public static AnimalPartsData convertToAnimalPartsDataList(List<AnimalPart> animalParts) {
+  /** <p>Converts a List of AnimalParts into the gRPC compatible AnimalPartsData format</p> */
+  public AnimalPartsData convertToAnimalPartsDataList(List<AnimalPart> animalParts) {
     // Return an empty list, if received list is null or empty.
     if(animalParts == null || animalParts.isEmpty())
       return AnimalPartsData.newBuilder().addAllAnimalParts(new ArrayList<>()).build();

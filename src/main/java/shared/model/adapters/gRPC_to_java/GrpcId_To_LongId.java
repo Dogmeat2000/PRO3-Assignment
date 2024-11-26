@@ -1,4 +1,4 @@
-package server.controller.grpc.adapters.grpc_to_java;
+package shared.model.adapters.gRPC_to_java;
 
 import grpc.*;
 
@@ -32,5 +32,10 @@ public class GrpcId_To_LongId
   /** <p>Convert a gRPC data type's id into a java compatible id format</p> */
   public static long ConvertToLongId(ProductId productId) {
     return productId.getProductId();
+  }
+
+  /** <p>Convert a gRPC data type's id into a java compatible id format</p> */
+  public static long ConvertToLongId(TrayToProductTransferId transferId) {
+    return transferId.getTransferId();
   }
 }

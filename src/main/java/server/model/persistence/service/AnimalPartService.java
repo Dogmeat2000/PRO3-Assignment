@@ -9,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.model.persistence.entities.*;
+import server.model.persistence.repository.TrayToProductTransferRepository;
 import server.model.validation.AnimalPartValidation;
 import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.AnimalRepository;
-import shared.model.entities.*;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.*;
@@ -21,24 +22,24 @@ import java.util.*;
 public class AnimalPartService implements AnimalPartRegistryInterface
 {
   private final AnimalPartRepository animalPartRepository;
-  private final Map<Long, AnimalPart> animalPartCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(AnimalPartService.class);
   private final AnimalRepository animalRepository;
   private final TrayRegistryInterface trayRepository;
   private final PartTypeRegistryInterface partTypeRepository;
   private final ProductRegistryInterface productRepository;
   private final EntityManager entityManager;
-
+  private final TrayToProductTransferRepository trayToProductTransferRepository;
 
   @Autowired
   public AnimalPartService(AnimalPartRepository animalPartRepository, AnimalRepository animalRepository, TrayRegistryInterface trayRepository, PartTypeRegistryInterface partTypeRepository,
-      ProductRegistryInterface productRepository, EntityManager entityManager) {
+      ProductRegistryInterface productRepository, EntityManager entityManager, TrayToProductTransferRepository trayToProductTransferRepository) {
     this.animalPartRepository = animalPartRepository;
     this.animalRepository = animalRepository;
     this.trayRepository = trayRepository;
     this.partTypeRepository = partTypeRepository;
     this.productRepository = productRepository;
     this.entityManager = entityManager;
+    this.trayToProductTransferRepository = trayToProductTransferRepository;
   }
 
 
@@ -49,7 +50,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateAnimalPart(data);
 
     // Override any set part_id, since the database automatically assigns this when creating:
-    data.setPart_id(0);
+    data.setPartId(0);
 
     // Attempt to add AnimalPart to DB:
     try {
@@ -67,25 +68,54 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       if(data.getProduct() != null && data.getProduct().getProductId() > 0) {
         managedProduct = productRepository.readProduct(data.getProduct().getProductId());
         data.setProduct(entityManager.merge(managedProduct));
+
+        // Check if there already exists proper Transfers between the given Tray and given Product:
+        boolean transferExists = false;
+        for (long id : data.getTray().getTransferIdList()) {
+          if(data.getProduct().getTransferIdList().contains(id)) {
+            // The given transfer ID exists in both Tray and Product.
+            transferExists = true;
+          }
+        }
+
+        if(!transferExists) {
+          logger.info("No existing Transfer found for the given AnimalPart, Tray and Product. Creating a new transfer");
+          // A transfer does not already exist. We must create one.
+          TrayToProductTransfer newTransfer = new TrayToProductTransfer(0, data.getTray(), data.getProduct());
+          newTransfer = trayToProductTransferRepository.save(newTransfer);
+          System.out.println("\n\nCREATED NEW TRANSFER: " + newTransfer); // TODO: DELETE LINE
+
+          // Update both the Tray and the Product:
+          data.getTray().addTransfer(newTransfer);
+          //managedTray = trayRepository.readTray(data.getTray().getTrayId());
+          //data.setTray(entityManager.merge(managedTray));
+
+          data.getProduct().addTransfer(newTransfer);
+          //managedProduct = productRepository.readProduct(data.getProduct().getProductId());
+          //data.setProduct(entityManager.merge(managedProduct));
+        }
+
+      } else {
+        data.setProduct(null);
       }
 
 
       // Register the AnimalPart:
       AnimalPart newAnimalPart = animalPartRepository.save(data);
-      logger.info("AnimalPart added to DB with ID: {}", newAnimalPart.getPart_id());
+      logger.info("AnimalPart added to DB with ID: {}", newAnimalPart.getPartId());
 
       // Attempt to add AnimalPart to local cache:
-      animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
-      logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
+      //animalPartCache.put(newAnimalPart.getPart_id(), newAnimalPart);
+      //logger.info("AnimalPart saved to local cache with ID: {}", newAnimalPart.getPart_id());
 
-      return newAnimalPart;
+      return readAnimalPart(newAnimalPart.getPartId());
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
       logger.error("Unable to register AnimalPart in DB with weight: {}, Reason: {}", data.getWeight_kilogram(), e.getMessage());
       throw new DataIntegrityViolationException("Invalid AnimalPart provided. Incompatible with database!");
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while registering AnimalPart with ID {}: {}", data.getPart_id(), e.getMessage());
+      logger.error("Persistence exception occurred while registering AnimalPart with ID {}: {}", data.getPartId(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -96,27 +126,83 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     // Validate received id, before passing to repository/database:
     AnimalPartValidation.validateId(part_id);
 
-    // Attempt to read AnimalPart from local cache first:
-    /*if(animalPartCache.containsKey(part_id)) {
-      logger.info("AnimalPart read from local cache with ID: {}", part_id);
-      return animalPartCache.get(part_id);
-    }*/
-
-    // AnimalPart not found in local cache. Attempt to read from DB:
+    // Attempt to read from DB:
     try {
-      logger.info("AnimalPart not found in local cache with ID: {}. Looking up in database...", part_id);
+      logger.info("Looking up AnimalPart with ID: {} in database...", part_id);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
       AnimalPart animalPart = animalPartRepository.findById(part_id).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + part_id));
 
       logger.info("AnimalPart read from database with ID: {}", part_id);
 
-      // Add found AnimalPart to local cache, to improve performance next time AnimalPart is requested.
-      animalPartCache.put(animalPart.getPart_id(), animalPart);
-      logger.info("AnimalPart added to local cache with ID: {}", part_id);
+      System.out.println("Read this AnimalPart from db: " + animalPart);
+
+      // Read the proper associated data types, for full ORM behavior:
+      /*if(animalPart.getAnimal() != null)
+        animalPart.setAnimal(animalRepository.findById(animalPart.getAnimal().getId()).orElseThrow(() -> new PersistenceException("Exception occurred")));
+
+      if(animalPart.getType() != null)
+        animalPart.setType(partTypeRepository.readPartType(animalPart.getType().getTypeId()));
+
+      if(animalPart.getTray() != null)
+        animalPart.setTray(trayRepository.readTray(animalPart.getTray().getTrayId()));
+
+      if(animalPart.getProduct() != null)
+        animalPart.setProduct(productRepository.readProduct(animalPart.getProduct().getProductId()));*/
+
+      System.out.println("Read this AnimalPart from db 2: " + animalPart);
+
+      // Populate transient AnimalPart data:
+      // Transient AnimalPartID list embedded inside the embedded Animal
+      /*List<Long> animalPartIdListFromAnimal = new ArrayList<>();
+      for (AnimalPart animalPartEmbedded : animalPart.getAnimal().getAnimalPartList())
+        animalPartIdListFromAnimal.add(animalPartEmbedded.getPart_id());
+      animalPart.getAnimal().setAnimalPartIdList(animalPartIdListFromAnimal);*/
+
+      // Transient AnimalPartID list embedded inside the embedded PartType
+      /*List<Long> animalPartIdListFromPartType = new ArrayList<>();
+      for (AnimalPart animalPartEmbedded : animalPart.getType().getAnimalPartList())
+        animalPartIdListFromPartType.add(animalPartEmbedded.getPart_id());
+      animalPart.getType().setAnimalPartIdList(animalPartIdListFromPartType);*/
+
+      // Transient PartType embedded inside the embedded Tray
+      //animalPart.getTray().setTrayType(partTypeRepository.readPartType(animalPart.getTray().getTrayType().getTypeId()));
+
+      // Transient AnimalPartID list embedded inside the embedded Tray
+      /*List<Long> animalPartIdListFromTray = new ArrayList<>();
+      for (AnimalPart animalPartEmbedded : animalPart.getTray().getAnimalPartList())
+        animalPartIdListFromTray.add(animalPartEmbedded.getPart_id());
+      animalPart.getTray().setAnimalPartIdList(animalPartIdListFromTray);*/
+
+      // Transient transferId list embedded inside the embedded Tray
+      /*List<Long> transferIdListFromTray = new ArrayList<>();
+      for (TrayToProductTransfer transferEmbedded : animalPart.getTray().getTransferList())
+        transferIdListFromTray.add(transferEmbedded.getTransferId());
+      animalPart.getTray().setTransferIdList(transferIdListFromTray);*/
+
+      if(animalPart.getProduct() != null) {
+        // Transient transferId list embedded inside the embedded Product
+        //List<Long> transferIdListFromProduct = new ArrayList<>();
+        List<Tray> trayListFromProduct = new ArrayList<>();
+        for (TrayToProductTransfer transferEmbedded : animalPart.getProduct().getTraySupplyJoinList()){
+          //transferIdListFromProduct.add(transferEmbedded.getTransferId());
+          trayListFromProduct.add(trayRepository.readTray(transferEmbedded.getTray().getTrayId()));
+        }
+        //animalPart.getProduct().setTransferIdList(transferIdListFromProduct);
+        animalPart.getProduct().addAllTraysToTraySuppliersList(trayListFromProduct);
+
+        // Transient AnimalPartID list embedded inside the embedded Product
+        /*List<Long> animalPartIdListFromProduct = new ArrayList<>();
+        for (AnimalPart animalPartEmbedded : animalPart.getProduct().getAnimalPartList())
+          animalPartIdListFromProduct.add(animalPartEmbedded.getPart_id());
+        animalPart.getProduct().setAnimalPartIdList(animalPartIdListFromProduct);*/
+      }
+
+      System.out.println("Read this AnimalPart from db 3: " + animalPart);
+
       return animalPart;
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while registering AnimalPart with ID {}: {}", part_id, e.getMessage());
+      logger.error("Persistence exception occurred while reading AnimalPart with ID {}: {}", part_id, e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -128,16 +214,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateId(animalId);
 
     try {
-      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByAnimal_animalId(animalId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with animal_ID: " + animalId));
-
-      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
-      for (AnimalPart animalPart : animalParts) {
-        if(animalPart != null)
-          animalPartCache.put(animalPart.getPart_id(), animalPart);
-
-      }
-      logger.info("Added all AnimalParts associated with animalId '{}' to Local Cache", animalId);
-      return animalParts;
+      return animalPartRepository.findAnimalPartsByAnimal_animalId(animalId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with animal_ID: " + animalId));
 
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());
@@ -152,17 +229,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateId(typeId);
 
     try {
-      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByType_typeId(typeId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with type_ID: " + typeId));
-
-      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
-      for (AnimalPart animalPart : animalParts) {
-        if(animalPart != null)
-          animalPartCache.put(animalPart.getPart_id(), animalPart);
-
-      }
-      logger.info("Added all AnimalParts associated with type_ID '{}' to Local Cache", typeId);
-      return animalParts;
-
+      return animalPartRepository.findAnimalPartsByType_typeId(typeId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with type_ID: " + typeId));
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
@@ -176,17 +243,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateId(productId);
 
     try {
-      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByProduct_productId(productId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with product_id: " + productId));
-
-      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
-      for (AnimalPart animalPart : animalParts) {
-        if(animalPart != null)
-          animalPartCache.put(animalPart.getPart_id(), animalPart);
-
-      }
-      logger.info("Added all AnimalParts associated with product_id '{}' to Local Cache", productId);
-      return animalParts;
-
+      return animalPartRepository.findAnimalPartsByProduct_productId(productId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with product_id: " + productId));
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
@@ -200,17 +257,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateId(trayId);
 
     try {
-      List<AnimalPart> animalParts = animalPartRepository.findAnimalPartsByTray_trayId(trayId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with tray_id: " + trayId));
-
-      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
-      for (AnimalPart animalPart : animalParts) {
-        if(animalPart != null)
-          animalPartCache.put(animalPart.getPart_id(), animalPart);
-
-      }
-      logger.info("Added all AnimalParts associated with tray_id '{}' to Local Cache", trayId);
-      return animalParts;
-
+      return animalPartRepository.findAnimalPartsByTray_trayId(trayId).orElseThrow(() -> new NotFoundException("No AnimalParts found in database associated with tray_id: " + trayId));
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());
       throw new PersistenceException(e);
@@ -218,7 +265,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override public boolean updateAnimalPart(AnimalPart data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
     AnimalPartValidation.validateAnimalPart(data);
@@ -226,35 +273,48 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     // Attempt to update AnimalPart in database:
     try {
       // Fetch existing entity from DB:
-      AnimalPart oldAnimalPart = animalPartRepository.findById(data.getPart_id()).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + data.getPart_id()));
+      AnimalPart oldAnimalPart = animalPartRepository.findById(data.getPartId()).orElseThrow(() -> new NotFoundException("No AnimalPart found in database with matching id=" + data.getPartId()));
 
 
       // Retrieve most recent repository versions of associated entities, for the modified AnimalPart:
       Animal managedModifiedAnimal = entityManager.merge(animalRepository.findById(data.getAnimal().getId()).orElseThrow(() -> new NotFoundException("Animal not found")));
-      data.setAnimal(managedModifiedAnimal);
+      //data.setAnimal(managedModifiedAnimal);
 
       Tray managedModifiedTray = entityManager.merge(trayRepository.readTray(data.getTray().getTrayId()));
-      data.setTray(managedModifiedTray);
+      //data.setTray(managedModifiedTray);
 
       PartType managedModifiedPartType = entityManager.merge(partTypeRepository.readPartType(data.getType().getTypeId()));
-      data.setType(managedModifiedPartType);
+      //data.setType(managedModifiedPartType);
 
       Product managedModifiedProduct = null;
       if(data.getProduct() != null && data.getProduct().getProductId() > 0)
         managedModifiedProduct = productRepository.readProduct(data.getProduct().getProductId());
-      data.setProduct(managedModifiedProduct);
+      //data.setProduct(managedModifiedProduct);
+
+      System.out.println("\n\nAttempting to update AnimalPart Weight from '" + oldAnimalPart.getWeight_kilogram() + "' to '" + data.getWeight_kilogram() + "\n\n");
 
       // Modify the database Entity locally:
-      AnimalPart modifiedAnimalPart = data.copy();
+      oldAnimalPart.setWeight_kilogram(data.getWeight_kilogram());
+      oldAnimalPart.setAnimal(managedModifiedAnimal);
+      oldAnimalPart.setTray(managedModifiedTray);
+      oldAnimalPart.setType(managedModifiedPartType);
+      oldAnimalPart.setProduct(managedModifiedProduct);
+
+
+      System.out.println("Modified AnimalPart Before Save has weight of: " + oldAnimalPart.getWeight_kilogram() + "\n\n");
 
       // Save modified AnimalPart to Db:
-      modifiedAnimalPart = animalPartRepository.save(modifiedAnimalPart);
-      logger.info("AnimalPart updated in database with ID: {}", modifiedAnimalPart.getPart_id());
+      System.out.println("SAVING!!!!");
+      oldAnimalPart = animalPartRepository.save(oldAnimalPart);
+      System.out.println("SAVED!!!!");
+      logger.info("AnimalPart updated in database with ID: {}", oldAnimalPart.getPartId());
+
+      System.out.println("\n\nSaved AnimalPart was: " + animalPartRepository.findById(oldAnimalPart.getPartId()));
 
       // Check if there are any of the associated entities, that changed. If so, update the old/void ones, to remove this AnimalPart from their associations:
-
+      // TODO: Should not be necessary since Cascade.All is set in entity.
       // Check associated Animal:
-      if(modifiedAnimalPart.getAnimal().getId() != oldAnimalPart.getAnimal().getId()) {
+      /*if(modifiedAnimalPart.getAnimal().getId() != oldAnimalPart.getAnimal().getId()) {
         //Old Animal no longer has association to this AnimalPart. Remove it:
         oldAnimalPart.getAnimal().removeAnimalPart(oldAnimalPart);
         animalRepository.save(oldAnimalPart.getAnimal());
@@ -281,23 +341,16 @@ public class AnimalPartService implements AnimalPartRegistryInterface
           oldAnimalPart.getProduct().removeAnimalPart(oldAnimalPart);
           productRepository.updateProduct(oldAnimalPart.getProduct());
         }
-      }
-
-      // Reset the local cache, since updates done inside the other service classes might not be downloaded from the Database:
-      animalPartCache.clear();
-
-      // Attempt to add new AnimalPart to local cache:
-      animalPartCache.put(modifiedAnimalPart.getPart_id(), modifiedAnimalPart);
-      logger.info("AnimalPart saved to local cache with ID: {}", modifiedAnimalPart.getPart_id());
+      }*/
 
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", data.getPart_id(), e.getMessage());
+      logger.error("Unable to update AnimalPart in DB with id: {}, Reason: {}", data.getPartId(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", data.getPart_id(), e.getMessage());
+      logger.error("Persistence exception occurred while updating AnimalPart with ID {}: {}", data.getPartId(), e.getMessage());
       throw new PersistenceException(e);
     }
   }
@@ -309,25 +362,22 @@ public class AnimalPartService implements AnimalPartRegistryInterface
     AnimalPartValidation.validateAnimalPart(data);
 
     // Read most recent version of AnimalPart:
-    AnimalPart animalPartToRemove = readAnimalPart(data.getPart_id());
+    //AnimalPart animalPartToRemove = readAnimalPart(data.getPartId());
 
     try {
       // Attempt to delete the given AnimalPart:
-      animalPartRepository.delete(data);
+      animalPartRepository.deleteAnimalPartByPartId(data.getPartId());
 
       // Confirm that the entity has been removed:
-      Optional<AnimalPart> deletedAnimalPart = animalPartRepository.findById(data.getPart_id());
+      Optional<AnimalPart> deletedAnimalPart = animalPartRepository.findById(data.getPartId());
 
       if(deletedAnimalPart.isPresent()) {
         // AnimalPart was not removed from database.
-        logger.info("AnimalPart was NOT deleted from database with ID: {}", data.getPart_id());
-        throw new PersistenceException("AnimalPart with ID " + data.getPart_id() + " was not deleted!");
+        logger.info("AnimalPart was NOT deleted from database with ID: {}", data.getPartId());
+        throw new PersistenceException("AnimalPart with ID " + data.getPartId() + " was not deleted!");
       }
 
-      logger.info("AnimalPart deleted from database with ID: {}", data.getPart_id());
-      // AnimalPart was removed from database. Now ensure that is it also removed from the local cache:
-      animalPartCache.remove(data.getPart_id());
-      logger.info("AnimalPart deleted from local cache with ID: {}", data.getPart_id());
+      logger.info("AnimalPart deleted from database with ID: {}", data.getPartId());
 
       // Update associated entities:
       // Parent Animal:
@@ -361,7 +411,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
       return true;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      logger.error("Unable to delete AnimalPart in DB with id: {}, Reason: {}", data.getPart_id(), e.getMessage());
+      logger.error("Unable to delete AnimalPart in DB with id: {}, Reason: {}", data.getPartId(), e.getMessage());
       throw new DataIntegrityViolationException(e.getMessage());
 
     } catch (PersistenceException e) {
@@ -374,17 +424,7 @@ public class AnimalPartService implements AnimalPartRegistryInterface
   @Transactional (readOnly = true)
   @Override public List<AnimalPart> getAllAnimalParts() throws PersistenceException {
     try {
-      List<AnimalPart> animalParts = animalPartRepository.findAll();
-
-      // Add all the found AnimalParts to local cache, to improve performance next time an AnimalPart is requested.
-      animalPartCache.clear();
-      for (AnimalPart animalPart : animalParts) {
-        if(animalPart != null){
-          animalPartCache.put(animalPart.getPart_id(), animalPart);
-        }
-      }
-      logger.info("Added all AnimalParts from Database to Local Cache");
-      return animalParts;
+      return animalPartRepository.findAll();
 
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());

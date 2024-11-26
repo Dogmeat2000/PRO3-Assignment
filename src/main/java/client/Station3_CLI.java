@@ -2,7 +2,12 @@ package client;
 
 import client.interfaces.*;
 import client.ui.Model.service.*;
-import shared.model.entities.*;
+import server.model.persistence.entities.AnimalPart;
+import server.model.persistence.entities.Product;
+import server.model.persistence.entities.Tray;
+import shared.model.dto.AnimalPartDto;
+import shared.model.dto.ProductDto;
+import shared.model.dto.TrayDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
 
@@ -12,9 +17,9 @@ import java.util.Scanner;
 
 public class Station3_CLI
 {
-  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090, 3);
-  private static final TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090, 3);
-  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090, 3);
+  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
+  private static final TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
+  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
 
   public static void main(String[] args) {
     System.out.println("\nSTATION 3: Product Packaging (Command Line Interface)\nThis CLI is for debugging purposes!");
@@ -82,12 +87,12 @@ public class Station3_CLI
       case "add":
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
-        validPartIds.clear();
-        for (AnimalPart animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
-          if(animalPart.getProduct() == null || animalPart.getProduct().getProductId() == 0) {
+        //validPartIds.clear();
+        for (AnimalPartDto animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
+          if(animalPart.getProductId() == 0) {
             // This AnimalPart is not already packed into a Product.
             System.out.println(animalPart);
-            validPartIds.add(animalPart.getPart_id());
+            validPartIds.add(animalPart.getPartId());
           }
         }
 
@@ -98,21 +103,21 @@ public class Station3_CLI
           System.out.println("Invalid input!");
           break;
         }
-        AnimalPart parentAnimalPart = null;
+        AnimalPartDto parentAnimalPart = null;
         try {
           parentAnimalPart = animalPartRegistrationSystem.readAnimalPart(Long.parseLong(value));
         } catch (NotFoundException e) {
           System.out.println("Invalid Animal Id!");
           break;
         }
-        List<AnimalPart> partsToPack = new ArrayList<>();
+        List<AnimalPartDto> partsToPack = new ArrayList<>();
         partsToPack.add(parentAnimalPart);
 
         // Read the Tray associated with the above AnimalParts:
-        List<Tray> traysReceivedFrom = new ArrayList<>();
-        for (AnimalPart animalPart : partsToPack){
+        List<TrayDto> traysReceivedFrom = new ArrayList<>();
+        for (AnimalPartDto animalPart : partsToPack){
           try {
-            traysReceivedFrom.add(trayRegistrationSystem.readTray(animalPart.getTray().getTrayId()));
+            traysReceivedFrom.add(trayRegistrationSystem.readTray(animalPart.getTrayId()));
           } catch (NotFoundException e) {
             System.out.println("Invalid Tray!");
             break;
@@ -121,10 +126,10 @@ public class Station3_CLI
 
         // Save the Product to the database:
         try {
-          Product product = productRegistrationSystem.registerNewProduct(partsToPack, traysReceivedFrom);
+          ProductDto product = productRegistrationSystem.registerNewProduct(partsToPack, traysReceivedFrom);
           System.out.println("Added [" + product + "] to Database!");
         } catch (CreateFailedException e) {
-          e.printStackTrace();
+          e.printStackTrace(); // TODO: DELETE LINE
           System.out.println("Product Registration failed, " + e.getMessage());
           break;
         }
@@ -277,7 +282,7 @@ public class Station3_CLI
         long productId = Long.parseLong(value);
 
         // Read the Product to from the database:
-        Product product;
+        ProductDto product;
         try {
           product = productRegistrationSystem.readProduct(productId);
           System.out.println("Found [" + product + "]");
@@ -292,9 +297,9 @@ public class Station3_CLI
         //Show a list of valid Products:
         System.out.println("\nRetrieving all Products from Database: ");
         try {
-          List<Product> productsFound = productRegistrationSystem.getAllProducts();
+          List<ProductDto> productsFound = productRegistrationSystem.getAllProducts();
           if(!productsFound.isEmpty()){
-            for (Product localProduct : productsFound) {
+            for (ProductDto localProduct : productsFound) {
               System.out.println(localProduct);
             }
           } else {

@@ -7,10 +7,10 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalPartData_To_AnimalPart;
-import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
+import server.model.persistence.entities.*;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
 import server.model.persistence.service.*;
-import shared.model.entities.*;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -22,29 +22,30 @@ import java.util.List;
 public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartServiceImplBase
 {
   private final AnimalPartRegistryInterface animalPartService;
-  private final ProductRegistryInterface productService;
+  /*private final ProductRegistryInterface productService;
   private final TrayRegistryInterface trayService;
   private final AnimalRegistryInterface animalService;
-  private final PartTypeRegistryInterface partTypeService;
-  private final GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter = new GrpcAnimalPartData_To_AnimalPart();
-  private final int maxNestingDepth;
+  private final PartTypeRegistryInterface partTypeService;*/
+  private final GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter;
+  private final AnimalPart_ToGrpc_AnimalPartData animalPartConverter = new AnimalPart_ToGrpc_AnimalPartData();
+  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcAnimalPartServiceImpl(AnimalPartRegistryInterface animalPartService,
       AnimalRegistryInterface animalService,
       PartTypeRegistryInterface partTypeService,
       TrayRegistryInterface trayService,
-      ProductRegistryInterface productService/*,
-      GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter*/,
+      ProductRegistryInterface productService,
+      GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter,
       @Value("${maxNestingDepth}") int maxNestingDepth) {
     super();
     this.animalPartService = animalPartService;
-    this.animalService = animalService;
+    /*this.animalService = animalService;
     this.partTypeService = partTypeService;
     this.trayService = trayService;
-    this.productService = productService;
-    //this.grpcAnimalPartDataConverter = grpcAnimalPartDataConverter;
-    this.maxNestingDepth = maxNestingDepth;
+    this.productService = productService;*/
+    this.grpcAnimalPartDataConverter = grpcAnimalPartDataConverter;
+    //this.maxNestingDepth = maxNestingDepth;
   }
 
 
@@ -52,11 +53,11 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void registerAnimalPart(AnimalPartData request, StreamObserver<AnimalPartData> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types
-      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
+      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request);
 
       // Query database for the data lost during gRPC transmission:
-      // Read associated Tray Data:
-      Tray associatedTray = trayService.readTray(animalPartReceived.getTray().getTrayId());
+      // Read associated Tray Data:  // TODO: Shouldn't be needed with the new adjusted converters.
+      /*Tray associatedTray = trayService.readTray(animalPartReceived.getTray().getTrayId());
 
       // Read associated Animal Data:
       Animal associatedAnimal = animalService.readAnimal(animalPartReceived.getAnimal().getId());
@@ -73,10 +74,11 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       animalPartReceived.setType(associatedPartType);
       animalPartReceived.setProduct(associatedProduct);
       animalPartReceived.setAnimal(associatedAnimal);
-      animalPartReceived.setTray(associatedTray);
+      animalPartReceived.setTray(associatedTray);*/
 
-      // Register the Product:
+      // Register the AnimalPart:
       AnimalPart createdAnimalPart = animalPartService.registerAnimalPart(animalPartReceived);
+      //System.out.println("[GprcAnimalPartService] Registered this AnimalPart: " + createdAnimalPart);
 
       // If AnimalPart creation fails
       if (createdAnimalPart == null)
@@ -84,38 +86,41 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
 
       // Update associated entities:
       // Parent Animal:
-      Animal parentAnimal = createdAnimalPart.getAnimal();
-      if(!parentAnimal.getPartList().contains(createdAnimalPart))
+      /*Animal parentAnimal = createdAnimalPart.getAnimal();
+      if(!parentAnimal.getAnimalPartList().contains(createdAnimalPart))
         parentAnimal.addAnimalPart(createdAnimalPart);
       animalService.updateAnimal(parentAnimal);
 
       // Parent Tray:
       Tray parentTray = createdAnimalPart.getTray();
-      if(!parentTray.getContents().contains(createdAnimalPart)) {
+      if(!parentTray.getAnimalPartList().contains(createdAnimalPart)) {
         parentTray.addAnimalPart(createdAnimalPart);
-        parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().add(createdAnimalPart.getWeight_kilogram()));
+        //parentTray.setWeight_kilogram(parentTray.getWeight_kilogram().add(createdAnimalPart.getWeight_kilogram()));
       }
       trayService.updateTray(parentTray);
 
       // Parent PartType:
       PartType parentPartType = createdAnimalPart.getType();
-      if(!parentPartType.getPartList().contains(createdAnimalPart))
+      if(!parentPartType.getAnimalPartList().contains(createdAnimalPart))
         parentPartType.addAnimalPart(createdAnimalPart);
       partTypeService.updatePartType(parentPartType);
 
       // Parent Product:
       if(createdAnimalPart.getProduct() != null && createdAnimalPart.getProduct().getProductId() != 0) {
         Product parentProduct = createdAnimalPart.getProduct();
-        if(!parentProduct.getContentList().contains(createdAnimalPart))
+        if(!parentProduct.getAnimalPartList().contains(createdAnimalPart))
           parentProduct.addAnimalPart(createdAnimalPart);
         productService.updateProduct(parentProduct);
-      }
+      }*/
 
-      // Translate the created Product into gRPC a compatible type, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(createdAnimalPart));
+      //System.out.println("[GprcAnimalPartService] Registered this AnimalPart 2: " + createdAnimalPart);
+      //System.out.println("[GprcAnimalPartService] Converting this AnimalPart 3: " + grpcAnimalPartDataConverter.convertToAnimalPart(animalPartConverter.convertToAnimalPartData(createdAnimalPart, maxNestingDepth), maxNestingDepth));
+
+      // Translate the created Product into a gRPC compatible type, before transmitting back to client:
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartData(createdAnimalPart));
       responseObserver.onCompleted();
     } catch (Exception e) {
-      e.printStackTrace();
+      e.printStackTrace(); // TODO: DELETE LINE
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -126,13 +131,15 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
       // Attempt to read the AnimalPart with the provided ID:
       AnimalPart animalPart = animalPartService.readAnimalPart(GrpcId_To_LongId.ConvertToLongId(request));
+      //System.out.println("[GprcAnimalPartService] Read this AnimalPart 1: " + animalPart);
 
       // If AnimalPart read failed:
       if (animalPart == null)
         throw new NotFoundException("AnimalPart not found");
 
       // Translate the found AnimalPart into a gRPC compatible type, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart));
+      //System.out.println("[GprcAnimalPartService] Sending this back this AnimalPart 2: " + animalPartConverter.convertToAnimalPartData(animalPart, maxNestingDepth));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartData(animalPart));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart with id '" + request.getAnimalPartId() + "' not found in DB").withCause(e).asRuntimeException());
@@ -153,7 +160,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("No AnimalParts associated with animal_id '" + request.getAnimalId() + "' found.");
 
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
@@ -174,7 +181,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("No AnimalParts associated with partType_id '" + request.getPartTypeId() + "' found.");
 
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
@@ -195,7 +202,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("No AnimalParts associated with product_id '" + request.getProductId() + "' found.");
 
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
@@ -216,7 +223,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("No AnimalParts associated with tray_id '" + request.getTrayId() + "' found.");
 
       // Translate the found AnimalPart into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).withCause(e).asRuntimeException());
@@ -231,11 +238,11 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     try {
 
       // Translate received gRPC information from the client, into Java compatible types:
-      AnimalPart modifiedAnimalPart = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
+      AnimalPart modifiedAnimalPart = grpcAnimalPartDataConverter.convertToAnimalPart(request);
 
       // Query database for the data lost during gRPC transmission:
-      // Read associated Tray Data:
-      Tray associatedTray = trayService.readTray(modifiedAnimalPart.getTray().getTrayId());
+      // Read associated Tray Data:  // TODO: Shouldn't be needed with the new adjusted converters.
+      /*Tray associatedTray = trayService.readTray(modifiedAnimalPart.getTray().getTrayId());
 
       // Read associated Animal Data:
       Animal associatedAnimal = animalService.readAnimal(modifiedAnimalPart.getAnimal().getId());
@@ -252,7 +259,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       modifiedAnimalPart.setType(associatedPartType);
       modifiedAnimalPart.setProduct(associatedProduct);
       modifiedAnimalPart.setAnimal(associatedAnimal);
-      modifiedAnimalPart.setTray(associatedTray);
+      modifiedAnimalPart.setTray(associatedTray);*/
 
       // Attempt to update the AnimalPart with the provided ID:
       if (!animalPartService.updateAnimalPart(modifiedAnimalPart)) {
@@ -275,11 +282,11 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
   public void removeAnimalPart(AnimalPartData request, StreamObserver<EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into Java compatible types,
-      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request, maxNestingDepth);
+      AnimalPart animalPartReceived = grpcAnimalPartDataConverter.convertToAnimalPart(request);
 
       // Query database for the data lost during gRPC transmission:
-      // Read associated Tray Data:
-      Tray associatedTray = trayService.readTray(animalPartReceived.getTray().getTrayId());
+      // Read associated Tray Data:  // TODO: Shouldn't be needed with the new adjusted converters.
+      /*Tray associatedTray = trayService.readTray(animalPartReceived.getTray().getTrayId());
 
       // Read associated Animal Data:
       Animal associatedAnimal = animalService.readAnimal(animalPartReceived.getAnimal().getId());
@@ -296,7 +303,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       animalPartReceived.setType(associatedPartType);
       animalPartReceived.setProduct(associatedProduct);
       animalPartReceived.setAnimal(associatedAnimal);
-      animalPartReceived.setTray(associatedTray);
+      animalPartReceived.setTray(associatedTray);*/
 
       // Attempt to delete the AnimalPart with the provided ID:
       if(!animalPartService.removeAnimalPart(animalPartReceived)) {
@@ -310,6 +317,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("AnimalPart not found in DB").withCause(e).asRuntimeException());
     } catch (Exception e) {
+      e.printStackTrace(); // TODO: DELETE
       responseObserver.onError(Status.INTERNAL.withDescription("Error deleting AnimalPart, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }
@@ -326,7 +334,7 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
         throw new NotFoundException("AnimalParts not found");
 
       // Translate the found Animal into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartsDataList(animalParts));
+      responseObserver.onNext(animalPartConverter.convertToAnimalPartsDataList(animalParts));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No AnimalParts found").withCause(e).asRuntimeException());

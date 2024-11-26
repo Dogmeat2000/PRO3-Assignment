@@ -1,6 +1,7 @@
 package client.interfaces;
 
-import shared.model.entities.PartType;
+import server.model.persistence.entities.PartType;
+import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -18,7 +19,7 @@ public interface PartTypeRegistrationSystem
      * @return The created PartType instance.
      * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
      */
-    PartType registerNewPartType (String desc) throws CreateFailedException;
+    PartTypeDto registerNewPartType (String desc) throws CreateFailedException;
 
 
     /** <p>Looks up any PartType entity with the specified id, in the repository</p>
@@ -26,7 +27,7 @@ public interface PartTypeRegistrationSystem
      * @return The identified PartType instance.
      * @throws NotFoundException Thrown if PartType is not be found.
      */
-    PartType readPartType (long typeId) throws NotFoundException;
+    PartTypeDto readPartType (long typeId) throws NotFoundException;
 
 
     /** <p>Updates the given PartType in the repository. Unique id is extracted from the PartType entity
@@ -35,7 +36,7 @@ public interface PartTypeRegistrationSystem
      * @throws NotFoundException Thrown if no matching PartType could be found in the repository.
      * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified PartType entity.
      */
-    void updatePartType (PartType data) throws UpdateFailedException, NotFoundException;
+    void updatePartType (PartTypeDto data) throws UpdateFailedException, NotFoundException;
 
 
     /** <p>Deletes the given PartType from the repository. Unique id is extracted from the PartType entity
@@ -52,5 +53,5 @@ public interface PartTypeRegistrationSystem
      * @return A List containing all PartType entities extracted from the repository.
      * @throws NotFoundException Thrown if no PartTypes could be found in the repository.
      */
-    List<PartType> getAllPartTypes() throws NotFoundException;
+    List<PartTypeDto> getAllPartTypes() throws NotFoundException;
 }

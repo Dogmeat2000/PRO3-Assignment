@@ -1,9 +1,13 @@
 package client.interfaces;
 
-import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
-import shared.model.entities.PartType;
-import shared.model.entities.Tray;
+import server.model.persistence.entities.Animal;
+import server.model.persistence.entities.AnimalPart;
+import server.model.persistence.entities.PartType;
+import server.model.persistence.entities.Tray;
+import shared.model.dto.AnimalDto;
+import shared.model.dto.AnimalPartDto;
+import shared.model.dto.PartTypeDto;
+import shared.model.dto.TrayDto;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -26,7 +30,7 @@ public interface AnimalPartRegistrationSystem
    * @return The created AnimalPart instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
-  AnimalPart registerNewAnimalPart (Animal animal, PartType type, Tray tray, BigDecimal weightInKilogram) throws CreateFailedException;
+  AnimalPartDto registerNewAnimalPart (AnimalDto animal, PartTypeDto type, TrayDto tray, BigDecimal weightInKilogram) throws CreateFailedException;
 
 
   /** <p>Looks up any AnimalPart entity with the specified id, in the repository</p>
@@ -37,20 +41,20 @@ public interface AnimalPartRegistrationSystem
    * @return The identified AnimalPart instance.
    * @throws NotFoundException Thrown if AnimalPart is not be found.
    */
-  AnimalPart readAnimalPart (long animalPartId) throws NotFoundException;
+  AnimalPartDto readAnimalPart (long animalPartId) throws NotFoundException;
 
 
   //TODO: Missing javaDocs
-  List<AnimalPart> readAnimalPartsByAnimalId(long animalId) throws NotFoundException;
+  List<AnimalPartDto> readAnimalPartsByAnimalId(long animalId) throws NotFoundException;
 
 
-  List<AnimalPart> readAnimalPartsByPartTypeId(long partTypeId) throws NotFoundException;
+  List<AnimalPartDto> readAnimalPartsByPartTypeId(long partTypeId) throws NotFoundException;
 
 
-  List<AnimalPart> readAnimalPartsByProductId(long productId) throws NotFoundException;
+  List<AnimalPartDto> readAnimalPartsByProductId(long productId) throws NotFoundException;
 
 
-  List<AnimalPart> readAnimalPartsByTrayId(long trayId) throws NotFoundException;
+  List<AnimalPartDto> readAnimalPartsByTrayId(long trayId) throws NotFoundException;
 
 
   /** <p>Updates the given AnimalPart in the repository. Unique id is extracted from the AnimalPart entity
@@ -59,7 +63,7 @@ public interface AnimalPartRegistrationSystem
    * @throws NotFoundException Thrown if no matching AnimalPart could be found in the repository.
    * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified AnimalPart entity.
    */
-  void updateAnimalPart (AnimalPart data) throws UpdateFailedException, NotFoundException;
+  void updateAnimalPart (AnimalPartDto data) throws UpdateFailedException, NotFoundException;
 
 
   /** <p>Deletes the given AnimalPart from the repository. Unique id is extracted from the AnimalPart entity
@@ -69,12 +73,12 @@ public interface AnimalPartRegistrationSystem
    * @throws NotFoundException Thrown if no matching AnimalPart could be found in the repository.
    * @throws DeleteFailedException Thrown if an error occurred while deleting the specified Animal entity.
    */
-  boolean removeAnimalPart (AnimalPart data) throws DeleteFailedException, NotFoundException;
+  boolean removeAnimalPart (AnimalPartDto data) throws DeleteFailedException, NotFoundException;
 
 
   /** <p>Fetches all AnimalParts from the repository.</p>
    * @return A List containing all AnimalPart entities extracted from the repository.
    * @throws NotFoundException Thrown if no AnimalParts could be found in the repository.
    */
-  List<AnimalPart> getAllAnimalParts() throws NotFoundException;
+  List<AnimalPartDto> getAllAnimalParts() throws NotFoundException;
 }

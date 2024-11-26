@@ -1,21 +1,17 @@
 package client.ui.Model.service;
 
 import client.interfaces.AnimalRegistrationSystem;
+import client.ui.Model.adapters.gRPC_to_java.GrpcAnimalData_To_AnimalDto;
+import client.ui.Model.adapters.java_to_gRPC.AnimalDto_ToGrpc_AnimalData;
+import client.ui.Model.adapters.java_to_gRPC.AnimalPartDto_ToGrpc_AnimalPartData;
 import grpc.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import server.controller.grpc.adapters.java_to_gRPC.AnimalPart_ToGrpc_AnimalPartData;
-import server.controller.grpc.adapters.java_to_gRPC.Animal_ToGrpc_AnimalData;
-import server.controller.grpc.adapters.java_to_gRPC.LongId_ToGrpc_Id;
-import shared.model.entities.AnimalPart;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.NotFoundException;
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
-import server.controller.grpc.adapters.GrpcFactory;
-import shared.model.entities.Animal;
+import client.ui.Model.adapters.GrpcFactory;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.UpdateFailedException;
@@ -30,17 +26,17 @@ import static io.grpc.Status.NOT_FOUND;
 
 public class AnimalRegistrationSystemImpl extends Client implements AnimalRegistrationSystem
 {
-  private final GrpcAnimalData_To_Animal grpcAnimalDataConverter = new GrpcAnimalData_To_Animal();
-  private final int maxNestingDepth;
+  private final GrpcAnimalData_To_AnimalDto grpcAnimalDataConverter = new GrpcAnimalData_To_AnimalDto();
+  private final AnimalDto_ToGrpc_AnimalData animalDtoConverter = new AnimalDto_ToGrpc_AnimalData();
+  private final AnimalPartDto_ToGrpc_AnimalPartData animalPartDtoConverter = new AnimalPartDto_ToGrpc_AnimalPartData();
 
-  public AnimalRegistrationSystemImpl(String host, int port, int maxNestingDepth) {
+  public AnimalRegistrationSystemImpl(String host, int port) {
     super(host, port);
-    this.maxNestingDepth = maxNestingDepth;
   }
 
 
   @Transactional
-  @Override public Animal registerNewAnimal(BigDecimal weightInKilogram, String origin, Date arrivalDate) throws CreateFailedException {
+  @Override public AnimalDto registerNewAnimal(BigDecimal weightInKilogram, String origin, Date arrivalDate) throws CreateFailedException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -49,7 +45,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalServiceGrpc.AnimalServiceBlockingStub animalStub = AnimalServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (AnimalData)
-      AnimalData data = GrpcFactory.buildGrpcAnimal(weightInKilogram, origin, arrivalDate, new ArrayList<>());
+      AnimalData data = GrpcFactory.buildGrpcAnimalData(1, weightInKilogram, origin, arrivalDate, new ArrayList<>());
 
       // Prompt gRPC to register the Animal:
       AnimalData createdAnimal = animalStub.registerAnimal(data);
@@ -66,7 +62,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
   }
 
 
-  @Override public Animal readAnimal(long animalId) throws NotFoundException {
+  @Override public AnimalDto readAnimal(long animalId) throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -81,8 +77,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       // Prompt gRPC to read the Animal:
       AnimalData foundAnimal = animalStub.readAnimal(id);
 
-      // Convert the AnimalData that was read from the DB into an application compatible format:
-      Animal animal = grpcAnimalDataConverter.convertToAnimal(foundAnimal, maxNestingDepth);
+      // Convert and return the AnimalData that was read from the DB into an application compatible format:
+      return grpcAnimalDataConverter.convertToAnimalDto(foundAnimal);
 
       // Populate Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
@@ -100,7 +96,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       }*/
 
       // Return:
-      return animal;
+      //return animalDto;
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No animal found with id '" + animalId + "' (" + e.getMessage() + ")");
@@ -112,7 +108,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
 
 
   @Transactional
-  @Override public void updateAnimal(Animal data) throws UpdateFailedException, NotFoundException {
+  @Override public void updateAnimal(AnimalDto data) throws UpdateFailedException, NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -121,20 +117,20 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalServiceGrpc.AnimalServiceBlockingStub animalStub = AnimalServiceGrpc.newBlockingStub(channel);
 
       // Create a gRPC compatible version of Animal (Convert Animal to AnimalData)
-      AnimalData animal = Animal_ToGrpc_AnimalData.convertToAnimalData(data);
+      AnimalData animal = animalDtoConverter.convertToAnimalData(data);
 
       // Prompt gRPC to update the Animal:
       EmptyMessage updated = animalStub.updateAnimal(animal);
 
       if(updated == null && data != null)
-        throw new UpdateFailedException("Failed to update Animal with id '" + data.getId() + "'");
+        throw new UpdateFailedException("Failed to update Animal with id '" + data.getAnimalId() + "'");
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
-        throw new NotFoundException("No animal found with id '" + data.getId() + "'");
+        throw new NotFoundException("No animal found with id '" + data.getAnimalId() + "'");
 
       if(e.getStatus().equals(INTERNAL))
-        throw new UpdateFailedException("Critical Error encountered. Failed to Update Animal with id '" + data.getId() + "' (" + e.getMessage() + ")");
+        throw new UpdateFailedException("Critical Error encountered. Failed to Update Animal with id '" + data.getAnimalId() + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.
       channel.shutdown();
@@ -153,10 +149,10 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       AnimalPartServiceGrpc.AnimalPartServiceBlockingStub animalPartStub = AnimalPartServiceGrpc.newBlockingStub(channel);
 
       // Attempt to find an Animal with the given animal_id:
-      Animal animal = readAnimal(animal_id);
+      AnimalDto animal = readAnimal(animal_id);
 
       // Create a gRPC compatible version of animal (Convert Animal to AnimalData)
-      AnimalData animalData = Animal_ToGrpc_AnimalData.convertToAnimalData(animal);
+      AnimalData animalData = animalDtoConverter.convertToAnimalData(animal);
 
       // Prompt gRPC to delete the Animal:
       EmptyMessage deleted = animalStub.removeAnimal(animalData);
@@ -165,15 +161,16 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
         throw new DeleteFailedException("Failed to delete Animal with id '" + animal_id + "'");
 
       // Check if there are any remaining AnimalParts associated with this Animal, if so delete these too:
-      if(!animal.getAnimalPartIdList().isEmpty()) {
+      // TODO: Shouldn't be needed with JPA.
+      /*if(animal != null && !animal.getAnimalPartIdList().isEmpty()) {
         // Prompt gRPC to delete the AnimalPart:
-        for (AnimalPart animalPart : animal.getPartList()) {
-          deleted = animalPartStub.removeAnimalPart(AnimalPart_ToGrpc_AnimalPartData.convertToAnimalPartData(animalPart));
+        for (AnimalPartDto animalPart : animal.getAnimalPartIdList()) {
+          deleted = animalPartStub.removeAnimalPart(animalPartDtoConverter.convertToAnimalPartData(animalPart, maxNestingDepth));
 
           if(deleted == null && animalPart != null)
-            throw new DeleteFailedException("Failed to delete AnimalPart with id '" + animalPart.getPart_id() + "' associated with Animal_id '" + animal_id + "'");
+            throw new DeleteFailedException("Failed to delete AnimalPart with id '" + animalPart.getPartId() + "' associated with Animal_id '" + animal_id + "'");
         }
-      }
+      }*/
 
       return true;
     } catch (StatusRuntimeException e) {
@@ -189,7 +186,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
   }
 
 
-  @Override public List<Animal> getAllAnimals() throws NotFoundException {
+  @Override public List<AnimalDto> getAllAnimals() throws NotFoundException {
     // Create a managed channel to connect to the gRPC server:
     ManagedChannel channel = channel();
 
@@ -201,8 +198,8 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       // Prompt gRPC to retrieve all Animals from Database:
       AnimalsData animalsData = animalStub.getAllAnimals(GrpcFactory.buildGrpcEmptyMessage());
 
-      // Convert received data to java language:
-      List<Animal> animals = grpcAnimalDataConverter.convertToAnimalList(animalsData, maxNestingDepth);
+      // Convert and return the received data:
+      return grpcAnimalDataConverter.convertToAnimalDtoList(animalsData);
 
       // Populate each Animal with the proper relationships, to have a proper Object Relational Model.
       // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both Animal and AnimalPart have relations to each other), so must be repopulated:
@@ -222,7 +219,7 @@ public class AnimalRegistrationSystemImpl extends Client implements AnimalRegist
       }*/
 
       // Return data
-      return animals;
+      //return animals;
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))

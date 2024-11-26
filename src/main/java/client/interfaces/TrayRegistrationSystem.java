@@ -1,6 +1,6 @@
 package client.interfaces;
 
-import shared.model.entities.Tray;
+import shared.model.dto.TrayDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -16,11 +16,10 @@ public interface TrayRegistrationSystem
 {
   /** <p>Registers/Creates a new Tray in repository with the given parameters applied.</p>
    * @param maxWeight_kilogram The maximum capacity this Tray can hold, in kilograms.
-   * @param currentWeight_kilogram The weight of this Tray's current contents, in kilograms.
    * @return The created Tray instance.
    * @throws CreateFailedException Thrown if creation/registration fails, for any reason.
    */
-  Tray registerNewTray (BigDecimal maxWeight_kilogram, BigDecimal currentWeight_kilogram) throws CreateFailedException;
+  TrayDto registerNewTray (BigDecimal maxWeight_kilogram) throws CreateFailedException;
 
 
   /** <p>Looks up any Tray entity with the specified id, in the repository</p>
@@ -28,7 +27,7 @@ public interface TrayRegistrationSystem
    * @return The identified Tray instance.
    * @throws NotFoundException Thrown if Tray is not be found.
    */
-  Tray readTray (long trayId) throws NotFoundException;
+  TrayDto readTray (long trayId) throws NotFoundException;
 
 
   /** <p>Updates the given Tray in the repository. Unique id is extracted from the Tray entity
@@ -37,7 +36,7 @@ public interface TrayRegistrationSystem
    * @throws NotFoundException Thrown if no matching Tray could be found in the repository.
    * @throws UpdateFailedException Thrown if an error occurred while applying the updates to the specified Tray entity.
    */
-  void updateTray (Tray data) throws UpdateFailedException, NotFoundException;
+  void updateTray (TrayDto data) throws UpdateFailedException, NotFoundException;
 
 
   /** <p>Deletes the given Tray from the repository. Unique id is extracted from the Tray entity
@@ -54,5 +53,5 @@ public interface TrayRegistrationSystem
    * @return A List containing all Tray entities extracted from the repository.
    * @throws NotFoundException Thrown if no Trays could be found in the repository.
    */
-  List<Tray> getAllTrays() throws NotFoundException;
+  List<TrayDto> getAllTrays() throws NotFoundException;
 }

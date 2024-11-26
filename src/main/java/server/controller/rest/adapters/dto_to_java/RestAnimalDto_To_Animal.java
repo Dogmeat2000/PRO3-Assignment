@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import server.model.persistence.service.AnimalPartRegistryInterface;
 import shared.model.dto.AnimalDto;
-import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
+import server.model.persistence.entities.Animal;
+import server.model.persistence.entities.AnimalPart;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.rest.DtoConversionException;
 import shared.model.exceptions.rest.DtoValidationException;
@@ -41,8 +41,8 @@ public class RestAnimalDto_To_Animal
       animal.setId(animalDto.getAnimalId());
       animal.setWeight_kilogram(animalDto.getWeight_kilogram());
       animal.setOrigin(animalDto.getOrigin());
-      animal.setArrivalDate(animalDto.getArrival_date());
-      animal.setAnimalPartIdList(animalDto.getAnimalPartIdList());
+      animal.setArrivalDate(animalDto.getArrivalDate());
+      //animal.setAnimalPartIdList(animalDto.getAnimalPartIdList());
       animal.setAnimalParts(new ArrayList<>());
 
       // Populate Animal entity with the proper associations:

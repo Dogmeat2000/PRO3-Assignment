@@ -1,38 +1,47 @@
 package server.controller.grpc.adapters.grpc_to_java;
 
 import grpc.TrayToProductTransferData;
-import org.springframework.context.annotation.Scope;
+import jakarta.persistence.PersistenceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-import shared.model.entities.*;
+import server.model.persistence.entities.Product;
+import server.model.persistence.entities.Tray;
+import server.model.persistence.entities.TrayToProductTransfer;
+import server.model.persistence.service.ProductService;
+import server.model.persistence.service.TrayService;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
+import shared.model.exceptions.persistance.NotFoundException;
 
-/** Responsible for converting a gRPC connection data entries into application compatible entities */
+/** <p>Responsible for converting a gRPC connection data entries into application compatible entities</p> */
 @Component
-@Scope("singleton")
 public class GrpcTrayToProductTransferData_To_TrayToProductTransfer
 {
-  private GrpcTrayData_To_Tray trayConverter = null;
-  private GrpcProductData_To_Product productConverter = null;
+  private final TrayService trayService;
+  private final ProductService productService;
 
-    /** Converts database/gRPC compatible TrayToProductTransferData information into an application compatible TrayToProductTransfer entity */
-    public TrayToProductTransfer convertToTrayToProductTransfer(TrayToProductTransferData trayToProductTransferData, int maxNestingDepth) {
+  @Autowired
+  public GrpcTrayToProductTransferData_To_TrayToProductTransfer(TrayService trayService, ProductService productService) {
+    this.trayService = trayService;
+    this.productService = productService;
+  }
 
-      if (trayToProductTransferData == null || maxNestingDepth < 0)
-        return null;
+  /** <p>Converts gRPC compatible TrayToProductTransferData information into an application compatible TrayToProductTransfer entity</p> */
+  public TrayToProductTransfer convertToTrayToProductTransfer(TrayToProductTransferData trayToProductTransferData) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
 
-      int currentNestingDepth = maxNestingDepth-1;
+    if (trayToProductTransferData == null)
+      return null;
 
-      // Lazy instantiate the required converters as needed:
-      if(trayConverter == null)
-        trayConverter = new GrpcTrayData_To_Tray();
-      if(productConverter == null)
-        productConverter = new GrpcProductData_To_Product();
+    // Convert the gRPC data fields, excluding any lists of other entities. These are queried from the repository based on the provided ids:
+    long id = GrpcId_To_LongId.ConvertToLongId(trayToProductTransferData.getTransferId());
 
-      // Read TrayToProductTransfer information from the gRPC data:
-      long id = trayToProductTransferData.getTransferId();
-      Product product = productConverter.convertToProduct(trayToProductTransferData.getProduct(), currentNestingDepth);
-      Tray tray = trayConverter.convertToTray(trayToProductTransferData.getTray(), currentNestingDepth);
+    // Query database for the referenced Tray entity, for proper Object Relational Model (ORM) behavior:
+    Tray tray = trayService.readTray(GrpcId_To_LongId.ConvertToLongId(trayToProductTransferData.getTrayId()));
 
-      // Construct and return a new Tray entity with the above read attributes set:
-      return new TrayToProductTransfer(id, tray, product);
-    }
+    // Query database for the referenced Product entity, for proper Object Relational Model (ORM) behavior:
+    Product product = productService.readProduct(GrpcId_To_LongId.ConvertToLongId(trayToProductTransferData.getProductId()));
+
+    // Construct and return a new Tray entity with the above read attributes set:
+    return new TrayToProductTransfer(id, tray, product);
+  }
 }

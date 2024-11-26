@@ -17,10 +17,9 @@ import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import server.ServerApplication;
-import server.model.persistence.service.AnimalRegistryInterface;
 import server.model.persistence.service.AnimalService;
 import shared.model.dto.AnimalDto;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -123,7 +122,7 @@ public class RestfulWebServicesEndPointsTest
       assertEquals(HttpStatus.CREATED, response.getStatusCode());
       assertEquals(7, response.getBody().getAnimalId());
       assertEquals("Farmstead3", response.getBody().getOrigin());
-      assertEquals(date, response.getBody().getArrival_date());
+      assertEquals(date, response.getBody().getArrivalDate());
       assertEquals(0, response.getBody().getWeight_kilogram().compareTo(new BigDecimal(150)));
 
 
@@ -149,7 +148,7 @@ public class RestfulWebServicesEndPointsTest
       assertEquals(HttpStatus.OK, response.getStatusCode());
       assertEquals(1, response.getBody().getAnimalId());
       assertEquals("Farmstead1", response.getBody().getOrigin());
-      assertEquals(expectedResultDate, response.getBody().getArrival_date());
+      assertEquals(expectedResultDate, response.getBody().getArrivalDate());
       assertEquals(0, response.getBody().getWeight_kilogram().compareTo(new BigDecimal(100)));
 
 
@@ -300,7 +299,7 @@ public class RestfulWebServicesEndPointsTest
       assertEquals(HttpStatus.OK, response.getStatusCode());
       assertEquals(1, response.getBody().getAnimalId());
       assertEquals("Farmstead44", response.getBody().getOrigin());
-      assertEquals(date, response.getBody().getArrival_date());
+      assertEquals(date, response.getBody().getArrivalDate());
       assertEquals(0, response.getBody().getWeight_kilogram().compareTo(new BigDecimal(175)));
 
     } catch (Exception e) {

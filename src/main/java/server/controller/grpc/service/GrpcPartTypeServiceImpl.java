@@ -10,13 +10,12 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
-import server.controller.grpc.adapters.grpc_to_java.GrpcAnimalData_To_Animal;
-import server.controller.grpc.adapters.grpc_to_java.GrpcId_To_LongId;
+import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import server.controller.grpc.adapters.grpc_to_java.GrpcPartTypeData_To_PartType;
 import server.controller.grpc.adapters.java_to_gRPC.PartType_ToGrpc_PartTypeData;
 import server.model.persistence.service.AnimalPartRegistryInterface;
 import server.model.persistence.service.PartTypeRegistryInterface;
-import shared.model.entities.PartType;
+import server.model.persistence.entities.PartType;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
 import shared.model.exceptions.persistance.NotFoundException;
@@ -29,19 +28,20 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
 {
   private final PartTypeRegistryInterface partTypeService;
   private final AnimalPartRegistryInterface animalPartService;
-  private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartType();
+  private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter;
+  private final PartType_ToGrpc_PartTypeData partTypeConverter = new PartType_ToGrpc_PartTypeData();
   private final int maxNestingDepth;
 
   @Autowired
   public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService,
-      AnimalPartRegistryInterface animalPartService/*,
-      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter*/,
+      AnimalPartRegistryInterface animalPartService,
+      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter,
       @Value("${maxNestingDepth}") int maxNestingDepth) {
     super();
     this.partTypeService = partTypeService;
     this.animalPartService = animalPartService;
     this.maxNestingDepth = maxNestingDepth;
-    //this.grpcPartTypeDataConverter = grpcPartTypeDataConverter;
+    this.grpcPartTypeDataConverter = grpcPartTypeDataConverter;
   }
 
 
@@ -51,14 +51,14 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types, and
       // attempt to register the PartType:
-      PartType createdPartType = partTypeService.registerPartType(grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth));
+      PartType createdPartType = partTypeService.registerPartType(grpcPartTypeDataConverter.convertToPartType(request));
 
       // If partType creation fails
       if (createdPartType == null)
         throw new CreateFailedException("PartType could not be created");
 
       // Translate the created PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(createdPartType));
+      responseObserver.onNext(partTypeConverter.convertToPartTypeData(createdPartType));
       responseObserver.onCompleted();
     } catch (Exception e) {
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering partType, " + e.getMessage()).withCause(e).asRuntimeException());
@@ -79,7 +79,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
         throw new NotFoundException("PartType not found");
 
       // Translate the found PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypeData(partType));
+      responseObserver.onNext(partTypeConverter.convertToPartTypeData(partType));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("PartType with id " + request.getPartTypeId() + " not found in DB").withCause(e).asRuntimeException());
@@ -94,12 +94,13 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   public void updatePartType(PartTypeData request, StreamObserver<grpc.EmptyMessage> responseObserver) {
     try {
       // Translate received gRPC information from the client, into a Java compatible type:
-      PartType partTypeReceived = grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth);
+      PartType partTypeReceived = grpcPartTypeDataConverter.convertToPartType(request);
 
       // To combat the data loss in entity relations during gRPC conversion, re-populate entity associations:
-      partTypeReceived.getPartList().clear();
+      // TODO: Shouldn't be needed with the new adjusted converters.
+      /*partTypeReceived.getPartList().clear();
       for (Long animalPartId : partTypeReceived.getAnimalPartIdList())
-        partTypeReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));
+        partTypeReceived.addAnimalPart(animalPartService.readAnimalPart(animalPartId));*/
 
       // Attempt to update the PartType:
       if (!partTypeService.updatePartType(partTypeReceived)) {
@@ -124,7 +125,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
     try {
       // Translate received gRPC information from the client, into Java compatible types,
       // and attempt to delete the PartType with the provided ID:
-      if(!partTypeService.removePartType(grpcPartTypeDataConverter.convertToPartType(request, maxNestingDepth))) {
+      if(!partTypeService.removePartType(grpcPartTypeDataConverter.convertToPartType(request))) {
         // If PartType deletion failed:
         throw new DeleteFailedException("Error occurred while deleting partType with id='" + request.getPartTypeId() + "'");
       }
@@ -152,7 +153,7 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
         throw new NotFoundException("PartTypes not found");
 
       // Translate the found PartType into gRPC compatible types, before transmitting back to client:
-      responseObserver.onNext(PartType_ToGrpc_PartTypeData.convertToPartTypesDataList(partTypes));
+      responseObserver.onNext(partTypeConverter.convertToPartTypesDataList(partTypes));
       responseObserver.onCompleted();
     } catch (NotFoundException e) {
       responseObserver.onError(Status.NOT_FOUND.withDescription("No PartTypes found").withCause(e).asRuntimeException());

@@ -10,7 +10,7 @@ import server.controller.rest.adapters.dto_to_java.RestAnimalDto_To_Animal;
 import server.controller.rest.adapters.java_to_dto.Animal_ToRest_AnimalDto;
 import server.model.persistence.service.AnimalRegistryInterface;
 import shared.model.dto.AnimalDto;
-import shared.model.entities.Animal;
+import server.model.persistence.entities.Animal;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.rest.*;
 

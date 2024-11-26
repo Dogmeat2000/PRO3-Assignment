@@ -1,10 +1,10 @@
 package server.model.validation;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.AnimalPart;
-import shared.model.entities.Product;
-import shared.model.entities.Tray;
-import shared.model.entities.TrayToProductTransfer;
+import server.model.persistence.entities.AnimalPart;
+import server.model.persistence.entities.Product;
+import server.model.persistence.entities.Tray;
+import server.model.persistence.entities.TrayToProductTransfer;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class ProductValidation
     validateId(product.getProductId());
 
     // Product must contain at least 1 AnimalPart
-    validateContents(product.getContentList());
+    validateContents(product.getAnimalPartList());
 
     // Product must have received animalParts from at least 1 Tray:
     validateTraySupplyList(product.getTraySupplyJoinList());

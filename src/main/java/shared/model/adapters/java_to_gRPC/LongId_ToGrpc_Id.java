@@ -1,4 +1,4 @@
-package server.controller.grpc.adapters.java_to_gRPC;
+package shared.model.adapters.java_to_gRPC;
 
 import grpc.*;
 
@@ -53,8 +53,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static ProductId convertToProductId(long productId) throws NullPointerException {
-    if (productId <= 0)
-      throw new NullPointerException("An argument was 0. All arguments must be positive value.");
+    if (productId < 0)
+      throw new NullPointerException("An argument was negative. All arguments must be 0 or positive value.");
 
     ProductId.Builder idBuilder = ProductId.newBuilder()
         .setProductId(productId);
@@ -75,6 +75,20 @@ public class LongId_ToGrpc_Id
 
     AnimalPartId.Builder idBuilder = AnimalPartId.newBuilder()
         .setAnimalPartId(animalPartId);
+    return idBuilder.build();
+  }
+
+
+  /** <p>Converts a long id into a gRPC compatible TransferId format</p>
+   * @param transferId The id (primary key) for a TrayToProductTransfer entity
+   * @return a gRPC compatible format of this id
+   * @throws NullPointerException If any of the arguments were null (0, or less).*/
+  public static TrayToProductTransferId convertToTrayToProductTransferId(long transferId) throws NullPointerException {
+    if (transferId <= 0)
+      throw new NullPointerException("Id was 0. Must be positive value.");
+
+    TrayToProductTransferId.Builder idBuilder = TrayToProductTransferId.newBuilder()
+        .setTransferId(transferId);
     return idBuilder.build();
   }
 }

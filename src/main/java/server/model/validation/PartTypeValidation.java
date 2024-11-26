@@ -1,7 +1,7 @@
 package server.model.validation;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.PartType;
+import server.model.persistence.entities.PartType;
 
 /** <p>Defines public static accessible methods used for validating the data integrity of PartType entities,
  * especially useful for validation checks before attempting to commit data to the repository/database</p>

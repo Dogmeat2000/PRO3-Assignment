@@ -1,54 +1,54 @@
 package server.controller.grpc.adapters.java_to_gRPC;
 
 import grpc.*;
-import shared.model.entities.Tray;
-import shared.model.entities.TrayToProductTransfer;
+import server.model.persistence.entities.Product;
+import server.model.persistence.entities.Tray;
+import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** <p>Responsible for converting a application entities into a database/gRPC compatible formats</p> */
+/** <p>Responsible for converting a application entities into a gRPC compatible formats</p> */
 public class Tray_ToGrpc_TrayData
 {
-    /** <p>Converts a Tray entity into a database/gRPC compatible TrayData format</p>
+
+    /** <p>Converts a Tray entity into a gRPC compatible TrayData format</p>
      * @param tray The Tray entity to convert
      * @return a gRPC compatible TrayData data type.
      * */
-    public static TrayData convertToTrayData(Tray tray, int maxNestingDepth) {
+    public TrayData convertToTrayData(Tray tray) {
 
       if (tray == null)
         return null;
 
-      if(maxNestingDepth < 0)
-        return TrayData.newBuilder().build();
-
-      int currentNestingDepth = maxNestingDepth-1;
-
-      // Convert the java data fields, excluding any lists of other entities. These need to be queried separately by the receiving service layer:
+      // Convert the java data fields:
       TrayData.Builder builder = TrayData.newBuilder();
-      builder.setTrayId(tray.getTrayId());
+      builder.setTrayId(LongId_ToGrpc_Id.convertToTrayId(tray.getTrayId()));
       builder.setMaxWeightKilogram(tray.getMaxWeight_kilogram().toString());
       builder.setWeightKilogram(tray.getWeight_kilogram().toString());
 
-      if(tray.getAnimalPartIdList() != null && !tray.getAnimalPartIdList().isEmpty())
-        builder.addAllAnimalPartIds(tray.getAnimalPartIdList());
+      if(tray.getTrayType() != null)
+        builder.setTrayTypeId(LongId_ToGrpc_Id.convertToPartTypeId(tray.getTrayType().getTypeId()));
 
-      if(tray.getTransferIdList() != null && !tray.getTransferIdList().isEmpty())
-        builder.addAllTransferIds(tray.getTransferIdList());
+      // Convert AnimalPartIds:
+      for (long id : tray.getAnimalPartIdList())
+        builder.addAnimalPartIds(LongId_ToGrpc_Id.convertToAnimalPartId(id));
 
-      if(tray.getTransferList() != null && !tray.getTransferList().isEmpty()) {
-        for (TrayToProductTransfer transfer : tray.getTransferList())
-          builder.addTransfersData(TrayToProductTransfer_ToGrpc_TrayToProductTransferData.convertToTrayToProductTransferData(transfer, currentNestingDepth));
-      }
+      // Convert TransferIds:
+      for (long id : tray.getTransferIdList())
+        builder.addTransferIds(LongId_ToGrpc_Id.convertToTrayToProductTransferId(id));
+
+      // Convert ProductIds:
+      for (Product product : tray.getProductList())
+        builder.addProductids(LongId_ToGrpc_Id.convertToProductId(product.getProductId()));
 
       return builder.build();
     }
 
-
     /** <p>Converts a List of Trays into the gRPC compatible TraysData format</p>
      * @param trays A list containing all the Tray entities to convert.
      * @return A gRPC compatible TraysData data type, containing all the converted entities.*/
-    public static TraysData convertToTraysDataList(List<Tray> trays) {
+    public TraysData convertToTraysDataList(List<Tray> trays) {
       // Return an empty list, if received list is null or empty.
       if(trays == null || trays.isEmpty())
         return TraysData.newBuilder().addAllTrays(new ArrayList<>()).build();
@@ -56,7 +56,7 @@ public class Tray_ToGrpc_TrayData
       // Convert List of Trays to a gRPC compatible list by iteration through each entry and running the method previously declared:
       List<TrayData> trayDataList = new ArrayList<>();
       for (Tray tray : trays)
-        trayDataList.add(convertToTrayData(tray, 3));
+        trayDataList.add(convertToTrayData(tray));
 
       // Construct and return a new List of TrayData entities:
       return TraysData.newBuilder().addAllTrays(trayDataList).build();

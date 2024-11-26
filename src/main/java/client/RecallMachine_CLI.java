@@ -4,9 +4,12 @@ import client.interfaces.*;
 import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import client.ui.Model.service.ProductRegistrationSystemImpl;
-import shared.model.entities.Animal;
-import shared.model.entities.AnimalPart;
-import shared.model.entities.Product;
+import server.model.persistence.entities.Animal;
+import server.model.persistence.entities.AnimalPart;
+import server.model.persistence.entities.Product;
+import shared.model.dto.AnimalDto;
+import shared.model.dto.AnimalPartDto;
+import shared.model.dto.ProductDto;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.util.ArrayList;
@@ -16,9 +19,9 @@ import java.util.Scanner;
 
 public class RecallMachine_CLI /*implements CommandLineRunner*/
 {
-  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090, 3);
-  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090, 3);
-  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090, 3);
+  private static final AnimalPartRegistrationSystem animalPartRegistrationSystem = new AnimalPartRegistrationSystemImpl("localhost", 9090);
+  private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
+  private static final AnimalRegistrationSystem animalRegistrationSystem = new AnimalRegistrationSystemImpl("localhost", 9090);
 
 
   public static void main(String[] args) {
@@ -81,14 +84,14 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
     String value;
     List<Long> validAnimalIds = new ArrayList<>();
     List<Long> validProductIds = new ArrayList<>();
-    List<AnimalPart> animalParts = new ArrayList<>();
+    List<AnimalPartDto> animalParts = new ArrayList<>();
 
     switch (input.toLowerCase()) {
       case "1": // Retrieve registration number for all animals involved in a given Product.
 
         //Show a list of valid Products:
         System.out.println("\nRetrieving registration number for all animals involved in a given Product.\nValid Products are:");
-        for (Product product : productRegistrationSystem.getAllProducts()) {
+        for (ProductDto product : productRegistrationSystem.getAllProducts()) {
           System.out.println(product);
           validProductIds.add(product.getProductId());
         }
@@ -100,7 +103,7 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
           System.out.println("Invalid input!");
           break;
         }
-        Product product = null;
+        ProductDto product = null;
         try {
           product = productRegistrationSystem.readProduct(Long.parseLong(value));
         } catch (NotFoundException e) {
@@ -113,9 +116,9 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
 
         // Retrieve a List of all Animals involved in each AnimalPart:
         List<Long> animalIdsInvolved = new ArrayList<>();
-        for (AnimalPart animalPart : animalParts)
-          if(animalPart.getAnimal().getId() > 0)
-            animalIdsInvolved.add(animalPart.getAnimal().getId());
+        for (AnimalPartDto animalPart : animalParts)
+          if(animalPart.getAnimalId() > 0)
+            animalIdsInvolved.add(animalPart.getAnimalId());
 
         // Display the List of Animals:
         System.out.println("Id of involved animals are: " + animalIdsInvolved);
@@ -126,9 +129,9 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
 
         //Show a list of valid Products:
         System.out.println("\nRetrieving all Products a given Animal is involved in\nValid Animals are:");
-        for (Animal animal : animalRegistrationSystem.getAllAnimals()) {
+        for (AnimalDto animal : animalRegistrationSystem.getAllAnimals()) {
           System.out.println(animal);
-          validAnimalIds.add(animal.getId());
+          validAnimalIds.add(animal.getAnimalId());
         }
 
         // Prompt user to select an Animal_id to get info for:
@@ -138,7 +141,7 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
           System.out.println("Invalid input!");
           break;
         }
-        Animal animal = null;
+        AnimalDto animal = null;
         try {
           animal = animalRegistrationSystem.readAnimal(Long.parseLong(value));
         } catch (NotFoundException e) {
@@ -151,9 +154,9 @@ public class RecallMachine_CLI /*implements CommandLineRunner*/
 
         // Retrieve a List of all Products involved in each AnimalPart:
         List<Long> productIdsInvolved = new ArrayList<>();
-        for (AnimalPart animalPart : animalParts) {
-          if(animalPart.getProduct().getProductId() > 0)
-            productIdsInvolved.add(animalPart.getProduct().getProductId());
+        for (AnimalPartDto animalPart : animalParts) {
+          if(animalPart.getProductId() > 0)
+            productIdsInvolved.add(animalPart.getProductId());
         }
 
 

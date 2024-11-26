@@ -1,7 +1,7 @@
 package server.model.validation;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import shared.model.entities.AnimalPart;
+import server.model.persistence.entities.AnimalPart;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,7 @@ public class AnimalPartValidation
       throw new DataIntegrityViolationException("AnimalPart is null");
 
     // Validate animalPart_id:
-    validateId(animalPart.getPart_id());
+    validateId(animalPart.getPartId());
 
     // AnimalPart weight must be larger than 0:
     validateWeight(animalPart.getWeight_kilogram());
