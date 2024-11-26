@@ -30,9 +30,6 @@ public class PartType implements Serializable
   @JsonManagedReference // Declares this class as parent, to avoid infinite recursion.
   private List<AnimalPart> animalPartList = new ArrayList<>();
 
-  /*@Transient
-  private List<Long> animalPartIdList = new ArrayList<>();*/
-
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected PartType() {
     //JPA requires this to be blank!
@@ -105,33 +102,21 @@ public class PartType implements Serializable
   }
 
 
-  /*public void setAnimalPartIdList(List<Long> animalPartIds) {
-    this.animalPartIdList = animalPartIds;
-  }*/
-
-
-  // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
-    if (this == o)
-      return true;
     if (o == null || getClass() != o.getClass())
       return false;
     PartType partType = (PartType) o;
     return getTypeId() == partType.getTypeId()
-        && Objects.equals(getTypeDesc(), partType.getTypeDesc());
-        //&& Objects.equals(getAnimalPartList(), partType.getAnimalPartList())
-        //&& Objects.equals(getAnimalPartIdList(), partType.getAnimalPartIdList()
+        && Objects.equals(type_Desc, partType.type_Desc)
+        && Objects.equals(getAnimalPartIdList(), partType.getAnimalPartIdList());
   }
 
-
-  // Required by Spring Boot JPA:
   @Override public int hashCode() {
-    return Objects.hash(typeId,
-        type_Desc);
-        //getAnimalPartIdList()
+    return Objects.hash(getTypeId(),
+        type_Desc,
+        getAnimalPartIdList());
   }
-
 
   @Override public String toString() {
     String returnValue = "partType_id: '"
@@ -155,7 +140,6 @@ public class PartType implements Serializable
     for (AnimalPart animalPart : getAnimalPartList()) {
       partTypeCopy.addAnimalPart(animalPart.copy());
     }
-    //partTypeCopy.setAnimalPartIdList(getAnimalPartIdList());
     return partTypeCopy;
   }
 }

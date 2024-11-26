@@ -21,21 +21,21 @@ public class AnimalPart implements Serializable
   @SequenceGenerator(name = "animal_part_id_generator", sequenceName = "animalpart_part_id_seq", allocationSize = 1) // Read documentation here: https://javabeat.net/jpa-annotations-generatedvalue-sequencegenerator-tablegenerator/
   private long partId;
 
-  @Column(nullable=false) // Tells Spring Boot, that this is a column in the database, and that it cannot be null.
+  @Column(nullable=false)
   private BigDecimal weight_kilogram;
 
   @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name="animal_id", nullable=false) // Tells Spring Boot which DB column to use in the Animal entity when joining tables.
+  @JoinColumn(name="animal_id", nullable=false)
   @JsonBackReference // Declares this class as child, to avoid infinite recursion.
   private Animal animal;
 
   @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name="type_id", nullable = false)  // Tells Spring Boot which DB column to use in the PartType entity when joining tables.
+  @JoinColumn(name="type_id", nullable = false)
   @JsonBackReference // Declares this class as child, to avoid infinite recursion.
   private PartType type;
 
   @ManyToOne (optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name="tray_id", nullable=false) // Tells Spring Boot which DB column to use in the Tray entity when joining tables.
+  @JoinColumn(name="tray_id", nullable=false)
   @JsonBackReference // Declares this class as child, to avoid infinite recursion.
   private Tray tray;
 

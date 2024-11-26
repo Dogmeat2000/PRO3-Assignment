@@ -33,12 +33,6 @@ public class Product implements Serializable
   @Transient
   private List<Tray> traySuppliersList = new ArrayList<>();
 
-  /*@Transient
-  private List<Long> animalPartIdList = new ArrayList<>();
-
-  @Transient
-  private List<Long> transferIdList = new ArrayList<>();*/
-
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Product() {
     //JPA requires this to be blank!
@@ -46,7 +40,6 @@ public class Product implements Serializable
 
   public Product(long id, List<AnimalPart> animalPartList, List<Tray> traySuppliersList) {
     setProductId(id);
-
     addAllAnimalParts(animalPartList);
     addAllTraysToTraySuppliersList(traySuppliersList);
   }
@@ -106,10 +99,6 @@ public class Product implements Serializable
         .collect(Collectors.toList());
   }
 
-  /*public void setAnimalPartIdList(List<Long> animalPartIds) {
-    this.animalPartIdList = animalPartIds;
-  }*/
-
   public List<TrayToProductTransfer> getTraySupplyJoinList() {
     return Collections.unmodifiableList(traySupplyJoinList);
   }
@@ -142,10 +131,6 @@ public class Product implements Serializable
         .collect(Collectors.toList());
   }
 
-  /*public void setTransferIdList(List<Long> transferIds) {
-    this.transferIdList = transferIds;
-  }*/
-
   public List<Tray> getTraySuppliersList() {
     return Collections.unmodifiableList(traySuppliersList);
   }
@@ -172,23 +157,22 @@ public class Product implements Serializable
     }
   }
 
-  // TODO: Update/Review equals, toString and hashcode methods
+
   // Required by Spring Boot JPA:
   @Override public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass())
       return false;
     Product product = (Product) o;
     return getProductId() == product.getProductId()
-        && Objects.equals(getAnimalPartList(), product.getAnimalPartList())
-        && Objects.equals(getTraySupplyJoinList(), product.getTraySupplyJoinList())
-        && Objects.equals(getTraySuppliersList(), product.getTraySuppliersList());
+        && Objects.equals(getAnimalPartIdList(), product.getAnimalPartIdList())
+        && Objects.equals(getTransferIdList(), product.getTransferIdList());
   }
 
   @Override public int hashCode() {
     return Objects.hash(getProductId(),
         getAnimalPartList(),
-        getTraySupplyJoinList(),
-        getTraySuppliersList());
+        getTransferIdList(),
+        getAnimalPartIdList());
   }
 
   // Required by Spring Boot JPA:

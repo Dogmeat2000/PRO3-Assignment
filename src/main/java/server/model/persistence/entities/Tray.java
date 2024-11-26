@@ -2,7 +2,6 @@ package server.model.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -38,19 +37,13 @@ public class Tray implements Serializable
 
   @OneToMany(mappedBy="tray", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JsonBackReference // Declares this class as child, to avoid infinite recursion.
-  private List<TrayToProductTransfer> transferList = new ArrayList<>();
+  private final List<TrayToProductTransfer> transferList = new ArrayList<>();
 
   @Transient
   private PartType trayType;
 
-  /*@Transient
-  private List<Long> animalPartIdList = new ArrayList<>();*/
-
-  /*@Transient
-  private List<Long> transferIdList = new ArrayList<>();*/
-
   @Transient
-  private List<Product> productList = new ArrayList<>();
+  private final List<Product> productList = new ArrayList<>();
 
   // A no-args constructor, as required by the Java Data API (JPA) specifications. Should not be used directly, thus protected!
   protected Tray() {
@@ -62,12 +55,6 @@ public class Tray implements Serializable
     setTrayId(trayId);
     setMaxWeight_kilogram(maxWeight_kilogram);
     this.weight_kilogram = BigDecimal.ZERO;
-
-    /*if(contentIdList != null && !contentIdList.isEmpty())
-      this.animalPartIdList.addAll(contentIdList);
-
-    if(transferIdList != null && !transferIdList.isEmpty())
-      this.transferIdList.addAll(transferIdList);*/
   }
 
 
@@ -268,34 +255,23 @@ public class Tray implements Serializable
     this.trayType = trayType;
   }
 
-  // TODO: Update/Review equals, toString and hashcode methods
   @Override public boolean equals(Object o) {
-    if (this == o)
-      return true;
     if (o == null || getClass() != o.getClass())
       return false;
     Tray tray = (Tray) o;
     return getTrayId() == tray.getTrayId()
         && Objects.equals(getMaxWeight_kilogram(), tray.getMaxWeight_kilogram())
         && Objects.equals(getWeight_kilogram(), tray.getWeight_kilogram())
-        //&& Objects.equals(getAnimalPartList(), tray.getAnimalPartList())
-        //&& Objects.equals(getTransferList(), tray.getTransferList())
-        && Objects.equals(getTrayType(), tray.getTrayType());
-        //&& Objects.equals(getAnimalPartIdList(), tray.getAnimalPartIdList())
-        //&& Objects.equals(getTransferIdList(), tray.getTransferIdList())
-        //&& Objects.equals(getProductList(), tray.getProductList());
+        && Objects.equals(getAnimalPartIdList(), tray.getAnimalPartIdList())
+        && Objects.equals(getTransferIdList(), tray.getTransferIdList());
   }
 
   @Override public int hashCode() {
     return Objects.hash(getTrayId(),
         getMaxWeight_kilogram(),
         getWeight_kilogram(),
-        //getAnimalPartList(),
-        //getTransferList(),
-        getTrayType());
-        //getAnimalPartIdList(),
-        //getTransferIdList(),
-        //getProductList());
+        getTransferIdList(),
+        getAnimalPartIdList());
   }
 
   @Override public String toString() {

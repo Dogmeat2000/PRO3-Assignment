@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,11 +33,6 @@ public class Animal implements Serializable
   @JsonManagedReference // Declares this class as parent, to avoid infinite recursion.
   private List<AnimalPart> animalPartList = new ArrayList<>();
 
-
-  //@Transient
-  //private List<Long> animalPartIdList = new ArrayList<>();
-
-
   // A no-args constructor, as required by the Java Data API (JPA) specifications.
   public Animal() {
     //JPA requires this to be blank!
@@ -66,11 +59,9 @@ public class Animal implements Serializable
     this.animalId = animal_id;
   }
 
-
   public BigDecimal getWeight_kilogram() {
     return weight_kilogram;
   }
-
 
   public void setWeight_kilogram(BigDecimal weight) {
     this.weight_kilogram = weight;
@@ -141,37 +132,24 @@ public class Animal implements Serializable
   }
 
 
-
-
-  /*public void setAnimalPartIdList(List<Long> animalPartIds) {
-    this.animalPartIdList = animalPartIds;
-  }*/
-
-
-  // TODO: Update/Review equals, toString and hashcode methods
   // Required by Spring Boot JPA:
-
   @Override public boolean equals(Object o) {
-    if (this == o)
-      return true;
     if (o == null || getClass() != o.getClass())
       return false;
     Animal animal = (Animal) o;
     return animalId == animal.animalId
         && Objects.equals(getWeight_kilogram(), animal.getWeight_kilogram())
         && Objects.equals(getOrigin(), animal.getOrigin())
-        && Timestamp.from(getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)).equals(Timestamp.from(animal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
-        //&& Objects.equals(getPartList(), animal.getPartList())
-        //&& Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList())
+        && Objects.equals(getArrivalDate(), animal.getArrivalDate())
+        && Objects.equals(getAnimalPartIdList(), animal.getAnimalPartIdList());
   }
 
   @Override public int hashCode() {
     return Objects.hash(animalId,
         getWeight_kilogram(),
         getOrigin(),
-        Timestamp.from(getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
-        //getPartList(),
-        //getAnimalPartIdList()
+        getArrivalDate(),
+        getAnimalPartIdList());
   }
 
   @Override public String toString() {

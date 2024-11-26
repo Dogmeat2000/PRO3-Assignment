@@ -111,8 +111,11 @@ public class ProductRegistrationSystemTest
       tray1 = trayRegistrationSystem.registerNewTray(maxCapacityTray1);
       tray2 = trayRegistrationSystem.registerNewTray(maxCapacityTray2);
       animalPart1 = animalPartRegistrationSystem.registerNewAnimalPart(animal1, partType1, tray1, animalPartWeight1);
+      System.out.println("REACHED HERE 1");
       animalPart2 = animalPartRegistrationSystem.registerNewAnimalPart(animal2, partType2, tray2, animalPartWeight2);
+      System.out.println("REACHED HERE 2");
       animalPart3 = animalPartRegistrationSystem.registerNewAnimalPart(animal1, partType2, tray2, animalPartWeight3);
+      System.out.println("REACHED HERE 3");
 
       // Read updated Animal, PartType and Tray after registering the AnimalPart:
       animal1 = animalRegistrationSystem.readAnimal(animal1.getAnimalId());

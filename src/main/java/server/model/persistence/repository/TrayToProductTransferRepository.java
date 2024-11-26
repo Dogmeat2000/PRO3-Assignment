@@ -4,9 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import server.model.persistence.entities.TrayToProductTransfer;
 
-import java.util.List;
-import java.util.Optional;
-
 /** <p>A @Repository (Spring Boot) for Java Persistance API (JPA).<br>
  * This @Repository interface extends JpaRepository and provides access to paging, sorting and CRUD operations on the database.
  * It is automatically populated by Spring Boot JPA, so no implementation class is needed for the proper Database access operations.<br>
@@ -20,6 +17,4 @@ public interface TrayToProductTransferRepository extends JpaRepository<TrayToPro
 {
   // The extended JpaRepository adds CRUD and Paging/Sorting operations to the Animal entity.
   // If additional functionality is required, it can be added below.
-  Optional<List<TrayToProductTransfer>> findTrayToProductTransferByTray_TrayId(Long tray_id);
-  Optional<List<TrayToProductTransfer>> findTrayToProductTransferByProduct_ProductId(Long product_id);
 }
