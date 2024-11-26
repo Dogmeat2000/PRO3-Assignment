@@ -40,14 +40,12 @@ public class ProductValidation
     validateId(product.getProductId());
 
     // Product must contain at least 1 AnimalPart
-    //validateContents(product.getContentList());
     if(product.getAnimalPartIdList().isEmpty())
       throw new DataIntegrityViolationException("No associated AnimalParts. Must have at least 1 AnimalPart association");
 
     // Product must have received animalParts from at least 1 Tray:
-    //validateTrayList(product.getTraySuppliersList());
-    /*if(product.get().isEmpty())
-      throw new DataIntegrityViolationException("No associated AnimalParts. Must have at least 1 AnimalPart association");*/
+    if(product.getTraySuppliersList().isEmpty())
+      throw new DataIntegrityViolationException("No associated Trays. Must have at least 1 AnimalPart association");
 
     // Validation passed:
   }

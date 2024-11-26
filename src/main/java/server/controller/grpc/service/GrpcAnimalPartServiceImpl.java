@@ -36,8 +36,8 @@ public class GrpcAnimalPartServiceImpl extends AnimalPartServiceGrpc.AnimalPartS
       PartTypeRegistryInterface partTypeService,
       TrayRegistryInterface trayService,
       ProductRegistryInterface productService,
-      GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter,
-      @Value("${maxNestingDepth}") int maxNestingDepth) {
+      GrpcAnimalPartData_To_AnimalPart grpcAnimalPartDataConverter/*,
+      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
     super();
     this.animalPartService = animalPartService;
     /*this.animalService = animalService;

@@ -209,6 +209,7 @@ public class GrpcAnimalPartServiceImplTest
       parentPartType = grpcPartTypeData_To_PartTypeDto.convertToPartTypeDto(partTypeStub.readPartType(LongId_ToGrpc_Id.convertToPartTypeId(parentPartType.getTypeId())));
 
     } catch (Exception e) {
+      e.printStackTrace();
       fail("Unexpected exception thrown while testing. " + e.getMessage());
     }
 

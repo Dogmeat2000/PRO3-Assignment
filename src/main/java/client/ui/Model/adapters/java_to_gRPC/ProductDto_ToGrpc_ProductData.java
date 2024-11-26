@@ -32,7 +32,7 @@ public class ProductDto_ToGrpc_ProductData
       builder.addTransferIds(LongId_ToGrpc_Id.convertToTrayToProductTransferId(id));
 
     // Convert TrayIds:
-    for (long id : dto.getTransferIdList())
+    for (long id : dto.getTrayIdList())
       builder.addTrayIds(LongId_ToGrpc_Id.convertToTrayId(id));
 
     return builder.build();

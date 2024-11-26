@@ -29,20 +29,20 @@ public class GrpcTrayServiceImpl extends TrayServiceGrpc.TrayServiceImplBase
   private final AnimalPartRegistryInterface animalPartService;
   private final GrpcTrayData_To_Tray grpcTrayDataConverter;
   private final Tray_ToGrpc_TrayData trayConverter = new Tray_ToGrpc_TrayData();
-  private final int maxNestingDepth;
+  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcTrayServiceImpl(TrayRegistryInterface trayService,
       ProductRegistryInterface productService,
       AnimalPartRegistryInterface animalPartService,
-      GrpcTrayData_To_Tray grpcTrayDataConverter,
-      @Value("${maxNestingDepth}") int maxNestingDepth) {
+      GrpcTrayData_To_Tray grpcTrayDataConverter/*,
+      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
     super();
     this.trayService = trayService;
     this.productService = productService;
     this.animalPartService = animalPartService;
     this.grpcTrayDataConverter = grpcTrayDataConverter;
-    this.maxNestingDepth = maxNestingDepth;
+    //this.maxNestingDepth = maxNestingDepth;
   }
 
 

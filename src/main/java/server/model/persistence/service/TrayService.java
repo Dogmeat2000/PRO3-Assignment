@@ -9,7 +9,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.model.validation.TrayValidation;
-import server.model.persistence.repository.AnimalPartRepository;
 import server.model.persistence.repository.TrayRepository;
 import server.model.persistence.repository.TrayToProductTransferRepository;
 import server.model.persistence.entities.Tray;

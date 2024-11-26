@@ -30,17 +30,17 @@ public class GrpcPartTypeServiceImpl extends PartTypeServiceGrpc.PartTypeService
   private final AnimalPartRegistryInterface animalPartService;
   private final GrpcPartTypeData_To_PartType grpcPartTypeDataConverter;
   private final PartType_ToGrpc_PartTypeData partTypeConverter = new PartType_ToGrpc_PartTypeData();
-  private final int maxNestingDepth;
+  //private final int maxNestingDepth;
 
   @Autowired
   public GrpcPartTypeServiceImpl(PartTypeRegistryInterface partTypeService,
       AnimalPartRegistryInterface animalPartService,
-      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter,
-      @Value("${maxNestingDepth}") int maxNestingDepth) {
+      GrpcPartTypeData_To_PartType grpcPartTypeDataConverter/*,
+      @Value("${maxNestingDepth}") int maxNestingDepth*/) {
     super();
     this.partTypeService = partTypeService;
     this.animalPartService = animalPartService;
-    this.maxNestingDepth = maxNestingDepth;
+    //this.maxNestingDepth = maxNestingDepth;
     this.grpcPartTypeDataConverter = grpcPartTypeDataConverter;
   }
 

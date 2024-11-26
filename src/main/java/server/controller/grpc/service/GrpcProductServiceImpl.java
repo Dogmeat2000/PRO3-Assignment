@@ -50,13 +50,16 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
     try {
       // Translate received gRPC information from the client, into Java compatible types
       System.out.println("\n\n[GrpcProductServiceImpl] Line 1");
+      System.out.println("Product is: " + request);
 
       Product productReceived = grpcProductDataConverter.convertToProduct(request);
       System.out.println("\n\n[GrpcProductServiceImpl] Line 2");
+      System.out.println("Product is: " + productReceived);
 
       // Register the Product:
       Product createdProduct = productService.registerProduct(productReceived);
       System.out.println("\n\n[GrpcProductServiceImpl] Line 3");
+      System.out.println("Product is: " + createdProduct);
 
       // If animal creation fails
       if (createdProduct == null)
