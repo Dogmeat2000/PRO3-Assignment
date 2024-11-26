@@ -2,9 +2,6 @@ package client;
 
 import client.interfaces.*;
 import client.ui.Model.service.*;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.Product;
-import server.model.persistence.entities.Tray;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.ProductDto;
 import shared.model.dto.TrayDto;

@@ -2,7 +2,6 @@ package client;
 
 import client.interfaces.AnimalRegistrationSystem;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
-import server.model.persistence.entities.Animal;
 import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.persistance.CreateFailedException;
@@ -106,7 +105,7 @@ public class Station1_CLI
 
         System.out.print("Enter name of origin farm: ");
         value = getUserInput();
-        if(value.isEmpty() ||value.isBlank())
+        if(value.isBlank())
           System.out.println("Invalid input!");
         else
           try {
@@ -163,7 +162,7 @@ public class Station1_CLI
 
         System.out.print("Enter new name of origin farm: ");
         value = getUserInput();
-        if(value.isEmpty() ||value.isBlank() || oldAnimal == null)
+        if(value.isBlank() || oldAnimal == null)
           System.out.println("Invalid input!");
         else
           try {

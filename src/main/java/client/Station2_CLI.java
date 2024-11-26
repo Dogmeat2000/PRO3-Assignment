@@ -8,10 +8,6 @@ import client.ui.Model.service.AnimalPartRegistrationSystemImpl;
 import client.ui.Model.service.AnimalRegistrationSystemImpl;
 import client.ui.Model.service.PartTypeRegistrationSystemImpl;
 import client.ui.Model.service.TrayRegistrationSystemImpl;
-import server.model.persistence.entities.Animal;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.PartType;
-import server.model.persistence.entities.Tray;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.PartTypeDto;
@@ -111,10 +107,6 @@ public class Station2_CLI
 
     switch (input.toLowerCase()) {
       case "add":
-        /*validPartIds.clear();
-        validAnimalIds.clear();
-        validTrayIds.clear();
-        validTypeIds.clear();*/
 
         // Prompt user to enter weight of AnimalPart:
         System.out.print("Enter weight (kg) of animalPart to ADD: ");
@@ -196,7 +188,6 @@ public class Station2_CLI
         try {
           parentTray = trayRegistrationSystem.readTray(Long.parseLong(value));
         } catch (NotFoundException e) {
-          e.printStackTrace(); // TODO: DELETE LINE
           System.out.println("Invalid Tray Id!");
           break;
         }
@@ -206,7 +197,6 @@ public class Station2_CLI
           AnimalPartDto animalPart = animalPartRegistrationSystem.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
           System.out.println("Added [" + animalPart + "] to Database!");
         } catch (CreateFailedException e) {
-          e.printStackTrace(); // TODO: DELETE LINE
           System.out.println("AnimalPartRegistration failed, " + e.getMessage());
           break;
         }
@@ -216,7 +206,6 @@ public class Station2_CLI
       case "remove":
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
-        validPartIds.clear();
         for (AnimalPartDto animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
           System.out.println(animalPart);
           validPartIds.add(animalPart.getPartId());
@@ -237,7 +226,6 @@ public class Station2_CLI
           if(animalPartRegistrationSystem.removeAnimalPart(partToRemove))
             System.out.println("Removed AnimalPart with Part_Id '" + part_idToRemove + "' from Database!");
         } catch (DeleteFailedException | NotFoundException e) {
-          e.printStackTrace(); // TODO: DELETE LINE
           System.out.println("ERROR: Could not remove designated AnimalPart from Database");
           break;
         }
@@ -247,10 +235,6 @@ public class Station2_CLI
       case "update":
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
-        /*validPartIds.clear();
-        validAnimalIds.clear();
-        validTypeIds.clear();
-        validTrayIds.clear();*/
         for (AnimalPartDto animalPart : animalPartRegistrationSystem.getAllAnimalParts()) {
           System.out.println(animalPart);
           validPartIds.add(animalPart.getPartId());
@@ -274,7 +258,6 @@ public class Station2_CLI
           if(modifiedAnimalPart != null)
             System.out.println("You are modifying AnimalPart\n: " + modifiedAnimalPart);
         } catch (NotFoundException e) {
-          e.printStackTrace(); // TODO: DELETE LINE
           System.out.println("ERROR: Could not retrieve original AnimalPart from Database. It no longer exists in database.");
           break;
         }
