@@ -2,7 +2,6 @@ package client.ui.Model.service;
 
 import client.interfaces.PartTypeRegistrationSystem;
 import client.ui.Model.adapters.gRPC_to_java.GrpcPartTypeData_To_PartTypeDto;
-import client.ui.Model.adapters.java_to_gRPC.AnimalPartDto_ToGrpc_AnimalPartData;
 import client.ui.Model.adapters.java_to_gRPC.PartTypeDto_ToGrpc_PartTypeData;
 import grpc.*;
 import io.grpc.ManagedChannel;
@@ -11,8 +10,6 @@ import jakarta.transaction.Transactional;
 import client.ui.Model.adapters.GrpcFactory;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.PartType;
 import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -29,7 +26,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 {
   private final GrpcPartTypeData_To_PartTypeDto grpcPartTypeDataConverter = new GrpcPartTypeData_To_PartTypeDto();
   private final PartTypeDto_ToGrpc_PartTypeData partTypeDtoConverter = new PartTypeDto_ToGrpc_PartTypeData();
-  private final AnimalPartDto_ToGrpc_AnimalPartData animalPartDtoConverter = new AnimalPartDto_ToGrpc_AnimalPartData();
 
   public PartTypeRegistrationSystemImpl(String host, int port) {
     super(host, port);
@@ -53,7 +49,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
       return readPartType(GrpcId_To_LongId.ConvertToLongId(createdPartType.getPartTypeId()));
-      //return GrpcPartTypeData_To_PartType.convertToPartType(createdPartType);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register PartType with desc '" + desc + "' (" + e.getMessage() + ")");
@@ -81,24 +76,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       // Convert the PartTypeData that was read from the DB into java compatible format:
       return grpcPartTypeDataConverter.convertToPartTypeDto(foundPartType);
-
-      // Populate PartType with the proper relationships, to have a proper Object Relational Model.
-      // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
-      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      /*try {
-        // Read all animalParts associated with this PartType:
-        AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(partType.getTypeId()));
-
-        // Convert to java language, and attach to PartType Object:
-        partType.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
-      } catch (StatusRuntimeException e) {
-        if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
-          // No AnimalParts found with this PartType:
-          throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
-      }*/
-
-      // Return:
-      //return partType;
 
     } catch (StatusRuntimeException e) {
       throw new NotFoundException("No PartType found with id '" + typeId + "' (" + e.getMessage() + ")");
@@ -163,18 +140,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
       if(deleted == null && partTypeData != null)
         throw new DeleteFailedException("Failed to delete PartType with id '" + typeId);
 
-      // Check if there are any remaining AnimalParts associated with this PartType, if so delete these too:
-      // TODO: Shouldn't be needed with JPA.
-      /*if(!partType.getAnimalPartIdList().isEmpty()) {
-        // Prompt gRPC to delete the AnimalPart:
-        for (AnimalPart animalPart : partType.getAnimalPartList()) {
-          deleted = animalPartStub.removeAnimalPart(animalPartDtoConverter.convertToAnimalPartData(animalPart, maxNestingDepth));
-
-          if(deleted == null && animalPart != null)
-            throw new DeleteFailedException("Failed to delete AnimalPart with id '" + animalPart.getPartId() + "' associated with PartType_id '" + typeId + "'");
-        }
-      }*/
-
       return true;
     } catch (StatusRuntimeException e) {
       if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
@@ -203,26 +168,6 @@ public class PartTypeRegistrationSystemImpl extends Client implements PartTypeRe
 
       // Convert received data to java language:
       return grpcPartTypeDataConverter.convertToPartTypeDtoList(partTypesData);
-
-      // Populate each PartType with the proper relationships, to have a proper Object Relational Model.
-      // Object relations are lost during gRPC conversion (due to cyclic relations, i.e. both PartType and AnimalPart have relations to each other), so must be repopulated:
-      // TODO: Instead of accepting significant dataloss, instead refactor adapters/converters and define a max-nesting depth, so that at least 2-3 levels of objects get transferred correctly.
-      /*for (PartType partType : partTypes) {
-        try {
-          // Read all animalParts associated with this PartType:
-          AnimalPartsData animalPartsData = animalPartStub.readAnimalPartsByPartTypeId(LongId_ToGrpc_Id.convertToPartTypeId(partType.getTypeId()));
-
-          // Convert to java language, and attach to PartType Object:
-          partType.setAnimalParts(GrpcAnimalPartData_To_AnimalPart.convertToAnimalPartList(animalPartsData));
-        } catch (StatusRuntimeException e) {
-          if(!e.getStatus().getCode().equals(NOT_FOUND.getCode()))
-            // No AnimalParts found with this PartType:
-            throw new RuntimeException("Critical Error encountered. Failed to Query for all AnimalParts associated with partType_id '" + partType.getTypeId() + "' (" + e.getMessage() + ")");
-        }
-      }*/
-
-      // Return data
-      //return partTypes;
 
     } catch (StatusRuntimeException e) {
       if(e.getStatus().getCode().equals(NOT_FOUND.getCode()))
