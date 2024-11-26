@@ -41,12 +41,6 @@ public class GrpcTrayData_To_Tray
     long id = GrpcId_To_LongId.ConvertToLongId(trayData.getTrayId());
     BigDecimal maxWeight_kilogram = trayData.getMaxWeightKilogram().isEmpty() ? BigDecimal.ZERO : new BigDecimal(trayData.getMaxWeightKilogram());
 
-    // Query database for the referenced PartType entities, for proper Object Relational Model (ORM) behavior:
-    /*PartType trayType = null;
-    try {
-      trayType = partTypeService.readPartType(GrpcId_To_LongId.ConvertToLongId(trayData.getTrayTypeId()));
-    } catch (NotFoundException ignored) {}*/
-
     // Query database for the referenced AnimalPart entities, for proper Object Relational Model (ORM) behavior:
     List<AnimalPart> animalParts = new ArrayList<>();
     for (AnimalPartId animalPartId : trayData.getAnimalPartIdsList())
