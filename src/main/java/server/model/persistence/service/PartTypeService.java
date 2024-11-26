@@ -21,7 +21,6 @@ import java.util.*;
 public class PartTypeService implements PartTypeRegistryInterface
 {
   private final PartTypeRepository partTypeRepository;
-  private final Map<Long, PartType> partTypeCache = new HashMap<>();
   private static final Logger logger = LoggerFactory.getLogger(PartTypeService.class);
   private final AnimalPartRepository animalPartRepository;
 
@@ -32,7 +31,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override
   public PartType registerPartType (PartType data) throws PersistenceException, DataIntegrityViolationException {
 
@@ -46,10 +45,6 @@ public class PartTypeService implements PartTypeRegistryInterface
     try {
       PartType newPartType = partTypeRepository.save(data);
       logger.info("PartType added to DB with ID: {}", data.getTypeId());
-
-      // Attempt to add PartType to local cache:
-      /*partTypeCache.put(newPartType.getTypeId(), newPartType);
-      logger.info("PartType saved to local cache with ID: {}", newPartType.getTypeId());*/
 
       return newPartType;
 
@@ -70,39 +65,14 @@ public class PartTypeService implements PartTypeRegistryInterface
     // Validate received id, before passing to repository/database:
     PartTypeValidation.validateId(typeId);
 
-    // Attempt to read PartType from local cache first:
-    /*if(partTypeCache.containsKey(typeId)) {
-      logger.info("PartType read from local cache with ID: {}", typeId);
-      return partTypeCache.get(typeId);
-    }*/
-
-    // PartType not found in local cache. Attempt to read from DB:
+    // Attempt to read from DB:
     try {
       logger.info("Looking up PartType with ID: {} in database...", typeId);
 
       // Causes the repository to query the database. If no match is found, an error is thrown immediately.
       PartType partType = partTypeRepository.findById(typeId).orElseThrow(() -> new NotFoundException("No PartType found in database with matching id=" + typeId));
-
       logger.info("PartType read from database with ID: {}", typeId);
 
-      // Load all associated AnimalParts:  //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*List<AnimalPart> animalParts = new ArrayList<>();
-      try {
-        animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching type_id=" + partType.getTypeId()));
-      } catch (NotFoundException ignored) {}
-
-      if(!animalParts.isEmpty())
-        partType.setAnimalParts(animalParts);*/
-
-      // Populate the id association list:
-      /*List<Long> animalPartIds = new ArrayList<>();
-      for (AnimalPart animalPart : partType.getAnimalPartList())
-        animalPartIds.add(animalPart.getPart_id());
-      partType.setAnimalPartIdList(animalPartIds);*/
-
-      // Add found PartType to local cache, to improve performance next time PartType is requested.
-      /*partTypeCache.put(partType.getTypeId(), partType);
-      logger.info("PartType added to local cache with ID: {}", partType.getTypeId());*/
       return partType;
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering PartType with ID {}: {}", typeId, e.getMessage());
@@ -111,7 +81,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   }
 
 
-  @Transactional // @Transactional is specified, to ensure that database actions are executed within a single transaction - and can be rolled back, if they fail!
+  @Transactional
   @Override
   public boolean updatePartType (PartType data) throws NotFoundException, DataIntegrityViolationException, PersistenceException {
     // Validate received data, before passing to repository/database:
@@ -135,33 +105,6 @@ public class PartTypeService implements PartTypeRegistryInterface
       // Save the modified entity back to database:
       partType = partTypeRepository.save(partType);
       logger.info("PartType updated in database with ID: {}", partType.getTypeId());
-
-      // Attempt to add updated PartType to local cache:
-      /*PartType updatedPartType = readPartType(partType.getTypeId());
-      partTypeCache.put(updatedPartType.getTypeId(), updatedPartType);
-      logger.info("PartType saved to local cache with ID: {}", updatedPartType.getTypeId());*/
-
-      // Get a list of AnimalParts that are no longer associated with this PartType:
-      /*List<AnimalPart> listOfAnimalPartsNotInUpdatedPartType = new ArrayList<>(data.getAnimalPartList());
-
-      for (AnimalPart oldAnimalPart : data.getAnimalPartList()) {
-        for (AnimalPart newAnimalPart : partType.getAnimalPartList()) {
-          if(oldAnimalPart.getPart_id() == newAnimalPart.getPart_id()) {
-            listOfAnimalPartsNotInUpdatedPartType.remove(oldAnimalPart);
-          }
-        }
-      }*/
-
-      // Update all still-existing AnimalPart compositions:
-      /*List<AnimalPart> threadSafePartTypes = new CopyOnWriteArrayList<>(partType.getAnimalPartList());
-      for (AnimalPart animalPart : threadSafePartTypes) {
-        animalPart.setType(partType);
-        animalPartRepository.save(animalPart);
-      }*/
-
-      // Delete any AnimalPart objects that are no longer associated with any Animal entity:
-      /*for (AnimalPart voidAnimalPart : listOfAnimalPartsNotInUpdatedPartType)
-        animalPartRepository.findById(voidAnimalPart.getPart_id()).ifPresent(animalPartRepository::delete);*/
 
       return true;
 
@@ -196,12 +139,6 @@ public class PartTypeService implements PartTypeRegistryInterface
       }
 
       logger.info("PartType deleted from database with ID: {}", data.getTypeId());
-      // PartType was removed from database. Now ensure that is it also removed from the local cache:
-      /*partTypeCache.remove(data.getTypeId());
-      logger.info("PartType deleted from local cache with ID: {}", data.getTypeId());
-
-      // Attempt to delete all associated AnimalPart entities:
-      animalPartRepository.deleteAll(data.getAnimalPartList());*/
 
       return true;
 
@@ -221,35 +158,7 @@ public class PartTypeService implements PartTypeRegistryInterface
   public List<PartType> getAllPartTypes() throws PersistenceException {
     try {
       // Load all PartTypes from repository:
-      List<PartType> partTypes = partTypeRepository.findAll();
-
-      // Load all associated AnimalParts, for each PartType: //TODO: Shouldn't be needed? JPA should be doing this already!
-      /*for (PartType partType : partTypes) {
-        List<AnimalPart> animalParts = new ArrayList<>();
-        try {
-          animalParts = animalPartRepository.findAnimalPartsByType_typeId(partType.getTypeId()).orElseThrow(() -> new NotFoundException("No associated AnimalParts found in database with matching id=" + partType.getTypeId()));
-        } catch (NotFoundException ignored) {}
-
-        if(!animalParts.isEmpty())
-          partType.setAnimalParts(animalParts);
-      }*/
-
-      // Populate the id association list:
-      /*for (PartType partType : partTypes) {
-        List<Long> animalPartIds = new ArrayList<>();
-        for (AnimalPart animalPart : partType.getAnimalPartList())
-          animalPartIds.add(animalPart.getPart_id());
-        partType.setAnimalPartIdList(animalPartIds);
-      }*/
-
-      // Add all the found PartTypes to local cache, to improve performance next time a PartType is requested.
-      /*partTypeCache.clear();
-      for (PartType partType : partTypes) {
-        if(partType != null)
-          partTypeCache.put(partType.getTypeId(), partType);
-      }
-      logger.info("Added all PartTypes from Database to Local Cache");*/
-      return partTypes;
+      return partTypeRepository.findAll();
 
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred: {}", e.getMessage());

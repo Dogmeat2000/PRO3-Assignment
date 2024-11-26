@@ -45,12 +45,8 @@ public class ProductService implements ProductRegistryInterface
     // Validate received data, before passing to repository/database:
     ProductValidation.validateProductRegistration(data);
 
-    System.out.println("\n\n[ProductService] Line 1");
-
     // Reset productId, since the database handles this assignment:
     data.setProductId(0);
-
-    System.out.println("\n\n[ProductService] Line 2");
 
     // Attempt to add Product to DB:
     try {
@@ -77,12 +73,8 @@ public class ProductService implements ProductRegistryInterface
       data.addAllAnimalParts(associatedAnimalParts);
       data.addAllTraysToTraySuppliersList(associatedTrays);
 
-      System.out.println("\n\n[ProductService] Line 3");
-
       // Save the Product to DB, without the transfers:
       Product newProduct = productRepository.save(data);
-
-      System.out.println("\n\n[ProductService] Line 4");
 
       // Register a new transfer for each Tray providing AnimalParts to this Product:
       for (Tray tray : data.getTraySuppliersList()) {
@@ -98,16 +90,12 @@ public class ProductService implements ProductRegistryInterface
       return newProduct;
 
     } catch (IllegalArgumentException | ConstraintViolationException | DataIntegrityViolationException e) {
-      e.printStackTrace(); // TODO: DELETE LINE
       logger.error("Unable to register Product in DB, Reason: {}", e.getMessage());
       throw new DataIntegrityViolationException("Invalid Product provided. Incompatible with database! Cause (" + e.getMessage() + ")");
 
     } catch (PersistenceException e) {
       logger.error("Persistence exception occurred while registering Product: {}", e.getMessage());
       throw new PersistenceException(e);
-    } catch (Exception e) {
-      e.printStackTrace(); // TODO: DELETE LINE
-      throw new RuntimeException();
     }
   }
 
@@ -117,7 +105,7 @@ public class ProductService implements ProductRegistryInterface
     // Validate received id, before passing to repository/database:
     ProductValidation.validateId(productId);
 
-    // Product not found in local cache. Attempt to read from DB:
+    // Attempt to read from DB:
     try {
       logger.info("Looking up Product with ID: '{}' in database...", productId);
 
@@ -137,28 +125,6 @@ public class ProductService implements ProductRegistryInterface
     }
   }
 
-  @Override public List<Product> readProductsByTransferId(long transferId) throws PersistenceException, NotFoundException, DataIntegrityViolationException {
-    // Validate received id, before passing to repository/database:
-    ProductValidation.validateId(transferId);
-
-    // Attempt to read from DB:
-    try {
-      List<Product> products = productRepository.findByTraySupplyJoinList_TransferId(transferId).orElseThrow(() -> new NotFoundException("No Products found in database associated with transferId=" + transferId));
-
-      logger.info("Products associated with transferId {} read from database.", transferId);
-
-      // Populate transient values for each Product:
-      for (Product product : products) {
-        // Populate the transient traySuppliers association list:
-        this.populateTransientTrayList(product);
-      }
-
-      return products;
-    } catch (PersistenceException e) {
-      logger.error("Persistence exception occurred while retrieving all Products associated with transferId {}: {}", transferId, e.getMessage());
-      throw new PersistenceException(e);
-    }
-  }
 
   @Transactional
   @Override public boolean updateProduct(Product data) {
