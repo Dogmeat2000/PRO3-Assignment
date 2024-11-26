@@ -42,7 +42,6 @@ public class RestAnimalDto_To_Animal
       animal.setWeight_kilogram(animalDto.getWeight_kilogram());
       animal.setOrigin(animalDto.getOrigin());
       animal.setArrivalDate(animalDto.getArrivalDate());
-      //animal.setAnimalPartIdList(animalDto.getAnimalPartIdList());
       animal.setAnimalParts(new ArrayList<>());
 
       // Populate Animal entity with the proper associations:
