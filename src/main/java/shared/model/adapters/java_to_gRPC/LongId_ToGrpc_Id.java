@@ -64,9 +64,6 @@ public class LongId_ToGrpc_Id
 
   /** <p>Converts a long id into a database/gRPC compatible AnimalPartId format</p>
    * @param animalPartId The id (primary key) for a AnimalPart entity
-   * @param animalId the id (primary key) for the Animal entity associated with this AnimalPart
-   * @param typeId the id (primary key) for the PartType entity associated with this AnimalPart
-   * @param trayId the id (primary key) for the Tray entity associated with this AnimalPart
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static AnimalPartId convertToAnimalPartId(long animalPartId) throws NullPointerException {
