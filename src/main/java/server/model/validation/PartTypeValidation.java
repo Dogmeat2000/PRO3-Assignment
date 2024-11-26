@@ -34,7 +34,7 @@ public class PartTypeValidation
 
   public static void validateDesc(String desc) throws DataIntegrityViolationException {
     // Animal weight must be larger than 0:
-    if(desc == null || desc.isEmpty() || desc.isBlank())
+    if(desc == null || desc.isBlank())
       throw new DataIntegrityViolationException("desc is empty or blank");
 
     // Validation passed:

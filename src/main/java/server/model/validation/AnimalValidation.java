@@ -53,7 +53,7 @@ public class AnimalValidation
 
   public static void validateOrigin(String origin) throws DataIntegrityViolationException {
     // Origin must not be null, empty or blank:
-    if(origin == null || origin.isEmpty() || origin.isBlank())
+    if(origin == null || origin.isBlank())
       throw new DataIntegrityViolationException("origin is invalid (null or empty/blank)");
 
     // Validation passed:

@@ -24,8 +24,11 @@ public class ProductValidation
     // Product must contain at least 1 AnimalPart
     validateContents(product.getAnimalPartList());
 
-    // Product must have received animalParts from at least 1 Tray:
+    // Product must have received animalParts from at least 1 Tray, this must be reported in a transfer:
     validateTraySupplyList(product.getTraySupplyJoinList());
+
+    // Product must have a transient associated with the Trays that supplied AnimalParts:
+    validateTrayList(product.getTraySuppliersList());
 
     // Validation passed:
   }
@@ -40,7 +43,7 @@ public class ProductValidation
     validateId(product.getProductId());
 
     // Product must contain at least 1 AnimalPart
-    if(product.getAnimalPartIdList().isEmpty())
+    if(product.getAnimalPartList().isEmpty())
       throw new DataIntegrityViolationException("No associated AnimalParts. Must have at least 1 AnimalPart association");
 
     // Product must have received animalParts from at least 1 Tray:
