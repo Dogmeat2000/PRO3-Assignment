@@ -1,6 +1,5 @@
 package client.interfaces;
 
-import server.model.persistence.entities.Animal;
 import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.NotFoundException;
 import shared.model.exceptions.persistance.CreateFailedException;

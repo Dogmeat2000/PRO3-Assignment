@@ -1,6 +1,5 @@
 package client.interfaces;
 
-import server.model.persistence.entities.PartType;
 import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;

@@ -1,9 +1,5 @@
 package client.interfaces;
 
-import server.model.persistence.entities.Animal;
-import server.model.persistence.entities.AnimalPart;
-import server.model.persistence.entities.PartType;
-import server.model.persistence.entities.Tray;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.PartTypeDto;
@@ -35,9 +31,6 @@ public interface AnimalPartRegistrationSystem
 
   /** <p>Looks up any AnimalPart entity with the specified id, in the repository</p>
    * @param animalPartId A unique identifier assigned to the specific AnimalPart to look up.
-   * @param animal The associated Animal entity from where this AnimalPart was cut.
-   * @param type The associated PartType entity describing which type of part this is (i.e. inner thigh)
-   * @param tray The associated Tray entity into which this AnimalPart was placed directly after dissection.
    * @return The identified AnimalPart instance.
    * @throws NotFoundException Thrown if AnimalPart is not be found.
    */
