@@ -27,7 +27,7 @@ public class ProducedAnimalPartsQueueManager implements QueueManager
         // Check if connection can be established with a RabbitMQ server:
         if(!rabbitMQChecker.isRabbitMQRunning()){
           System.err.println("[ProducedAnimalsQueueManager] Critical Error: Could not connect to RabbitMQ");
-          System.err.println("[ProducedAnimalsQueueManager] Waiting for connection. Retrying in 5s...");
+          System.err.println("[ProducedAnimalsQueueManager] Retrying in 5s...");
           Thread.sleep(5000);
 
         } else {

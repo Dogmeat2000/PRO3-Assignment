@@ -22,8 +22,6 @@ public class Station2Model implements BaseModel
   private final QueueManager registeredAnimalPartsQueueManager;
   private final AnimalPartRegistrationService animalPartRegistrationService;
 
-  // TODO: Refactor, so the it does not require a QueueManager, but merely a Queue (or List) for the received Animals
-
   public Station2Model(QueueManager registeredAnimalPartsQueueManager, AnimalPartRegistrationService animalPartRegistrationService) {
     this.receivedAnimalsList = new ArrayList<>();
     this.registeredAnimalPartsQueueManager = registeredAnimalPartsQueueManager;
