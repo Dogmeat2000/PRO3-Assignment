@@ -26,6 +26,9 @@ public class AnimalDto implements Serializable
   @JsonProperty("animalPartIdList")
   private List<Long> animalPartIdList = new ArrayList<>();
 
+  // No-Args constructor for Jackson, JSON parser:
+  public AnimalDto() {}
+
   public AnimalDto(long animalId, BigDecimal weight_kilogram, String origin, Date arrivalDate, List<Long> animalPartIdList) {
     setAnimalId(animalId);
     setWeight_kilogram(weight_kilogram);

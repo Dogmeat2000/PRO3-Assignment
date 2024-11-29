@@ -12,6 +12,9 @@ public class AnimalPartDto
   private long trayId;
   private long productId;
 
+  // No-Args constructor for Jackson, JSON parser:
+  public AnimalPartDto(){}
+
   public AnimalPartDto(long partId, BigDecimal weight_kilogram, long typeId, long animalId, long trayId, long productId) {
     setPartId(partId);
     setWeight_kilogram(weight_kilogram);

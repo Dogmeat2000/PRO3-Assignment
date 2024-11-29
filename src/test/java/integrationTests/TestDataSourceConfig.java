@@ -30,7 +30,7 @@ import java.util.Map;
 @EnableJpaRepositories(
     entityManagerFactoryRef = "testdbEntityManagerFactory",
     transactionManagerRef = "testdbTransactionManager",
-    basePackages = {"server.model.persistence.repository"})
+    basePackages = {"DataServer.model.persistence.repository"})
 public class TestDataSourceConfig
 {
   @Primary
@@ -55,7 +55,7 @@ public class TestDataSourceConfig
 
     return builder
         .dataSource(testdbDataSource)
-        .packages("server.model.persistence.entities")
+        .packages("DataServer.model.persistence.entities")
         .persistenceUnit("testdbDataSource")
         .properties(testdbJpaProperties)
         .build();
