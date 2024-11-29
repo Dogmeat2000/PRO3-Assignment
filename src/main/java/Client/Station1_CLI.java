@@ -21,9 +21,8 @@ import java.util.Scanner;
 
 public class Station1_CLI
 {
-  // NOTE: Be aware that Queue names in RabbitMQ may max be 8 characters in length (https://www.rabbitmq.com/docs/queues)
   private static final AnimalRegistrationService ANIMAL_REGISTRATION_SERVICE = new AnimalRegistrationServiceImpl("localhost", 9090);
-  private static final BasicProducer ANIMAL_PRODUCER = new BasicProducer("QAni", "Station1","Animal", "localhost", 5672);
+  private static final BasicProducer ANIMAL_PRODUCER = new BasicProducer("QAni", "SlaughterHouse","Animal", "localhost", 5672);
   private static final RabbitMQChecker RABBIT_MQ_CHECKER = new RabbitMQChecker("localhost", 5672);
   private static final ProducedAnimalsQueueManager QUEUE_MANAGER = new ProducedAnimalsQueueManager(ANIMAL_PRODUCER, RABBIT_MQ_CHECKER);
   private static final Station1Model STATION_1_MODEL = new Station1Model(ANIMAL_REGISTRATION_SERVICE, QUEUE_MANAGER);

@@ -6,6 +6,7 @@ import Client.model.Station3.Station3Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.*;
 import org.springframework.beans.factory.annotation.Value;
+import shared.controller.rabbitMQ.RabbitMQChecker;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 
@@ -20,6 +21,7 @@ public class BasicConsumer implements Runnable
   private final String QUEUE_NAME;
   private final String ROUTING_KEY;
   private final ObjectMapper mapper = new ObjectMapper();
+  private final RabbitMQChecker rabbitMQChecker;
 
   //@Value("${spring.rabbitmq.host:localhost}")
   private String rabbitMQServerAddress;
@@ -29,13 +31,14 @@ public class BasicConsumer implements Runnable
 
   private final BaseModel model;
 
-  public BasicConsumer(String exchangeName, String queueName, String routingKey, String rabbitMQServerAddress, int rabbitMQServerPort, BaseModel model){
+  public BasicConsumer(String exchangeName, String queueName, String routingKey, String rabbitMQServerAddress, int rabbitMQServerPort, BaseModel model, RabbitMQChecker rabbitMQChecker){
     this.rabbitMQServerAddress = rabbitMQServerAddress;
     this.rabbitMQServerPort = rabbitMQServerPort;
     this.EXCHANGE_NAME = exchangeName;
     this.QUEUE_NAME = queueName;
     this.ROUTING_KEY = routingKey;
     this.model = model;
+    this.rabbitMQChecker = rabbitMQChecker;
   }
 
   //@PostConstruct
@@ -45,6 +48,21 @@ public class BasicConsumer implements Runnable
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost(rabbitMQServerAddress);
     factory.setPort(rabbitMQServerPort);
+
+    boolean amqpServerStated = false;
+
+    // Check if connection can be established with a RabbitMQ server:
+    while(!amqpServerStated){
+      if(!rabbitMQChecker.isRabbitMQRunning()){
+        System.err.println("[BasicConsumer] Critical Error: Could not connect to RabbitMQ");
+        System.err.println("[BasicConsumer] Retrying in 5s...");
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException ignored) {}
+      } else {
+        amqpServerStated = true;
+      }
+    }
 
     // Ensure this controller is launched inside a new Thread, to not halt the rest of the spring application:
     Thread consumerThread = new Thread(() -> {
@@ -62,12 +80,12 @@ public class BasicConsumer implements Runnable
         // Bind the Queue to the exchange (in case it isn't already):
         channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
 
-        //System.out.println("\n\n[BasicConsumer] Waiting for AMQP messages. To exit, stop the application.");
+        System.out.println("\n\n[BasicConsumer] Waiting for AMQP messages. To exit, stop the application.");
 
         // Define the consumer
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
           String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-          //System.out.println("[BasicConsumer] AMQP Received '" + message + "'");
+          System.out.println("[BasicConsumer] AMQP Received '" + message + "'");
 
           try {
             // Process the message:
@@ -125,7 +143,7 @@ public class BasicConsumer implements Runnable
 
         // Add to Station 3's list of received AnimalParts:
         model.addEntityToReceivedEntityList(dto);
-        //System.out.println("[BasicConsumer] Finished processing AMQP message: " + message);
+        System.out.println("[BasicConsumer] Finished processing AMQP message: " + message);
 
       } else {
         System.err.println("\n[BasicConsumer] Failed to deserialize received AMQP message. Did not match any station requirements.");

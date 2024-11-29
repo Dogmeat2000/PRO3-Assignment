@@ -1,6 +1,9 @@
 package Client;
 
+import Client.model.Station3.Station3Model;
 import Client.network.services.gRPC.*;
+import Client.network.services.rabbitAmqp.BasicConsumer;
+import shared.controller.rabbitMQ.RabbitMQChecker;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.ProductDto;
 import shared.model.dto.TrayDto;
@@ -13,12 +16,19 @@ import java.util.Scanner;
 
 public class Station3_CLI
 {
-  private static final AnimalPartRegistrationService ANIMAL_PART_REGISTRATION_SERVICE = new AnimalPartRegistrationServiceImpl("localhost", 9090);
   private static final TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
   private static final ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
+  private static final RabbitMQChecker RABBIT_MQ_CHECKER = new RabbitMQChecker("localhost", 5672);
+  private static final Station3Model STATION_3_MODEL = new Station3Model(productRegistrationSystem);
+  private static final BasicConsumer ANIMALPART_CONSUMER = new BasicConsumer("SlaughterHouse", "QAniPart","AnimalPart", "localhost", 5672, STATION_3_MODEL, RABBIT_MQ_CHECKER);
 
   public static void main(String[] args) {
     System.out.println("\nSTATION 3: Product Packaging (Command Line Interface)\nThis CLI is for debugging purposes!");
+
+    // Boot up the AMQP Message Consumer:
+    Thread consumerThread = new Thread(ANIMALPART_CONSUMER);
+    consumerThread.setDaemon(true);
+    consumerThread.start();
 
     while(true) {
       String input = null;
@@ -84,7 +94,7 @@ public class Station3_CLI
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
         //validPartIds.clear();
-        for (AnimalPartDto animalPart : ANIMAL_PART_REGISTRATION_SERVICE.getAllAnimalParts()) {
+        for (AnimalPartDto animalPart : STATION_3_MODEL.getAllEntitiesFromReceivedEntityList()) {
           if(animalPart.getProductId() == 0) {
             // This AnimalPart is not already packed into a Product.
             System.out.println(animalPart);
@@ -101,7 +111,7 @@ public class Station3_CLI
         }
         AnimalPartDto parentAnimalPart = null;
         try {
-          parentAnimalPart = ANIMAL_PART_REGISTRATION_SERVICE.readAnimalPart(Long.parseLong(value));
+          parentAnimalPart = STATION_3_MODEL.readEntityFromReceivedEntityList(Long.parseLong(value));
         } catch (NotFoundException e) {
           System.out.println("Invalid Animal Id!");
           break;
@@ -122,7 +132,7 @@ public class Station3_CLI
 
         // Save the Product to the database:
         try {
-          ProductDto product = productRegistrationSystem.registerNewProduct(partsToPack, traysReceivedFrom);
+          ProductDto product = STATION_3_MODEL.registerNewProduct(partsToPack, traysReceivedFrom);
           System.out.println("Added [" + product + "] to Database!");
         } catch (CreateFailedException e) {
           e.printStackTrace(); // TODO: DELETE LINE
@@ -137,7 +147,7 @@ public class Station3_CLI
         System.out.println("NOT PROPERLY IMPLEMENTED YET");
         /*System.out.println("\nValid Products are:");
         validProductIds.clear();
-        for (Product product : productRegistrationSystem.getAllProducts()) {
+        for (Product product : STATION_3_MODEL.getAllProducts()) {
           System.out.println(product);
           validProductIds.add(product.getProductId());
         }
@@ -153,8 +163,8 @@ public class Station3_CLI
 
         // Remove the Product
         try {
-          Product productToRemove = productRegistrationSystem.readProduct(product_idToRemove);
-          if(productRegistrationSystem.removeProduct(productToRemove.getProductId()))
+          Product productToRemove = STATION_3_MODEL.readProduct(product_idToRemove);
+          if(STATION_3_MODEL.removeProduct(productToRemove.getProductId()))
             System.out.println("Removed Product with ProductId '" + product_idToRemove + "' from Database!");
         } catch (DeleteFailedException | NotFoundException e) {
           e.printStackTrace();
@@ -168,7 +178,7 @@ public class Station3_CLI
         //Show a list of valid Products: //TODO: Refine this functionality!
         System.out.println("NOT PROPERLY IMPLEMENTED YET");
         /*System.out.println("\nValid Products are:");
-        for (Product product : productRegistrationSystem.getAllProducts()) {
+        for (Product product : STATION_3_MODEL.getAllProducts()) {
           System.out.println(product);
           validProductIds.add(product.getProductId());
         }
@@ -185,7 +195,7 @@ public class Station3_CLI
         // Read the Product to modify from the database:
         Product modifiedProduct = null;
         try {
-          modifiedProduct = productRegistrationSystem.readProduct(product_idToUpdate);
+          modifiedProduct = STATION_3_MODEL.readProduct(product_idToUpdate);
           if(modifiedProduct != null)
             System.out.println("You are modifying Product\n: " + modifiedProduct);
         } catch (NotFoundException e) {
@@ -257,7 +267,7 @@ public class Station3_CLI
 
         // Save the modified Product to the database:
         try {
-          productRegistrationSystem.updateProduct(modifiedProduct);
+          STATION_3_MODEL.updateProduct(modifiedProduct);
           System.out.println("Added [" + modifiedProduct + "] to Database!");
         } catch (UpdateFailedException e) {
           e.printStackTrace();
@@ -280,7 +290,7 @@ public class Station3_CLI
         // Read the Product to from the database:
         ProductDto product;
         try {
-          product = productRegistrationSystem.readProduct(productId);
+          product = STATION_3_MODEL.readProduct(productId);
           System.out.println("Found [" + product + "]");
         } catch (NotFoundException e) {
           System.out.println("ERROR: Could not retrieve original Product from Database. It no longer exists in database.");
@@ -293,7 +303,7 @@ public class Station3_CLI
         //Show a list of valid Products:
         System.out.println("\nRetrieving all Products from Database: ");
         try {
-          List<ProductDto> productsFound = productRegistrationSystem.getAllProducts();
+          List<ProductDto> productsFound = STATION_3_MODEL.getAllProducts();
           if(!productsFound.isEmpty()){
             for (ProductDto localProduct : productsFound) {
               System.out.println(localProduct);

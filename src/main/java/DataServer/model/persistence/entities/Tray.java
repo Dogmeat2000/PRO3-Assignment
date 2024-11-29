@@ -69,6 +69,11 @@ public class Tray implements Serializable
 
 
   public BigDecimal getWeight_kilogram() {
+    BigDecimal weight = BigDecimal.ZERO;
+    for (AnimalPart animalPart : getAnimalPartList()) {
+      weight = weight.add(animalPart.getWeight_kilogram());
+    }
+    this.setWeight_kilogram(weight);
     return weight_kilogram;
   }
 

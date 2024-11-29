@@ -29,18 +29,23 @@ public class Station2_CLI
   private static final PartTypeRegistrationSystem partTypeRegistrationSystem = new PartTypeRegistrationSystemImpl("localhost", 9090);
   private static final TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
   private static final RabbitMQChecker RABBIT_MQ_CHECKER = new RabbitMQChecker("localhost", 5672);
-  private static final BasicProducer ANIMALPART_PRODUCER = new BasicProducer("QAniPart", "Station2","AnimalPart", "localhost", 5672);
-  private static final ProducedAnimalPartsQueueManager PRODUCED_ANIMALPARTS_QUEUE_MANAGER = new ProducedAnimalPartsQueueManager(ANIMALPART_PRODUCER, RABBIT_MQ_CHECKER);
-  private static final Station2Model STATION_2_MODEL = new Station2Model(PRODUCED_ANIMALPARTS_QUEUE_MANAGER, ANIMAL_PART_REGISTRATION_SERVICE);
-  private static final BasicConsumer ANIMAL_CONSUMER = new BasicConsumer("Station1", "QAni","Animal", "localhost", 5672, STATION_2_MODEL);
+  private static final BasicProducer ANIMALPART_PRODUCER = new BasicProducer("QAniPart", "SlaughterHouse","AnimalPart", "localhost", 5672);
+  private static final ProducedAnimalPartsQueueManager QUEUE_MANAGER = new ProducedAnimalPartsQueueManager(ANIMALPART_PRODUCER, RABBIT_MQ_CHECKER);
+  private static final Station2Model STATION_2_MODEL = new Station2Model(QUEUE_MANAGER, ANIMAL_PART_REGISTRATION_SERVICE);
+  private static final BasicConsumer ANIMAL_CONSUMER = new BasicConsumer("SlaughterHouse", "QAni","Animal", "localhost", 5672, STATION_2_MODEL, RABBIT_MQ_CHECKER);
 
   public static void main(String[] args) {
     System.out.println("\nSTATION 2: Animal Dissection (Command Line Interface)\nThis CLI is for debugging purposes!");
 
     // Boot up the QueueManager:
-    Thread queueManagerThread = new Thread(ANIMAL_CONSUMER);
+    Thread queueManagerThread = new Thread(QUEUE_MANAGER);
     queueManagerThread.setDaemon(true);
     queueManagerThread.start();
+
+    // Boot up the AMQP Message Consumer:
+    Thread consumerThread = new Thread(ANIMAL_CONSUMER);
+    consumerThread.setDaemon(true);
+    consumerThread.start();
 
     while(true) {
       String input = null;
@@ -204,7 +209,7 @@ public class Station2_CLI
 
         // Save the AnimalPart to the database:
         try {
-          AnimalPartDto animalPart = ANIMAL_PART_REGISTRATION_SERVICE.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
+          AnimalPartDto animalPart = STATION_2_MODEL.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
           System.out.println("Added [" + animalPart + "] to Database!");
         } catch (CreateFailedException e) {
           System.out.println("AnimalPartRegistration failed, " + e.getMessage());
@@ -216,7 +221,7 @@ public class Station2_CLI
       case "remove":
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
-        for (AnimalPartDto animalPart : ANIMAL_PART_REGISTRATION_SERVICE.getAllAnimalParts()) {
+        for (AnimalPartDto animalPart : STATION_2_MODEL.getAllAnimalParts()) {
           System.out.println(animalPart);
           validPartIds.add(animalPart.getPartId());
         }
@@ -232,8 +237,8 @@ public class Station2_CLI
 
         // Remove the AnimalPart
         try {
-          AnimalPartDto partToRemove = ANIMAL_PART_REGISTRATION_SERVICE.readAnimalPart(part_idToRemove);
-          if(ANIMAL_PART_REGISTRATION_SERVICE.removeAnimalPart(partToRemove))
+          AnimalPartDto partToRemove = STATION_2_MODEL.readAnimalPart(part_idToRemove);
+          if(STATION_2_MODEL.removeAnimalPart(partToRemove))
             System.out.println("Removed AnimalPart with Part_Id '" + part_idToRemove + "' from Database!");
         } catch (DeleteFailedException | NotFoundException e) {
           System.out.println("ERROR: Could not remove designated AnimalPart from Database");
@@ -245,7 +250,7 @@ public class Station2_CLI
       case "update":
         //Show a list of valid AnimalParts:
         System.out.println("\nValid AnimalParts are:");
-        for (AnimalPartDto animalPart : ANIMAL_PART_REGISTRATION_SERVICE.getAllAnimalParts()) {
+        for (AnimalPartDto animalPart : STATION_2_MODEL.getAllAnimalParts()) {
           System.out.println(animalPart);
           validPartIds.add(animalPart.getPartId());
           validAnimalIds.add(animalPart.getAnimalId());
@@ -264,7 +269,7 @@ public class Station2_CLI
         // Read the AnimalPart to modify from the database:
         AnimalPartDto modifiedAnimalPart = null;
         try {
-          modifiedAnimalPart = ANIMAL_PART_REGISTRATION_SERVICE.readAnimalPart(part_idToUpdate);
+          modifiedAnimalPart = STATION_2_MODEL.readAnimalPart(part_idToUpdate);
           if(modifiedAnimalPart != null)
             System.out.println("You are modifying AnimalPart\n: " + modifiedAnimalPart);
         } catch (NotFoundException e) {
@@ -369,7 +374,7 @@ public class Station2_CLI
         // Attempt to persist the user defined modifications:
         modifiedAnimalPart.setWeight_kilogram(newUpdatedWeight);
         try {
-          ANIMAL_PART_REGISTRATION_SERVICE.updateAnimalPart(modifiedAnimalPart);
+          STATION_2_MODEL.updateAnimalPart(modifiedAnimalPart);
         } catch (UpdateFailedException e) {
           System.out.println("Update failed. Reason: " + e.getMessage());
         } catch (NotFoundException e) {
@@ -391,7 +396,7 @@ public class Station2_CLI
        // Read the AnimalPart to from the database:
         AnimalPartDto animalPart;
         try {
-          animalPart = ANIMAL_PART_REGISTRATION_SERVICE.readAnimalPart(partId);
+          animalPart = STATION_2_MODEL.readAnimalPart(partId);
           System.out.println("Found [" + animalPart + "]");
         } catch (NotFoundException e) {
           System.out.println("ERROR: Could not retrieve original AnimalPart from Database. It no longer exists in database.");
@@ -404,7 +409,7 @@ public class Station2_CLI
         //Show a list of valid AnimalParts:
         System.out.println("\nRetrieving all AnimalParts from Database: ");
         try {
-          List<AnimalPartDto> animalPartsFound = ANIMAL_PART_REGISTRATION_SERVICE.getAllAnimalParts();
+          List<AnimalPartDto> animalPartsFound = STATION_2_MODEL.getAllAnimalParts();
           if(!animalPartsFound.isEmpty()){
             for (AnimalPartDto localAnimalPart : animalPartsFound) {
               System.out.println(localAnimalPart);

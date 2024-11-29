@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import Client.model.adapters.GrpcFactory;
 import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
+import shared.model.dto.AnimalDto;
 import shared.model.dto.PartTypeDto;
 import shared.model.exceptions.persistance.CreateFailedException;
 import shared.model.exceptions.persistance.DeleteFailedException;
@@ -47,7 +48,7 @@ public class PartTypeRegistrationSystemImpl extends GrpcConnection implements Pa
       PartTypeData createdPartType = stub.registerPartType(data);
 
       // Convert, and return, the PartType that was added to the DB into an application compatible format:
-      return readPartType(GrpcId_To_LongId.ConvertToLongId(createdPartType.getPartTypeId()));
+      return grpcPartTypeDataConverter.convertToPartTypeDto(createdPartType);
 
     } catch (StatusRuntimeException e) {
       throw new CreateFailedException("Failed to register PartType with desc '" + desc + "' (" + e.getMessage() + ")");
