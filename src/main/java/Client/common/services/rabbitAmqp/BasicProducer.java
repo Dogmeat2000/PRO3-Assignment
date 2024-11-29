@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 
+
 public class BasicProducer
 {
   private final String EXCHANGE_NAME;
@@ -18,7 +19,7 @@ public class BasicProducer
   private final int PORT;
   private final ObjectMapper mapper = new ObjectMapper();
 
-  public BasicProducer(String queueName, String exchangeName, String routingKey, String host, int port) {
+  public BasicProducer(String exchangeName, String queueName, String routingKey, String host, int port) {
     EXCHANGE_NAME = exchangeName;
     QUEUE_NAME = queueName;
     ROUTING_KEY = routingKey;

@@ -8,7 +8,6 @@ import shared.model.adapters.gRPC_to_java.GrpcId_To_LongId;
 import shared.model.dto.AnimalDto;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

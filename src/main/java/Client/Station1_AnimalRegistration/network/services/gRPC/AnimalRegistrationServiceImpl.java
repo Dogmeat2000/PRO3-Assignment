@@ -27,8 +27,8 @@ public class AnimalRegistrationServiceImpl extends GrpcConnection implements Ani
   private final GrpcAnimalData_To_AnimalDto grpcAnimalDataConverter = new GrpcAnimalData_To_AnimalDto();
   private final AnimalDto_ToGrpc_AnimalData animalDtoConverter = new AnimalDto_ToGrpc_AnimalData();
 
-  public AnimalRegistrationServiceImpl(String host, int port) {
-    super(host, port);
+  public AnimalRegistrationServiceImpl(String grpcServerAddress, int grpcServerPort) {
+    super(grpcServerAddress, grpcServerPort);
   }
 
 

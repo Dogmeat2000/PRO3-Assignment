@@ -16,9 +16,10 @@ public class ProducedAnimalsQueueManager implements QueueManager
   RabbitMQChecker rabbitMQChecker;
 
   public ProducedAnimalsQueueManager(BasicProducer animalProducer, RabbitMQChecker rabbitMQChecker){
-    this.animalProducer = animalProducer;
     this.rabbitMQChecker = rabbitMQChecker;
+    this.animalProducer = animalProducer;
   }
+
 
   @Override public void run() {
     // Run continuously for as long as this thread lives:
@@ -56,7 +57,6 @@ public class ProducedAnimalsQueueManager implements QueueManager
 
   }
 
-
   @Override public boolean addLast(Object obj) throws IllegalArgumentException {
     if(!(obj instanceof AnimalDto))
       throw new IllegalArgumentException("obj is not an instance of AnimalDto");
@@ -69,6 +69,7 @@ public class ProducedAnimalsQueueManager implements QueueManager
   }
 
   @Override public boolean findAndConsume(Object obj) {
+    // TODO: REMOVE THIS UNUSED METHOD
     // Validate:
     if(!(obj instanceof AnimalDto))
       return false;
