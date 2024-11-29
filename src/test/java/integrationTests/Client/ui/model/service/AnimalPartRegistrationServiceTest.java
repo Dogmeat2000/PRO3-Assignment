@@ -1,6 +1,15 @@
 package integrationTests.Client.ui.model.service;
 
-import Client.network.services.gRPC.*;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationServiceImpl;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationServiceImpl;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystem;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystemImpl;
+import Client.common.services.gRPC.PartTypeRegistrationSystem;
+import Client.common.services.gRPC.PartTypeRegistrationSystemImpl;
+import Client.common.services.gRPC.TrayRegistrationSystem;
+import Client.common.services.gRPC.TrayRegistrationSystemImpl;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -80,11 +89,11 @@ public class AnimalPartRegistrationServiceTest
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
     String origin1 = "Test Farmstead";
-    Date arrivalDate1 = Timestamp.from(Instant.now());
+    Date arrivalDate1 = Date.from(Instant.now());
     BigDecimal weight1 = new BigDecimal("542.41");
 
     String origin2 = "Test Animal Coop";
-    Date arrivalDate2 = Timestamp.from(Instant.now());
+    Date arrivalDate2 = Date.from(Instant.now());
     BigDecimal weight2 = new BigDecimal("123.45");
 
     // Part Types
@@ -284,7 +293,7 @@ public class AnimalPartRegistrationServiceTest
   public void whenReadAnimalPartByAnimalId_WithValidAnimalId_ReturnsFoundAnimalPart() {
     // Arrange:
     AnimalDto parentAnimal1 = animal1.copy();
-    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Timestamp.from(Instant.now()));
+    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Date.from(Instant.now()));
     PartTypeDto parentPartType = partType1.copy();
     TrayDto parentTray = tray1.copy();
     BigDecimal weight = new BigDecimal("5.42");
@@ -339,7 +348,7 @@ public class AnimalPartRegistrationServiceTest
   public void whenReadAnimalPartByPartType_WithValidPartTypeId_ReturnsFoundAnimalPart() {
     // Arrange:
     AnimalDto parentAnimal1 = animal1.copy();
-    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Timestamp.from(Instant.now()));
+    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Date.from(Instant.now()));
     PartTypeDto parentPartType = partType1.copy();
     TrayDto parentTray = tray1.copy();
     BigDecimal weight = new BigDecimal("5.42");
@@ -395,7 +404,7 @@ public class AnimalPartRegistrationServiceTest
   public void whenReadAnimalPartByProductId_WithValidProductId_ReturnsFoundAnimalPart() {
     // Arrange:
     AnimalDto parentAnimal1 = animal1.copy();
-    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Timestamp.from(Instant.now()));
+    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Date.from(Instant.now()));
     PartTypeDto parentPartType = partType1.copy();
     TrayDto parentTray = tray1.copy();
     BigDecimal weight = new BigDecimal("5.42");
@@ -451,7 +460,7 @@ public class AnimalPartRegistrationServiceTest
   public void whenReadAnimalPartByTrayId_WithValidTrayId_ReturnsFoundAnimalPart() {
     // Arrange:
     AnimalDto parentAnimal1 = animal1.copy();
-    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Timestamp.from(Instant.now()));
+    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Date.from(Instant.now()));
     PartTypeDto parentPartType = partType1.copy();
     TrayDto parentTray = tray1.copy();
     BigDecimal weight = new BigDecimal("5.42");
@@ -537,7 +546,7 @@ public class AnimalPartRegistrationServiceTest
       parentPartType = partTypeRegistrationSystem.readPartType(parentPartType.getTypeId());
 
       // Define updated values:
-      newAnimal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Timestamp.from(Instant.now()));
+      newAnimal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Date.from(Instant.now()));
       newPartType = partTypeRegistrationSystem.registerNewPartType("Cow Bladder");
       newTray = trayRegistrationSystem.registerNewTray(new BigDecimal("25.00"));
       BigDecimal newWeight = new BigDecimal("2.50");
@@ -637,7 +646,7 @@ public class AnimalPartRegistrationServiceTest
   public void whenGetAllAnimalParts_ReturnsAllAnimalParts() {
     // Arrange:
     AnimalDto parentAnimal1 = animal1.copy();
-    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Timestamp.from(Instant.now()));
+    AnimalDto parentAnimal2 = animalRegistrationService.registerNewAnimal(new BigDecimal("163.22"), "Test Farmstead 2", Date.from(Instant.now()));
     PartTypeDto parentPartType = partType1.copy();
     TrayDto parentTray = tray1.copy();
     BigDecimal weight = new BigDecimal("5.42");

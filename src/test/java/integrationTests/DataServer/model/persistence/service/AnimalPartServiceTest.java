@@ -18,7 +18,6 @@ import DataServer.model.persistence.entities.*;
 import DataServer.model.persistence.service.*;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -75,11 +74,11 @@ public class AnimalPartServiceTest
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
     String origin1 = "Test Farmstead";
-    Date arrivalDate1 = Timestamp.from(Instant.now());
+    Date arrivalDate1 = Date.from(Instant.now());
     BigDecimal weight1 = new BigDecimal("542.41");
 
     String origin2 = "Test Animal Coop";
-    Date arrivalDate2 = Timestamp.from(Instant.now());
+    Date arrivalDate2 = Date.from(Instant.now());
     BigDecimal weight2 = new BigDecimal("123.45");
 
     // Part Types
@@ -154,7 +153,7 @@ public class AnimalPartServiceTest
     assertEquals(parentAnimal.getId(), createdAnimalPart.getAnimal().getId());
     assertEquals(parentAnimal.getAnimalPartIdList(), createdAnimalPart.getAnimal().getAnimalPartIdList());
     assertEquals(parentAnimal.getOrigin(), createdAnimalPart.getAnimal().getOrigin());
-    assertEquals(Timestamp.from(parentAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimalPart.getAnimal().getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(parentAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimalPart.getAnimal().getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(parentAnimal.getWeight_kilogram(), createdAnimalPart.getAnimal().getWeight_kilogram());
 
     // Assert embedded/associated PartType:
@@ -220,7 +219,7 @@ public class AnimalPartServiceTest
     assertEquals(parentAnimal.getId(), createdAnimalPart.getAnimal().getId());
     assertEquals(parentAnimal.getAnimalPartIdList(), createdAnimalPart.getAnimal().getAnimalPartIdList());
     assertEquals(parentAnimal.getOrigin(), createdAnimalPart.getAnimal().getOrigin());
-    assertEquals(Timestamp.from(parentAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimalPart.getAnimal().getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(parentAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimalPart.getAnimal().getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(parentAnimal.getWeight_kilogram(), createdAnimalPart.getAnimal().getWeight_kilogram());
 
     // Assert embedded/associated PartType:

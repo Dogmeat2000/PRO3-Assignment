@@ -1,7 +1,7 @@
 package integrationTests.Client.ui.model.service;
 
-import Client.network.services.gRPC.PartTypeRegistrationSystem;
-import Client.network.services.gRPC.PartTypeRegistrationSystemImpl;
+import Client.common.services.gRPC.PartTypeRegistrationSystem;
+import Client.common.services.gRPC.PartTypeRegistrationSystemImpl;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

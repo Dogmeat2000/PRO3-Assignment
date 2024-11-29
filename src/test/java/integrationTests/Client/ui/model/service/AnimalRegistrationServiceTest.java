@@ -1,7 +1,7 @@
 package integrationTests.Client.ui.model.service;
 
-import Client.network.services.gRPC.AnimalRegistrationService;
-import Client.network.services.gRPC.AnimalRegistrationServiceImpl;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationServiceImpl;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -22,7 +22,6 @@ import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class AnimalRegistrationServiceTest
   public void whenRegisterNewAnimal_WithValidAnimalData_ReturnsRegisteredAnimal() {
     // Arrange:
     String origin = "Test Farmstead";
-    Date arrivalDate = Timestamp.from(Instant.now());
+    Date arrivalDate = Date.from(Instant.now());
     BigDecimal weight = new BigDecimal("542.41");
     AnimalDto createdAnimal = null;
 
@@ -97,7 +96,7 @@ public class AnimalRegistrationServiceTest
     assertNotNull(createdAnimal);
     assertEquals(1L, createdAnimal.getAnimalId());
     assertEquals(origin, createdAnimal.getOrigin());
-    assertEquals(Timestamp.from(arrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(arrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(weight, createdAnimal.getWeight_kilogram());
   }
 
@@ -106,7 +105,7 @@ public class AnimalRegistrationServiceTest
   public void whenReadAnimal_WithValidAnimalData_ReturnsReadAnimal() {
     // Arrange:
     String origin = "Test Farmstead";
-    Date arrivalDate = Timestamp.from(Instant.now());
+    Date arrivalDate = Date.from(Instant.now());
     BigDecimal weight = new BigDecimal("542.41");
     AnimalDto createdAnimal = null;
     try {
@@ -127,7 +126,7 @@ public class AnimalRegistrationServiceTest
     assertNotNull(readAnimal);
     assertEquals(1L, readAnimal.getAnimalId());
     assertEquals(origin, readAnimal.getOrigin());
-    assertEquals(Timestamp.from(arrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(readAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(arrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(readAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(weight, readAnimal.getWeight_kilogram());
   }
 
@@ -137,7 +136,7 @@ public class AnimalRegistrationServiceTest
     // Arrange:
     // Original Animal:
     String origin = "Test Farmstead";
-    Date arrivalDate = Timestamp.from(Instant.now());
+    Date arrivalDate = Date.from(Instant.now());
     BigDecimal weight = new BigDecimal("542.41");
     AnimalDto createdAnimal = null;
     try {
@@ -148,7 +147,7 @@ public class AnimalRegistrationServiceTest
 
     // Update Information:
     String newOrigin = "Test SlaughterHouse";
-    Date newArrivalDate = Timestamp.from(Instant.now());
+    Date newArrivalDate = Date.from(Instant.now());
     BigDecimal newWeight = new BigDecimal("100.75");
     createdAnimal.setOrigin(newOrigin);
     createdAnimal.setWeight_kilogram(newWeight);
@@ -169,7 +168,7 @@ public class AnimalRegistrationServiceTest
     assertNotNull(updatedAnimal);
     assertEquals(1L, updatedAnimal.getAnimalId());
     assertEquals(newOrigin, updatedAnimal.getOrigin());
-    assertEquals(Timestamp.from(newArrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(updatedAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(newArrivalDate.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(updatedAnimal.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(newWeight, updatedAnimal.getWeight_kilogram());
   }
 
@@ -179,7 +178,7 @@ public class AnimalRegistrationServiceTest
     // Arrange:
     // Original Animal:
     String origin = "Test Farmstead";
-    Date arrivalDate = Timestamp.from(Instant.now());
+    Date arrivalDate = Date.from(Instant.now());
     BigDecimal weight = new BigDecimal("542.41");
     AnimalDto createdAnimal = null;
     try {
@@ -216,19 +215,19 @@ public class AnimalRegistrationServiceTest
     // Arrange:
     // Animal1:
     String origin1 = "Test Farmstead 1";
-    Date arrivalDate1 = Timestamp.from(Instant.now());
+    Date arrivalDate1 = Date.from(Instant.now());
     BigDecimal weight1 = new BigDecimal("542.41");
     AnimalDto createdAnimal1 = null;
 
     // Animal2:
     String origin2 = "Test Farmstead 2";
-    Date arrivalDate2 = Timestamp.from(Instant.now());
+    Date arrivalDate2 = Date.from(Instant.now());
     BigDecimal weight2 = new BigDecimal("123.45");
     AnimalDto createdAnimal2 = null;
 
     // Animal3:
     String origin3 = "Test Farmstead 3";
-    Date arrivalDate3 = Timestamp.from(Instant.now());
+    Date arrivalDate3 = Date.from(Instant.now());
     BigDecimal weight3 = new BigDecimal("234.56");
     AnimalDto createdAnimal3 = null;
 
@@ -256,19 +255,19 @@ public class AnimalRegistrationServiceTest
     // Check Animal with id1:
     assertEquals(1L, createdAnimal1.getAnimalId());
     assertEquals(origin1, createdAnimal1.getOrigin());
-    assertEquals(Timestamp.from(arrivalDate1.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimal1.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(arrivalDate1.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimal1.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(weight1, createdAnimal1.getWeight_kilogram());
 
     // Check Animal with id2:
     assertEquals(2L, createdAnimal2.getAnimalId());
     assertEquals(origin2, createdAnimal2.getOrigin());
-    assertEquals(Timestamp.from(arrivalDate2.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimal2.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(arrivalDate2.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimal2.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(weight2, createdAnimal2.getWeight_kilogram());
 
     // Check Animal with id3:
     assertEquals(3L, createdAnimal3.getAnimalId());
     assertEquals(origin3, createdAnimal3.getOrigin());
-    assertEquals(Timestamp.from(arrivalDate3.toInstant().truncatedTo(ChronoUnit.DAYS)), Timestamp.from(createdAnimal3.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
+    assertEquals(Date.from(arrivalDate3.toInstant().truncatedTo(ChronoUnit.DAYS)), Date.from(createdAnimal3.getArrivalDate().toInstant().truncatedTo(ChronoUnit.DAYS)));
     assertEquals(weight3, createdAnimal3.getWeight_kilogram());
   }
 }

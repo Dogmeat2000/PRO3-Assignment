@@ -1,8 +1,8 @@
 package integrationTests.DataServer.controller.grpc.service;
 
-import Client.model.adapters.gRPC_to_java.*;
-import Client.model.adapters.java_to_gRPC.PartTypeDto_ToGrpc_PartTypeData;
-import Client.model.adapters.java_to_gRPC.ProductDto_ToGrpc_ProductData;
+import Client.common.model.adapters.gRPC_to_java.*;
+import Client.common.model.adapters.java_to_gRPC.PartTypeDto_ToGrpc_PartTypeData;
+import Client.common.model.adapters.java_to_gRPC.ProductDto_ToGrpc_ProductData;
 import grpc.*;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import DataServer.DataServerApplication;
-import Client.model.adapters.GrpcFactory;
+import Client.common.model.adapters.GrpcFactory;
 import shared.model.adapters.java_to_gRPC.LongId_ToGrpc_Id;
 import shared.model.dto.*;
 
@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,11 +94,11 @@ public class GrpcAnimalPartServiceImplTest
     // In the DB, register some Animals, PartTypes, Products and Trays to use in the AnimalPart tests:
     // Animals
     String origin1 = "Test Farmstead";
-    Date arrivalDate1 = Timestamp.from(Instant.now());
+    Date arrivalDate1 = Date.from(Instant.now());
     BigDecimal weight1 = new BigDecimal("542.41");
 
     String origin2 = "Test Animal Coop";
-    Date arrivalDate2 = Timestamp.from(Instant.now());
+    Date arrivalDate2 = Date.from(Instant.now());
     BigDecimal weight2 = new BigDecimal("123.45");
 
     // Part Types

@@ -1,7 +1,13 @@
 package integrationTests.Client.ui.model.service;
 
-import Client.network.services.gRPC.*;
-import Client.network.services.gRPC.AnimalRegistrationServiceImpl;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationServiceImpl;
+import Client.common.services.gRPC.PartTypeRegistrationSystem;
+import Client.common.services.gRPC.PartTypeRegistrationSystemImpl;
+import Client.common.services.gRPC.TrayRegistrationSystem;
+import Client.common.services.gRPC.TrayRegistrationSystemImpl;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationServiceImpl;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -25,9 +31,9 @@ import shared.model.dto.TrayDto;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -160,7 +166,7 @@ public class TrayRegistrationSystemTest
     BigDecimal newMaxWeight = new BigDecimal("30.00");
 
     // Add an AnimalPart, so there is some weight to test against:
-    AnimalDto animal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Timestamp.from(Instant.now()));
+    AnimalDto animal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Date.from(Instant.now()));
     PartTypeDto partType = partTypeRegistrationSystem.registerNewPartType("Cow Bladder");
     AnimalPartDto animalPart1 = animalPartRegistrationService.registerNewAnimalPart(animal, partType, createdTray, new BigDecimal("7.12"));
 
@@ -248,7 +254,7 @@ public class TrayRegistrationSystemTest
       createdTray3 = trayRegistrationSystem.registerNewTray(maxWeight3);
 
       // Add an AnimalPart, so there is some weight to test against:
-      AnimalDto animal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Timestamp.from(Instant.now()));
+      AnimalDto animal = animalRegistrationService.registerNewAnimal(new BigDecimal("212.25"), "Test Farmstead", Date.from(Instant.now()));
       PartTypeDto partType = partTypeRegistrationSystem.registerNewPartType("Cow Bladder");
       AnimalPartDto animalPart1 = animalPartRegistrationService.registerNewAnimalPart(animal, partType, createdTray2, new BigDecimal("3.25"));
       AnimalPartDto animalPart2 = animalPartRegistrationService.registerNewAnimalPart(animal, partType, createdTray3, new BigDecimal("5.10"));

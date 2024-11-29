@@ -1,6 +1,15 @@
 package integrationTests.Client.ui.model.service;
 
-import Client.network.services.gRPC.*;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationServiceImpl;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationServiceImpl;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystem;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystemImpl;
+import Client.common.services.gRPC.PartTypeRegistrationSystem;
+import Client.common.services.gRPC.PartTypeRegistrationSystemImpl;
+import Client.common.services.gRPC.TrayRegistrationSystem;
+import Client.common.services.gRPC.TrayRegistrationSystemImpl;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -19,7 +28,6 @@ import shared.model.dto.*;
 import shared.model.exceptions.persistance.NotFoundException;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,11 +92,11 @@ public class ProductRegistrationSystemTest
     // Create some basic entities in the database, to test Products against:
     // Animals
     String origin1 = "Test Farmstead";
-    Date arrivalDate1 = Timestamp.from(Instant.now());
+    Date arrivalDate1 = Date.from(Instant.now());
     BigDecimal weight1 = new BigDecimal("542.41");
 
     String origin2 = "Test Animal Coop";
-    Date arrivalDate2 = Timestamp.from(Instant.now());
+    Date arrivalDate2 = Date.from(Instant.now());
     BigDecimal weight2 = new BigDecimal("123.45");
 
     // Part Types

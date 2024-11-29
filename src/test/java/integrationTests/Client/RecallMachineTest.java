@@ -1,9 +1,13 @@
 package integrationTests.Client;
 
-import Client.model.adapters.gRPC_to_java.*;
-import Client.model.adapters.java_to_gRPC.*;
-import Client.network.services.gRPC.*;
-import Client.network.services.gRPC.AnimalRegistrationServiceImpl;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationServiceImpl;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystem;
+import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystemImpl;
+import Client.common.model.adapters.gRPC_to_java.*;
+import Client.common.model.adapters.java_to_gRPC.*;
+import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationServiceImpl;
 import grpc.*;
 import integrationTests.TestDataSourceConfig;
 import io.grpc.ManagedChannel;
@@ -23,9 +27,9 @@ import DataServer.DataServerApplication;
 import shared.model.dto.*;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,9 +107,9 @@ public class RecallMachineTest
   public void testRetrieveRegistrationNumberForAllAnimalsInvolvedInAProduct() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()), null);
-    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()), null);
-    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()), null);
+    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Date.from(Instant.now()), null);
+    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Date.from(Instant.now()), null);
+    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Date.from(Instant.now()), null);
 
     animal1 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal1)));
     animal2 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal2)));
@@ -180,9 +184,9 @@ public class RecallMachineTest
   public void testRetrieveAllProductsAGivenAnimalIsInvolvedIn() {
     // Arrange: Add some entities to the temporary database:
     // Create Animals:
-    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Timestamp.from(Instant.now()), null);
-    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Timestamp.from(Instant.now()), null);
-    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Timestamp.from(Instant.now()), null);
+    AnimalDto animal1 = new AnimalDto(1L, BigDecimal.valueOf(420), "Johnson Farmstead", Date.from(Instant.now()), null);
+    AnimalDto animal2 = new AnimalDto(1L, BigDecimal.valueOf(400), "Smith Farmstead", Date.from(Instant.now()), null);
+    AnimalDto animal3 = new AnimalDto(1L,BigDecimal.valueOf(435), "Corporate Slaughterers Inc.", Date.from(Instant.now()), null);
 
     animal1 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal1)));
     animal2 = grpcAnimalData_To_AnimalDto.convertToAnimalDto(animalStub.registerAnimal(animalDto_To_AnimalData.convertToAnimalData(animal2)));
