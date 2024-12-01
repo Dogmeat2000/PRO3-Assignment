@@ -1,4 +1,4 @@
-package Client.model;
+package Client.common.model;
 
 public interface BaseModel {
   Object readEntityFromReceivedEntityList(long Id);

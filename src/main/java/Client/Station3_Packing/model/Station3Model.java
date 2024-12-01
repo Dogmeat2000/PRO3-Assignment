@@ -1,6 +1,6 @@
 package Client.Station3_Packing.model;
 
-import Client.model.BaseModel;
+import Client.common.model.BaseModel;
 import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystem;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.ProductDto;

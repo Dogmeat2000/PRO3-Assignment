@@ -1,7 +1,7 @@
 package Client.Station1_AnimalRegistration.model;
 
-import Client.model.BaseModel;
-import Client.model.QueueManager;
+import Client.common.model.BaseModel;
+import Client.common.model.QueueManager;
 import Client.Station1_AnimalRegistration.network.services.gRPC.AnimalRegistrationService;
 import shared.model.dto.AnimalDto;
 import shared.model.exceptions.persistance.DeleteFailedException;

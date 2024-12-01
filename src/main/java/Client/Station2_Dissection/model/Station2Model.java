@@ -1,8 +1,10 @@
 package Client.Station2_Dissection.model;
 
-import Client.model.BaseModel;
-import Client.model.QueueManager;
+import Client.common.model.BaseModel;
+import Client.common.model.QueueManager;
 import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
+import Client.common.services.gRPC.PartTypeRegistrationSystem;
+import Client.common.services.gRPC.TrayRegistrationSystem;
 import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.PartTypeDto;
@@ -21,12 +23,18 @@ public class Station2Model implements BaseModel
   private final List<AnimalDto> receivedAnimalsList;
   private final QueueManager registeredAnimalPartsQueueManager;
   private final AnimalPartRegistrationService animalPartRegistrationService;
+  private final PartTypeRegistrationSystem partTypeRegistrationSystem;
+  private final TrayRegistrationSystem trayRegistrationSystem;
 
-  public Station2Model(QueueManager registeredAnimalPartsQueueManager, AnimalPartRegistrationService animalPartRegistrationService) {
+  public Station2Model(AnimalPartRegistrationService animalPartRegistrationService,
+      QueueManager registeredAnimalPartsQueueManager,
+      PartTypeRegistrationSystem partTypeRegistrationSystem,
+      TrayRegistrationSystem trayRegistrationSystem) {
     this.receivedAnimalsList = new ArrayList<>();
     this.registeredAnimalPartsQueueManager = registeredAnimalPartsQueueManager;
     this.animalPartRegistrationService = animalPartRegistrationService;
-
+    this.partTypeRegistrationSystem = partTypeRegistrationSystem;
+    this.trayRegistrationSystem = trayRegistrationSystem;
   }
 
   // AnimalPart related operations:
@@ -62,27 +70,6 @@ public class Station2Model implements BaseModel
     return animalPartRegistrationService.readAnimalPartsByAnimalId(animalId);
   }
 
-  public List<AnimalPartDto> readAnimalPartsByPartTypeId(long partTypeId) throws NotFoundException {
-    // TODO: Initial validation of data
-
-    // Attempt to read, using gRPC connection:
-    return animalPartRegistrationService.readAnimalPartsByPartTypeId(partTypeId);
-  }
-
-  public List<AnimalPartDto> readAnimalPartsByProductId(long productId) throws NotFoundException {
-    // TODO: Initial validation of data
-
-    // Attempt to read, using gRPC connection:
-    return animalPartRegistrationService.readAnimalPartsByProductId(productId);
-  }
-
-  public List<AnimalPartDto> readAnimalPartsByTrayId(long trayId) throws NotFoundException {
-    // TODO: Initial validation of data
-
-    // Attempt to read, using gRPC connection:
-    return animalPartRegistrationService.readAnimalPartsByTrayId(trayId);
-  }
-
   public void updateAnimalPart(AnimalPartDto data) throws UpdateFailedException, NotFoundException {
     // TODO: Initial validation of data
 
@@ -110,8 +97,6 @@ public class Station2Model implements BaseModel
     // Attempt to read all, using gRPC connection:
     return animalPartRegistrationService.getAllAnimalParts();
   }
-
-
 
 
 
@@ -143,5 +128,35 @@ public class Station2Model implements BaseModel
       }
     }
     return false;
+  }
+
+
+
+  // PartType related operations:
+  public PartTypeDto readPartType(long partTypeId) throws NotFoundException {
+    // TODO: Initial validation of data
+
+    // Attempt to read, using gRPC connection:
+    return partTypeRegistrationSystem.readPartType(partTypeId);
+  }
+
+  public List<PartTypeDto> getAllPartTypes(){
+    // Attempt to read all, using gRPC connection:
+    return partTypeRegistrationSystem.getAllPartTypes();
+  }
+
+
+
+  // Tray related operations:
+  public TrayDto readTray(long trayId) throws NotFoundException {
+    // TODO: Initial validation of data
+
+    // Attempt to read, using gRPC connection:
+    return trayRegistrationSystem.readTray(trayId);
+  }
+
+  public List<TrayDto> getAllTrays(){
+    // Attempt to read all, using gRPC connection:
+    return trayRegistrationSystem.getAllTrays();
   }
 }

@@ -1,6 +1,6 @@
 package Client.Station2_Dissection.model;
 
-import Client.model.QueueManager;
+import Client.common.model.QueueManager;
 import Client.common.services.rabbitAmqp.BasicProducer;
 import shared.controller.rabbitMQ.RabbitMQChecker;
 import shared.model.dto.AnimalPartDto;

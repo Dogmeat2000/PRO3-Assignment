@@ -1,6 +1,6 @@
 package Client.common.services.rabbitAmqp;
 
-import Client.model.BaseModel;
+import Client.common.model.BaseModel;
 import Client.Station2_Dissection.model.Station2Model;
 import Client.Station3_Packing.model.Station3Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +21,8 @@ public class BasicConsumer implements Runnable
   private final ObjectMapper mapper = new ObjectMapper();
   private final RabbitMQChecker rabbitMQChecker;
 
-  //@Value("${spring.rabbitmq.host:localhost}")
-  private String rabbitMQServerAddress;
-
-  //@Value("${spring.rabbitmq.port:5672}")
-  private int rabbitMQServerPort;
+  private final String rabbitMQServerAddress;
+  private final int rabbitMQServerPort;
 
   private final BaseModel model;
 
@@ -52,8 +49,8 @@ public class BasicConsumer implements Runnable
     // Check if connection can be established with a RabbitMQ server:
     while(!amqpServerStated){
       if(!rabbitMQChecker.isRabbitMQRunning()){
-        System.err.println("[BasicConsumer] Critical Error: Could not connect to RabbitMQ");
-        System.err.println("[BasicConsumer] Retrying in 5s...");
+        System.err.println("\n[BasicConsumer] Critical Error: Could not connect to RabbitMQ");
+        System.err.print("[BasicConsumer] Retrying in 5s..."  + "\n: ");
         try {
           Thread.sleep(5000);
         } catch (InterruptedException ignored) {}
@@ -95,7 +92,7 @@ public class BasicConsumer implements Runnable
           }
           catch (Exception e) {
             // Return not-acknowledged to inform sender that the message was not properly received:
-            System.err.println("\n[BasicConsumer] Error processing AMQP message: " + e.getMessage());
+            System.err.print("\n[BasicConsumer] Error processing AMQP message: " + e.getMessage() + "\n: ");
             channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
           }
         };
@@ -134,6 +131,7 @@ public class BasicConsumer implements Runnable
 
         // Add to Station 2's list of received Animals:
         model.addEntityToReceivedEntityList(dto);
+        System.out.print("[BasicConsumer] Finished processing AMQP message: " + message + "\n: ");
 
       } else if (model instanceof Station3Model){
         // Deserialize into AnimalPart:
@@ -141,14 +139,13 @@ public class BasicConsumer implements Runnable
 
         // Add to Station 3's list of received AnimalParts:
         model.addEntityToReceivedEntityList(dto);
-        System.out.println("[BasicConsumer] Finished processing AMQP message: " + message);
+        System.out.print("[BasicConsumer] Finished processing AMQP message: " + message + "\n: ");
 
       } else {
-        System.err.println("\n[BasicConsumer] Failed to deserialize received AMQP message. Did not match any station requirements.");
+        System.err.println("\n[BasicConsumer] Failed to deserialize received AMQP message. Did not match any station requirements." + "\n: ");
       }
     } catch (IOException e) {
-      //e.printStackTrace();
-      System.err.println("\n[BasicConsumer] Failed to deserialize received AMQP message. Received incompatible DTO object. Reason: " + e.getMessage());
+      System.err.print("\n[BasicConsumer] Failed to deserialize received AMQP message. Received incompatible DTO object. Reason: " + e.getMessage() + "\n: ");
     }
   }
 }
