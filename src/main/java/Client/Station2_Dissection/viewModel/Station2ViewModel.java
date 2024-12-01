@@ -162,8 +162,8 @@ public class Station2ViewModel
 
         // Save the AnimalPart to the database:
         try {
-          AnimalPartDto animalPart = station2Model.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
-          System.out.println("Added [" + animalPart + "] to Database!");
+          /*AnimalPartDto animalPart = */station2Model.registerNewAnimalPart(parentAnimal, parentPartType, parentTray, weight);
+          //System.out.println("Added [" + animalPart + "] to Database!");
         } catch (CreateFailedException e) {
           System.out.println("AnimalPartRegistration failed, " + e.getMessage());
           break;

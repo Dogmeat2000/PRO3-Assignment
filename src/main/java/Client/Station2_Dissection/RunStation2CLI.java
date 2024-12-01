@@ -31,7 +31,7 @@ public class RunStation2CLI
     TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
     PartTypeRegistrationSystem partTypeRegistrationSystem = new PartTypeRegistrationSystemImpl("localhost", 9090);
     RabbitMQChecker rabbitMQChecker = new RabbitMQChecker(amqpHost, amqpPort);
-    ProducedAnimalPartsQueueManager queueManager = new ProducedAnimalPartsQueueManager(amqpAnimalPartProducer, rabbitMQChecker);
+    ProducedAnimalPartsQueueManager queueManager = new ProducedAnimalPartsQueueManager(amqpAnimalPartProducer, rabbitMQChecker, animalPartRegistrationService);
     Station2Model station2Model = new Station2Model(animalPartRegistrationService, queueManager, partTypeRegistrationSystem, trayRegistrationSystem);
     BasicConsumer amqpAnimalConsumer = new BasicConsumer(exchangeName, queueNameAnimalQueue, routingKeyWordAnimalQueue, amqpHost, amqpPort, station2Model, rabbitMQChecker);
 

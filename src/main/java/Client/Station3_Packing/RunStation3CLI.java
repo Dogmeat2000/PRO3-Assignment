@@ -25,9 +25,8 @@ public class RunStation3CLI
 
     ProductRegistrationSystem productRegistrationSystem = new ProductRegistrationSystemImpl("localhost", 9090);
     TrayRegistrationSystem trayRegistrationSystem = new TrayRegistrationSystemImpl("localhost", 9090);
-    PartTypeRegistrationSystem partTypeRegistrationSystem = new PartTypeRegistrationSystemImpl("localhost", 9090);
     RabbitMQChecker rabbitMQChecker = new RabbitMQChecker(amqpHost, amqpPort);
-    ProducedProductsQueueManager queueManager = new ProducedProductsQueueManager();
+    ProducedProductsQueueManager queueManager = new ProducedProductsQueueManager(productRegistrationSystem);
     Station3Model station3Model = new Station3Model(productRegistrationSystem, queueManager, trayRegistrationSystem);
     BasicConsumer amqpAnimalPartConsumer = new BasicConsumer(exchangeName, queueNameAnimalPartQueue, routingKeyWordAnimalPartQueue, amqpHost, amqpPort, station3Model, rabbitMQChecker);
 

@@ -21,39 +21,38 @@ import java.util.List;
 public class Station2Model implements BaseModel
 {
   private final List<AnimalDto> receivedAnimalsList;
-  private final QueueManager registeredAnimalPartsQueueManager;
+  private final QueueManager queueManager;
   private final AnimalPartRegistrationService animalPartRegistrationService;
   private final PartTypeRegistrationSystem partTypeRegistrationSystem;
   private final TrayRegistrationSystem trayRegistrationSystem;
 
   public Station2Model(AnimalPartRegistrationService animalPartRegistrationService,
-      QueueManager registeredAnimalPartsQueueManager,
+      QueueManager queueManager,
       PartTypeRegistrationSystem partTypeRegistrationSystem,
       TrayRegistrationSystem trayRegistrationSystem) {
     this.receivedAnimalsList = new ArrayList<>();
-    this.registeredAnimalPartsQueueManager = registeredAnimalPartsQueueManager;
+    this.queueManager = queueManager;
     this.animalPartRegistrationService = animalPartRegistrationService;
     this.partTypeRegistrationSystem = partTypeRegistrationSystem;
     this.trayRegistrationSystem = trayRegistrationSystem;
   }
 
   // AnimalPart related operations:
-  public AnimalPartDto registerNewAnimalPart(AnimalDto animal, PartTypeDto type, TrayDto tray, BigDecimal weightInKilogram) throws CreateFailedException {
+  public void registerNewAnimalPart(AnimalDto animal, PartTypeDto type, TrayDto tray, BigDecimal weightInKilogram) throws CreateFailedException {
     // TODO: Initial validation of data
 
-    // Attempt to register, using gRPC connection:
-    AnimalPartDto registeredAnimalPart = animalPartRegistrationService.registerNewAnimalPart(animal, type, tray, weightInKilogram);
+    // Create a new AnimalPartDto:
+    AnimalPartDto newAnimalPart = new AnimalPartDto(
+        0,
+        weightInKilogram,
+        type.getTypeId(),
+        animal.getAnimalId(),
+        tray.getTrayId(),
+        0
+    );
 
-    // Add the registered entity to the proper Queue for indirect transmission to the next station:
-    if(!registeredAnimalPartsQueueManager.addLast(registeredAnimalPart)){
-      // Registered entity was not properly added to the queue. Throw an exception.
-      throw new RuntimeException("Critical Failure: Failed to add the registered AnimalPart to the queue, before transmission via RabbitMq.");
-    }
-
-    // Remove the added Animal from the received Animals list:
-    this.removeEntityFromReceivedEntityList(registeredAnimalPart.getAnimalId());
-
-    return registeredAnimalPart;
+    // Hand over to responsible Queue:
+    queueManager.addToUnregisteredQueue(newAnimalPart);
   }
 
   public AnimalPartDto readAnimalPart(long animalPartId) throws NotFoundException {

@@ -21,19 +21,17 @@ public class Station1Model implements BaseModel
     this.queueManager = queueManager;
   }
 
-  public AnimalDto registerNewAnimal(BigDecimal weightInKilogram, String origin, Date arrivalDate) {
+  public void registerNewAnimal(BigDecimal weightInKilogram, String origin, Date arrivalDate) {
     // TODO: Initial validation of data
 
-    // Attempt to register, using gRPC connection:
-    AnimalDto registeredAnimal = animalRegistrationService.registerNewAnimal(weightInKilogram, origin, arrivalDate);
+    // Create a new AnimalDto:
+    AnimalDto newAnimal = new AnimalDto();
+    newAnimal.setWeight_kilogram(weightInKilogram);
+    newAnimal.setOrigin(origin);
+    newAnimal.setArrivalDate(arrivalDate);
 
-    // Add the registered entity to the proper Queue for indirect transmission to the next station:
-    if(!queueManager.addLast(registeredAnimal)){
-      // Registered entity was not properly added to the queue. Throw an exception.
-      throw new RuntimeException("Critical Failure: Failed to add the registered Animal to the queue, before transmission via RabbitMq.");
-    }
-
-    return registeredAnimal;
+    // Hand over to responsible Queue:
+    queueManager.addToUnregisteredQueue(newAnimal);
   }
 
   public AnimalDto readAnimal(long animalId) throws NotFoundException {

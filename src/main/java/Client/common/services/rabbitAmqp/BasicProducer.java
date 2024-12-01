@@ -63,7 +63,7 @@ public class BasicProducer
       // Publish the message:
       channel.confirmSelect();
       channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY, true, basicProperties, jsonMessage.getBytes());
-      System.out.print("\n[BasicProducer] Sent AMQP Message:" + jsonMessage +  "\n: ");
+      System.out.print("[BasicProducer] Sent AMQP Message:" + jsonMessage +  "\n: ");
 
       if (!channel.waitForConfirms()) {
         System.err.println("\n[BasicProducer] AMQP Message delivery failed." + "\n: ");

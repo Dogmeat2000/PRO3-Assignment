@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface QueueManager extends Runnable
 {
-  boolean addLast(Object obj) throws IllegalArgumentException;
-  List<Object> copyQueue();
-  boolean findAndConsume(Object obj);
+  boolean addToUnregisteredQueue(Object obj) throws IllegalArgumentException;
+  List<Object> copyRegisteredQueue();
 }

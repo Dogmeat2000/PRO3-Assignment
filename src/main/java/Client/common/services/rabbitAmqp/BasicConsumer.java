@@ -75,7 +75,7 @@ public class BasicConsumer implements Runnable
         // Bind the Queue to the exchange (in case it isn't already):
         channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);
 
-        System.out.println("\n\n[BasicConsumer] Waiting for AMQP messages. To exit, stop the application.");
+        //System.out.println("\n\n[BasicConsumer] Waiting for AMQP messages. To exit, stop the application.");
 
         // Define the consumer
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {

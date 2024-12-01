@@ -11,8 +11,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static AnimalId convertToAnimalId(long animal_id) throws NullPointerException {
-    if (animal_id <= 0)
-      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
+    if (animal_id < 0)
+      throw new NullPointerException("Id was negative. Must be 0 or positive value.");
 
     AnimalId.Builder idBuilder = AnimalId.newBuilder()
         .setAnimalId(animal_id);
@@ -25,8 +25,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static PartTypeId convertToPartTypeId(long partTypeId) throws NullPointerException {
-    if (partTypeId <= 0)
-      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
+    if (partTypeId < 0)
+      throw new NullPointerException("Id was negative. Must be 0 or positive value.");
 
     PartTypeId.Builder idBuilder = PartTypeId.newBuilder()
         .setPartTypeId(partTypeId);
@@ -39,8 +39,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static TrayId convertToTrayId(long trayId) throws NullPointerException {
-    if (trayId <= 0)
-      throw new NullPointerException("An argument was 0. All arguments must be positive integers.");
+    if (trayId < 0)
+      throw new NullPointerException("Id was negative. Must be 0 or positive value.");
 
     TrayId.Builder idBuilder = TrayId.newBuilder()
         .setTrayId(trayId);
@@ -67,8 +67,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static AnimalPartId convertToAnimalPartId(long animalPartId) throws NullPointerException {
-    if (animalPartId <= 0)
-      throw new NullPointerException("Id was 0. Must be positive value.");
+    if (animalPartId < 0)
+      throw new NullPointerException("Id was negative. Must be 0 or positive value.");
 
     AnimalPartId.Builder idBuilder = AnimalPartId.newBuilder()
         .setAnimalPartId(animalPartId);
@@ -81,8 +81,8 @@ public class LongId_ToGrpc_Id
    * @return a gRPC compatible format of this id
    * @throws NullPointerException If any of the arguments were null (0, or less).*/
   public static TrayToProductTransferId convertToTrayToProductTransferId(long transferId) throws NullPointerException {
-    if (transferId <= 0)
-      throw new NullPointerException("Id was 0. Must be positive value.");
+    if (transferId < 0)
+      throw new NullPointerException("Id was negative. Must be 0 or positive value.");
 
     TrayToProductTransferId.Builder idBuilder = TrayToProductTransferId.newBuilder()
         .setTransferId(transferId);

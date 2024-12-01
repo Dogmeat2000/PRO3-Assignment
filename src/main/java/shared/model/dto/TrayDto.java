@@ -16,6 +16,8 @@ public class TrayDto
   private final List<Long> transferIdList = new ArrayList<>();
   private final List<Long> productIdList = new ArrayList<>();
 
+  public TrayDto(){}
+
   public TrayDto(long trayId, BigDecimal maxWeight_kilogram, BigDecimal weight_kilogram, long trayTypeId, List<Long> animalPartIdList) {
     setTrayId(trayId);
     setMaxWeight_kilogram(maxWeight_kilogram);

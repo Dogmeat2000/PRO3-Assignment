@@ -88,8 +88,8 @@ public class Station1ViewModel
           try {
             Date today = Date.from(Instant.now()); // UTC Time
             System.out.println("NOTE Animal will be registered as having arrived at '" + today + "' UTC Time");
-            AnimalDto animal = station1Model.registerNewAnimal(newAnimalWeight, value, today);
-            System.out.println("Added [" + animal + "] to Database!");
+            /*AnimalDto animal = */station1Model.registerNewAnimal(newAnimalWeight, value, today);
+            //System.out.println("Added [" + animal + "] to Database!");
             Thread.sleep(750); // Give the RabbitMQ server some time to write its confirmation message in the terminal.
           } catch (CreateFailedException e) {
             e.printStackTrace();

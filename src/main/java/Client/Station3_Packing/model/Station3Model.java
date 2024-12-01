@@ -20,28 +20,41 @@ public class Station3Model implements BaseModel
   private final List<AnimalPartDto> receivedAnimalPartsList;
   private final ProductRegistrationSystem productRegistrationSystem;
   private final TrayRegistrationSystem trayRegistrationSystem;
-  private final QueueManager registeredProductsQueueManager;
+  private final QueueManager queueManager;
 
   public Station3Model(ProductRegistrationSystem productRegistrationSystem,
-      QueueManager registeredProductsQueueManager,
+      QueueManager queueManager,
       TrayRegistrationSystem trayRegistrationSystem) {
     this.receivedAnimalPartsList = new ArrayList<>();
     this.productRegistrationSystem = productRegistrationSystem;
-    this.registeredProductsQueueManager = registeredProductsQueueManager;
+    this.queueManager = queueManager;
     this.trayRegistrationSystem = trayRegistrationSystem;
   }
 
 
-  public ProductDto registerNewProduct(List<AnimalPartDto> animalPartContentList, List<TrayDto> receivedPartsFromTrayList) throws CreateFailedException {
+  public void registerNewProduct(List<AnimalPartDto> animalPartContentList, List<TrayDto> receivedPartsFromTrayList) throws CreateFailedException {
     // TODO: Initial validation of data
 
-    // Attempt to register, using gRPC connection:
-    ProductDto registeredProduct = productRegistrationSystem.registerNewProduct(animalPartContentList, receivedPartsFromTrayList);
+    // Create necessary data:
+    List<Long> animalPartIdList = new ArrayList<>();
+    for (AnimalPartDto animalPartDto : animalPartContentList) {
+      animalPartIdList.add(animalPartDto.getPartId());
+    }
 
-    // Remove the added AnimalParts from the received AnimalParts list:
-    this.removeMultipleEntitiesFromReceivedEntityList(registeredProduct.getAnimalPartIdList());
+    List<Long> trayIdList = new ArrayList<>();
+    for (TrayDto trayDto : receivedPartsFromTrayList) {
+      trayIdList.add(trayDto.getTrayId());
+    }
 
-    return registeredProduct;
+    // Create a new ProductDto:
+    ProductDto newProduct = new ProductDto(0,
+        animalPartIdList,
+        trayIdList,
+        null
+    );
+
+    // Hand over to responsible Queue:
+    queueManager.addToUnregisteredQueue(newProduct);
   }
 
   public ProductDto readProduct(long productId) throws NotFoundException {
@@ -50,7 +63,6 @@ public class Station3Model implements BaseModel
     // Attempt to read, using gRPC connection:
     return productRegistrationSystem.readProduct(productId);
   }
-
 
   public void updateProduct(ProductDto data) throws UpdateFailedException, NotFoundException {
     // TODO: Initial validation of data
@@ -70,14 +82,12 @@ public class Station3Model implements BaseModel
     }
   }
 
-
   public boolean removeProduct(long productId) throws DeleteFailedException, NotFoundException {
     // TODO: Initial validation of data
 
     // Attempt to delete, using gRPC connection:
     return productRegistrationSystem.removeProduct(productId);
   }
-
 
   public List<ProductDto> getAllProducts() throws NotFoundException {
     // Attempt to read all, using gRPC connection:

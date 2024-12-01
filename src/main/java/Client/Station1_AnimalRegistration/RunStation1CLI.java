@@ -26,8 +26,8 @@ public class RunStation1CLI
         amqpPort);
 
     RabbitMQChecker rabbitMQChecker = new RabbitMQChecker("localhost", 5672);
-    ProducedAnimalsQueueManager queueManager = new ProducedAnimalsQueueManager(amqpAnimalProducer, rabbitMQChecker);
     AnimalRegistrationService animalRegistrationService = new AnimalRegistrationServiceImpl("localhost", 9090);
+    ProducedAnimalsQueueManager queueManager = new ProducedAnimalsQueueManager(amqpAnimalProducer, rabbitMQChecker, animalRegistrationService);
 
     Station1Model station1Model = new Station1Model(animalRegistrationService, queueManager);
     Station1ViewModel viewModel = new Station1ViewModel(station1Model);

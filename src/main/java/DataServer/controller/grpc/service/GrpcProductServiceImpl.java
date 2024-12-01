@@ -50,6 +50,7 @@ public class GrpcProductServiceImpl extends ProductServiceGrpc.ProductServiceImp
       responseObserver.onNext(productConverter.convertToProductData(createdProduct));
       responseObserver.onCompleted();
     } catch (Exception e) {
+      e.printStackTrace();
       responseObserver.onError(Status.INTERNAL.withDescription("Error registering Product, " + e.getMessage()).withCause(e).asRuntimeException());
     }
   }

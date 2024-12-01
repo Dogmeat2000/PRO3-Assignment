@@ -48,6 +48,7 @@ public class ProductRegistrationSystemImpl extends GrpcConnection implements Pro
       return grpcProductDataConverter.convertToProductDto(createdProduct);
 
     } catch (StatusRuntimeException e) {
+      e.printStackTrace();
       throw new CreateFailedException("Failed to register Product (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.

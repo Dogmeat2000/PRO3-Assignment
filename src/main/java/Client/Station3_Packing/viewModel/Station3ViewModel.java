@@ -100,8 +100,8 @@ public class Station3ViewModel
 
         // Save the Product to the database:
         try {
-          ProductDto product = station3Model.registerNewProduct(partsToPack, traysReceivedFrom);
-          System.out.println("Added [" + product + "] to Database!");
+          /*ProductDto product =*/ station3Model.registerNewProduct(partsToPack, traysReceivedFrom);
+          //System.out.println("Added [" + product + "] to Database!");
         } catch (CreateFailedException e) {
           e.printStackTrace();
           System.out.println("Product Registration failed, " + e.getMessage());

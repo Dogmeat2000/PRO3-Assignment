@@ -1,26 +1,104 @@
 package Client.Station2_Dissection.model;
 
+import Client.Station2_Dissection.network.services.gRPC.AnimalPartRegistrationService;
 import Client.common.model.QueueManager;
 import Client.common.services.rabbitAmqp.BasicProducer;
 import shared.controller.rabbitMQ.RabbitMQChecker;
+import shared.model.dto.AnimalDto;
 import shared.model.dto.AnimalPartDto;
+import shared.model.dto.PartTypeDto;
+import shared.model.dto.TrayDto;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class ProducedAnimalPartsQueueManager implements QueueManager
 {
-  Queue<AnimalPartDto> registeredAnimalPartQueue = new LinkedList<>();
-  BasicProducer animalPartProducer;
-  RabbitMQChecker rabbitMQChecker;
+  private final Queue<AnimalPartDto> unregisteredAnimalPartQueue = new LinkedList<>();
+  private final Queue<AnimalPartDto> registeredAnimalPartQueue = new LinkedList<>();
+  private final BasicProducer animalPartProducer;
+  private final RabbitMQChecker rabbitMQChecker;
+  private final AnimalPartRegistrationService animalPartRegistrationService;
 
-  public ProducedAnimalPartsQueueManager(BasicProducer animalPartProducer, RabbitMQChecker rabbitMQChecker){
+  public ProducedAnimalPartsQueueManager(BasicProducer animalPartProducer, RabbitMQChecker rabbitMQChecker, AnimalPartRegistrationService animalPartRegistrationService){
     this.animalPartProducer = animalPartProducer;
     this.rabbitMQChecker = rabbitMQChecker;
+    this.animalPartRegistrationService = animalPartRegistrationService;
   }
 
   @Override public void run() {
+    // Handle the unregistered Animals on its own thread:
+    Thread handleUnregisteredAnimalPartsThread = new Thread(this::handleUnregisteredAnimalParts);
+    handleUnregisteredAnimalPartsThread.setDaemon(true);
+    handleUnregisteredAnimalPartsThread.start();
+
+    // Handle the registered Animals on its own thread:
+    Thread handleregisteredAnimalPartsThread = new Thread(this::handleRegisteredAnimalParts);
+    handleregisteredAnimalPartsThread.setDaemon(true);
+    handleregisteredAnimalPartsThread.start();
+
+    // Wait for these two threads to close:
+    try {
+      handleUnregisteredAnimalPartsThread.join();
+      handleregisteredAnimalPartsThread.join();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void handleUnregisteredAnimalParts(){
+    // Run continuously for as long as this thread lives:
+    while(true){
+      // Check if Queue is non-empty:
+      if(!unregisteredAnimalPartQueue.isEmpty()){
+        // Extract data:
+        AnimalPartDto animalPart = unregisteredAnimalPartQueue.poll();
+        try {
+          AnimalDto animal = new AnimalDto();
+          animal.setAnimalId(animalPart.getAnimalId());
+
+          PartTypeDto type = new PartTypeDto(0, "");
+          type.setTypeId(animalPart.getTypeId());
+
+          TrayDto tray = new TrayDto(0, BigDecimal.ZERO, BigDecimal.ZERO, 0, null);
+          tray.setTrayId(animalPart.getTrayId());
+
+          BigDecimal weightInKilogram = animalPart.getWeight_kilogram();
+
+          // Attempt to register next Animal in the Queue, using gRPC connection:
+          AnimalPartDto registeredAnimalPart = animalPartRegistrationService.registerNewAnimalPart(animal, type, tray, weightInKilogram);
+          System.out.println("\n[QueueManager] Saved animalPart {" + registeredAnimalPart + "} to database.");
+
+          // Add the registered entity to the proper Queue for indirect transmission to the next station:
+          if(!this.addToRegisteredQueue(registeredAnimalPart)){
+            // Registered entity was not properly added to the queue. Throw an exception.
+            throw new RuntimeException("Critical Failure: Failed to add the registered AnimalPart to the queue, before transmission via RabbitMq.");
+          }
+        } catch (Exception e) {
+          System.err.println("\n[QueueManager] Failed to register animalPart {" + animalPart + "}. Reason: " + e.getMessage());
+          System.err.println("[QueueManager] Adding failed AnimalPart to the end of the queue, and trying next AnimalPart in queue.");
+          unregisteredAnimalPartQueue.offer(animalPart);
+          try {
+            Thread.sleep(250);
+          } catch (InterruptedException ex) {
+            e.printStackTrace();
+          }
+        }
+
+      } else {
+        // Queue is empty. Wait a bit, before checking again:
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  private void handleRegisteredAnimalParts(){
     // Run continuously for as long as this thread lives:
     while(true){
       try {
@@ -40,7 +118,7 @@ public class ProducedAnimalPartsQueueManager implements QueueManager
 
             // If the RabbitMQ server did receive the message, re add the AnimalDto to the queue.
             if(!success){
-              addLast(animalPart);
+              addToRegisteredQueue(animalPart);
             }
 
           } catch (NullPointerException e) {
@@ -50,57 +128,27 @@ public class ProducedAnimalPartsQueueManager implements QueueManager
         }
 
       } catch (Exception e) {
-        e.printStackTrace(); // TODO: Implement better exception handling.
+        e.printStackTrace();
       }
     }
-
   }
 
-
-  @Override public boolean addLast(Object obj) throws IllegalArgumentException {
+  @Override public boolean addToUnregisteredQueue(Object obj) throws IllegalArgumentException {
     if(!(obj instanceof AnimalPartDto))
-      throw new IllegalArgumentException("obj is not an instance of AnimalDto");
+      throw new IllegalArgumentException("obj is not an instance of AnimalPartDto");
+
+    return unregisteredAnimalPartQueue.offer((AnimalPartDto) obj);
+  }
+
+  private boolean addToRegisteredQueue(Object obj) throws IllegalArgumentException {
+    if(!(obj instanceof AnimalPartDto))
+      throw new IllegalArgumentException("obj is not an instance of AnimalPartDto");
 
     return registeredAnimalPartQueue.offer((AnimalPartDto) obj);
   }
 
-  @Override public List<Object> copyQueue() {
+  @Override public List<Object> copyRegisteredQueue() {
     return new LinkedList<>(registeredAnimalPartQueue);
-  }
-
-  @Override public boolean findAndConsume(Object obj) {
-    // Validate:
-    if(!(obj instanceof AnimalPartDto))
-      return false;
-
-    AnimalPartDto animalPart = (AnimalPartDto) obj;
-
-    // Create a backup of the original, so it can be restored:
-    List<Object> queueToMaintain = new LinkedList<>();
-    List<Object> copyOfQueue = copyQueue();
-    boolean foundMatch = false;
-
-    // Iterate through the copy (so we don't modify the true list):
-    for (Object o : copyOfQueue) {
-      if(o instanceof AnimalPartDto && ((AnimalPartDto) o).getPartId() != animalPart.getPartId()){
-        queueToMaintain.add(o);
-      } else if (o instanceof AnimalPartDto && ((AnimalPartDto) o).getPartId() == animalPart.getPartId()){
-        foundMatch = true;
-      }
-    }
-
-    // If a match was found, we iterate through the Queue until we find the match, and don't re-add it. Everything else is re-added.
-    if(foundMatch){
-      while(!registeredAnimalPartQueue.isEmpty()){
-        AnimalPartDto dto = registeredAnimalPartQueue.poll();
-        if(dto.getPartId() == animalPart.getPartId()){
-          return true;
-        } else {
-          registeredAnimalPartQueue.offer(dto);
-        }
-      }
-    }
-    return false;
   }
 
   private AnimalPartDto removeFirst() {
