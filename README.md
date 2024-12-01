@@ -23,12 +23,16 @@ If it is later discovered, that there is some kind of trouble with a slaughtered
 It is important for the customer that the stations can work as independently as possible. In particular, Work shouldn’t stop at a station just because the network is down.
 
 # How to run
-
-## Using an external HTTP messaging application (Postman, HTTPie, etc.):
+## Preparation:
 1. Import/Clone repository
 2. Clean and install with maven, ensuring to generate sources and documentation
-3. Run ServerApplication.java to launch the Server.
-4. Use Postman, HTTPie, etc. to send HTTP messages to the Web Server. See pictures below for examples of messages using HTTPie:
+3. Install RabbitMQ on the local machine.
+4. Update the path defined inside the 'RunAllServers.java' Spring Boot Service launcher. This needs to point to the shortcut that launches your RabbitMQ service.
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/RunAllServers_UpdatePath.jpg)
+6. Run 'RunAllServers' {src -> main -> java -> 'RunAllServers'} to launch both the Database (including REST/WEB endpoints and gRPC controllers) and the RabbitMQ AMQP server.
+   
+## Using an external HTTP messaging application (Postman, HTTPie, etc.):
+1. Use Postman, HTTPie, etc. to send HTTP messages to the Web Server. See pictures below for examples of messages using HTTPie:
 
 
 ### Post (Create) a new Animal:
@@ -72,10 +76,10 @@ It is important for the customer that the stations can work as independently as 
 
 
 ## Using built-in CLI operating through gRPC connection:
-1. Import/Clone repository
-2. Clean and Install with Maven, ensuring to generate sources and documentation
-3. Run ServerApplication.java to launch the Server.
-4. Run Station1_CLI, Station2_CLI, Station3_CLI or RecallMachine_CLI to launch the debugging CLI with basic commands accessable.
+1. Run 'Station1CLI' {src -> main -> java -> Client -> Station1_AnimalRegistration -> RunStation1CLI} to launch the Animal Management & Registration services.
+2. Run 'Station2CLI' {src -> main -> java -> Client -> Station2_Dissection -> RunStation2CLI} to launch the AnimalPart Management & Registration services.
+3. Run 'Station3CLI' {src -> main -> java -> Client -> Station3_Packing -> RunStation3CLI} to launch the Product Management & Registration services.
+4. Run 'RecallMachineCLI' {src -> main -> java -> Client -> RecallMachine -> RunRecallMachineCLI} to launch a simulation of the machine that can gather provide required information for Product recall (i.e. Which animals did a given product have something to do with?).
 
 ![CLI ScreenShot1](Development%20Documents%20(UML%2C%20etc)/Station4_CLI.png)
 
