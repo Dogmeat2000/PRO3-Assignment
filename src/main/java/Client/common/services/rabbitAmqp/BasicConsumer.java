@@ -80,7 +80,7 @@ public class BasicConsumer implements Runnable
         // Define the consumer
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
           String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-          System.out.println("[BasicConsumer] AMQP Received '" + message + "'");
+          System.out.println("\n[BasicConsumer] AMQP Received '" + message + "'");
 
           try {
             // Process the message:
@@ -121,8 +121,6 @@ public class BasicConsumer implements Runnable
   }
 
   private void processMessage(String message) {
-    //System.out.println("[BasicConsumer] Processing AMQP message: " + message);
-
     try {
       // Deserialize JSON back into a DTO
       if(model instanceof Station2Model){

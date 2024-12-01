@@ -2,6 +2,8 @@ package Client.Station3_Packing.model;
 
 import Client.common.model.BaseModel;
 import Client.Station3_Packing.network.services.gRPC.ProductRegistrationSystem;
+import Client.common.model.QueueManager;
+import Client.common.services.gRPC.TrayRegistrationSystem;
 import shared.model.dto.AnimalPartDto;
 import shared.model.dto.ProductDto;
 import shared.model.dto.TrayDto;
@@ -17,10 +19,16 @@ public class Station3Model implements BaseModel
 {
   private final List<AnimalPartDto> receivedAnimalPartsList;
   private final ProductRegistrationSystem productRegistrationSystem;
+  private final TrayRegistrationSystem trayRegistrationSystem;
+  private final QueueManager registeredProductsQueueManager;
 
-  public Station3Model(ProductRegistrationSystem productRegistrationSystem) {
+  public Station3Model(ProductRegistrationSystem productRegistrationSystem,
+      QueueManager registeredProductsQueueManager,
+      TrayRegistrationSystem trayRegistrationSystem) {
     this.receivedAnimalPartsList = new ArrayList<>();
     this.productRegistrationSystem = productRegistrationSystem;
+    this.registeredProductsQueueManager = registeredProductsQueueManager;
+    this.trayRegistrationSystem = trayRegistrationSystem;
   }
 
 
@@ -112,5 +120,19 @@ public class Station3Model implements BaseModel
         success = false;
     }
     return success;
+  }
+
+
+  // Tray related operations:
+  public TrayDto readTray(long trayId) throws NotFoundException {
+    // TODO: Initial validation of data
+
+    // Attempt to read, using gRPC connection:
+    return trayRegistrationSystem.readTray(trayId);
+  }
+
+  public List<TrayDto> getAllTrays(){
+    // Attempt to read all, using gRPC connection:
+    return trayRegistrationSystem.getAllTrays();
   }
 }

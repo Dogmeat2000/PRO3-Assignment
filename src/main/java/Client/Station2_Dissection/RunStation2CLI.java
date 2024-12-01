@@ -17,8 +17,6 @@ import shared.controller.rabbitMQ.RabbitMQChecker;
 public class RunStation2CLI
 {
   public static void main(String[] args) {
-    System.out.println("\nSTATION 2: Animal Dissection (Command Line Interface)\nThis CLI is for debugging purposes!");
-
     // Create the dependencies:
     String amqpHost = "localhost";
     int amqpPort = 5672;

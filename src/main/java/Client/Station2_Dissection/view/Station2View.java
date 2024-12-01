@@ -11,6 +11,8 @@ public class Station2View
   }
 
   public void run() {
+    System.out.println("\nSTATION 2: Animal Dissection (Command Line Interface)\nThis CLI is for debugging purposes!");
+
     while(true) {
       String input = null;
 
