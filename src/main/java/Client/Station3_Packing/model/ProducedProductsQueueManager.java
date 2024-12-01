@@ -59,12 +59,12 @@ public class ProducedProductsQueueManager implements QueueManager
           System.out.println("\n[QueueManager] Saved Product {" + registeredProduct + "} to database.");
 
         } catch (Exception e) {
-          e.printStackTrace();
+          //e.printStackTrace();
           System.err.println("\n[QueueManager] Failed to register Product {" + product + "}. Reason: " + e.getMessage());
           System.err.println("[QueueManager] Adding failed Product to the end of the queue, and trying next Product in queue.");
           unregisteredProductQueue.offer(product);
           try {
-            Thread.sleep(250);
+            Thread.sleep(1000);
           } catch (InterruptedException ex) {
             e.printStackTrace();
           }

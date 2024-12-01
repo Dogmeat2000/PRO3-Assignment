@@ -72,6 +72,7 @@ public class ProductService implements ProductRegistryInterface
       data.clearTraySuppliersList();
       data.addAllAnimalParts(associatedAnimalParts);
       data.addAllTraysToTraySuppliersList(associatedTrays);
+      data.clearTraySupplyJoinList();
 
       // Save the Product to DB, without the transfers:
       Product newProduct = productRepository.save(data);
@@ -79,7 +80,8 @@ public class ProductService implements ProductRegistryInterface
       // Register a new transfer for each Tray providing AnimalParts to this Product:
       for (Tray tray : data.getTraySuppliersList()) {
         TrayToProductTransfer newTransfer = new TrayToProductTransfer(0, tray, newProduct);
-        newProduct.addTransfer(newTransfer);
+        TrayToProductTransfer transfer = trayToProductTransferRepository.save(newTransfer);
+        newProduct.addTransfer(transfer);
       }
 
       // Save the Product to DB again, now with the proper Transfers assigned:

@@ -194,6 +194,14 @@ public class Product implements Serializable
         returnValue += ", ";
     }
 
+    returnValue += "], List of transfer_id's in this product: [";
+
+    for (int i = 0; i < getTraySupplyJoinList().size(); i++) {
+      returnValue += getTraySupplyJoinList().get(i).getTransferId();
+      if(i < getTraySupplyJoinList().size() - 1)
+        returnValue += ", ";
+    }
+
     returnValue += "]";
 
     return returnValue;

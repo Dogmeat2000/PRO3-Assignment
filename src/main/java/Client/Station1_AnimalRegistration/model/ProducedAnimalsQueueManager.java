@@ -73,7 +73,7 @@ public class ProducedAnimalsQueueManager implements QueueManager
           System.err.println("[QueueManager] Adding failed animal to the end of the queue, and trying next Animal in queue.");
           unregisteredAnimalQueue.offer(animal);
           try {
-            Thread.sleep(250);
+            Thread.sleep(1000);
           } catch (InterruptedException ex) {
             e.printStackTrace();
           }
@@ -120,7 +120,7 @@ public class ProducedAnimalsQueueManager implements QueueManager
         }
 
       } catch (Exception e) {
-        e.printStackTrace();
+        System.err.println("Exception while registering Animal through AMQP...");
       }
     }
   }

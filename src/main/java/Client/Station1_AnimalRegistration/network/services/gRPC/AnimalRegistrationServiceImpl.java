@@ -53,7 +53,7 @@ public class AnimalRegistrationServiceImpl extends GrpcConnection implements Ani
       return response;
 
     } catch (StatusRuntimeException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       throw new CreateFailedException("Failed to register animal with weight '" + weightInKilogram + "' (" + e.getMessage() + ")");
     } finally {
       // Always shut down the channel after use, to reduce server congestion and 'application hanging'.

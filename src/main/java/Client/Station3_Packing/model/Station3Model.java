@@ -18,6 +18,7 @@ import java.util.List;
 public class Station3Model implements BaseModel
 {
   private final List<AnimalPartDto> receivedAnimalPartsList;
+  private final List<TrayDto> trayDtoCache = new ArrayList<>();
   private final ProductRegistrationSystem productRegistrationSystem;
   private final TrayRegistrationSystem trayRegistrationSystem;
   private final QueueManager queueManager;
@@ -55,13 +56,30 @@ public class Station3Model implements BaseModel
 
     // Hand over to responsible Queue:
     queueManager.addToUnregisteredQueue(newProduct);
+
+    // Remove the associated AnimalParts from the received AnimalParts Queue:
+    List<AnimalPartDto> dtosToRemove = new ArrayList<>();
+    for (AnimalPartDto animalPartDto : receivedAnimalPartsList) {
+      for (AnimalPartDto nestedDto : animalPartContentList){
+        if(nestedDto.getPartId() == animalPartDto.getPartId()){
+          dtosToRemove.add(animalPartDto);
+        }
+      }
+    }
+    receivedAnimalPartsList.removeAll(dtosToRemove);
   }
 
   public ProductDto readProduct(long productId) throws NotFoundException {
     // TODO: Initial validation of data
 
     // Attempt to read, using gRPC connection:
-    return productRegistrationSystem.readProduct(productId);
+    try {
+      return productRegistrationSystem.readProduct(productId);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading Product '" + productId + "'. Database server could not be reached. Please try again later...");
+      return null;
+    }
   }
 
   public void updateProduct(ProductDto data) throws UpdateFailedException, NotFoundException {
@@ -86,12 +104,24 @@ public class Station3Model implements BaseModel
     // TODO: Initial validation of data
 
     // Attempt to delete, using gRPC connection:
-    return productRegistrationSystem.removeProduct(productId);
+    try {
+      return productRegistrationSystem.removeProduct(productId);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error removing Product '" + productId + "'. Database server could not be reached. Please try again later...");
+      return false;
+    }
   }
 
   public List<ProductDto> getAllProducts() throws NotFoundException {
     // Attempt to read all, using gRPC connection:
-    return productRegistrationSystem.getAllProducts();
+    try {
+      return productRegistrationSystem.getAllProducts();
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading all Products. Database server could not be reached. Please try again later...");
+      return new ArrayList<>();
+    }
   }
 
   @Override public AnimalPartDto readEntityFromReceivedEntityList(long animalPartId) {
@@ -138,11 +168,32 @@ public class Station3Model implements BaseModel
     // TODO: Initial validation of data
 
     // Attempt to read, using gRPC connection:
-    return trayRegistrationSystem.readTray(trayId);
+    try {
+      return trayRegistrationSystem.readTray(trayId);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading Tray '" + trayId + "'. Database server could not be reached. Reading data from local cache instead.");
+      for (TrayDto trayDto : trayDtoCache) {
+        if(trayDto.getTrayId() == trayId) {
+          return trayDto;
+        }
+      }
+      return null;
+    }
   }
 
   public List<TrayDto> getAllTrays(){
     // Attempt to read all, using gRPC connection:
-    return trayRegistrationSystem.getAllTrays();
+    try {
+      List<TrayDto> traysLoaded = trayRegistrationSystem.getAllTrays();
+      trayDtoCache.clear();
+      trayDtoCache.addAll(traysLoaded);
+      return traysLoaded;
+
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading all Trays. Database server could not be reached. Reading data from local cache instead.");
+      return trayDtoCache;
+    }
   }
 }

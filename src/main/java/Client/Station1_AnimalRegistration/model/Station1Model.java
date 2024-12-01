@@ -38,26 +38,49 @@ public class Station1Model implements BaseModel
     // TODO: Initial validation of data
 
     // Attempt to read, using gRPC connection:
-    return animalRegistrationService.readAnimal(animalId);
+    try {
+      return animalRegistrationService.readAnimal(animalId);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading animal '" + animalId + "'. Database server could not be reached. Please try again later...");
+      return null;
+    }
   }
 
   public void updateAnimal(AnimalDto data) throws UpdateFailedException, NotFoundException {
     // TODO: Initial validation of data
 
     // Attempt to update, using gRPC connection:
-    animalRegistrationService.updateAnimal(data);
+    try {
+      animalRegistrationService.updateAnimal(data);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error updating animal '" + data.getAnimalId() + "'. Database server could not be reached. Please try again later...");
+    }
   }
 
   public boolean removeAnimal(long animalId) throws DeleteFailedException, NotFoundException {
     // TODO: Initial validation of data
 
     // Attempt to delete, using gRPC connection:
-    return animalRegistrationService.removeAnimal(animalId);
+    try {
+      return animalRegistrationService.removeAnimal(animalId);
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error removing animal '" + animalId + "'. Database server could not be reached. Please try again later...");
+      return false;
+    }
   }
 
   public List<AnimalDto> getAllAnimals() throws NotFoundException {
     // Attempt to read all, using gRPC connection:
-    return animalRegistrationService.getAllAnimals();
+    try {
+      return animalRegistrationService.getAllAnimals();
+    } catch (RuntimeException e) {
+      // Database server cannot be reached.
+      System.err.println("Error reading all animals. Database server could not be reached. Please try again later...");
+      return new ArrayList<>();
+    }
   }
 
   @Override public Object readEntityFromReceivedEntityList(long Id) throws NullPointerException {

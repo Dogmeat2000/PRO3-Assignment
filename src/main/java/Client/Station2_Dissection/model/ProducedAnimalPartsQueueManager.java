@@ -81,7 +81,7 @@ public class ProducedAnimalPartsQueueManager implements QueueManager
           System.err.println("[QueueManager] Adding failed AnimalPart to the end of the queue, and trying next AnimalPart in queue.");
           unregisteredAnimalPartQueue.offer(animalPart);
           try {
-            Thread.sleep(250);
+            Thread.sleep(1000);
           } catch (InterruptedException ex) {
             e.printStackTrace();
           }
