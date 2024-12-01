@@ -28,7 +28,8 @@ It is important for the customer that the stations can work as independently as 
 2. Clean and install with maven, ensuring to generate sources and documentation
 3. Install RabbitMQ on the local machine.
 4. Update the path defined inside the 'RunAllServers.java' Spring Boot Service launcher. This needs to point to the shortcut that launches your RabbitMQ service.
-5. Run 'RunAllServers' {src -> main -> java -> 'RunAllServers'} to launch both the Database (including REST/WEB endpoints and gRPC controllers) and the RabbitMQ AMQP server.
+![ScreenShot](Development%20Documents%20(UML%2C%20etc)/RunAllServers_UpdatePath.jpg)
+6. Run 'RunAllServers' {src -> main -> java -> 'RunAllServers'} to launch both the Database (including REST/WEB endpoints and gRPC controllers) and the RabbitMQ AMQP server.
    
 ## Using an external HTTP messaging application (Postman, HTTPie, etc.):
 1. Use Postman, HTTPie, etc. to send HTTP messages to the Web Server. See pictures below for examples of messages using HTTPie:
