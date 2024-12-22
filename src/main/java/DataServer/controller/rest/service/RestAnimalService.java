@@ -2,6 +2,8 @@ package DataServer.controller.rest.service;
 
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,7 @@ public class RestAnimalService
 
 
   @GetMapping("/{animalId}")
+  @Cacheable(value = "animals", key = "#animalId")
   public AnimalDto getAnimal(@PathVariable("animalId") Long animalId) throws DtoValidationException,
       DtoConversionException,
       RestPersistenceException,
@@ -141,6 +144,7 @@ public class RestAnimalService
 
 
   @PutMapping("/{animalId}")
+  @CacheEvict(value = "animals", key = "#animalId")
   public void updateAnimal(@PathVariable("animalId") Long animalId, @RequestBody AnimalDto animalDto) throws DtoValidationException,
       DtoConversionException,
       RestPersistenceException,
@@ -171,6 +175,7 @@ public class RestAnimalService
 
   @Transactional
   @DeleteMapping("/{animalId}")
+  @CacheEvict(value = "animals", key = "#animalId")
   public void deleteAnimal(@PathVariable("animalId") Long animalId, @RequestBody AnimalDto animalDto) throws DtoValidationException,
       DtoConversionException,
       RestPersistenceException,
